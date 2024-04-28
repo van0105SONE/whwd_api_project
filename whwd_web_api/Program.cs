@@ -1,7 +1,6 @@
 ﻿using Infrastructure.DataBaseContext;
 using Infrastructure.Model;
 using Infrastructure.Model.Volunteer;
-using Infrastructure.Model.Work;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

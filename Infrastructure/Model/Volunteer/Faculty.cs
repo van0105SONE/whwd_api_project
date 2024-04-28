@@ -4,14 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Model.Work
+namespace Infrastructure.Model.Volunteer
 {
-    public class Major
+    public class Faculty
     {
         public Guid Id { get; set; }
-        public String Name { get; set; }
+        public string Name { get; set; }
 
-        public  Faculty Faculty { get; set; }
-
+        public Department Department { get; set; }
     }
 }

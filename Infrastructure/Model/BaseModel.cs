@@ -12,7 +12,10 @@ namespace Infrastructure.Model
     {
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
+        public ApplicationUser CreateBy { get; set; }
+        public ApplicationUser? UpdateBy { get; set; }
         public DateTime CreateAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdateAt { get; set;  }
+        
     }
 }

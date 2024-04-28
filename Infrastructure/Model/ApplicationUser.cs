@@ -1,5 +1,4 @@
 ﻿using Infrastructure.Model.Volunteer;
-using Infrastructure.Model.Work;
 using Microsoft.AspNetCore.Identity;
 
 namespace Infrastructure.Model

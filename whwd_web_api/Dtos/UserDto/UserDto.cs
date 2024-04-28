@@ -1,5 +1,4 @@
 ﻿using Infrastructure.Model.Volunteer;
-using Infrastructure.Model.Work;
 
 namespace whwd_web_api.Dtos.UserDto
 {

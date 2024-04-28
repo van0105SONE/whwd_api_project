@@ -4,6 +4,7 @@ using Infrastructure.Model.Volunteer;
 using Infrastructure.Model.Work;
 using whwd_web_api.Dtos;
 using whwd_web_api.Dtos.UserDto;
+using whwd_web_api.Dtos.Work;
 
 namespace whwd_web_api.Mapper
 {
@@ -15,6 +16,11 @@ namespace whwd_web_api.Mapper
             CreateMap<UserDto, ApplicationUser>();
             CreateMap<DepartmentDto, Department>();
             CreateMap<GenerationDto, Generation>();
+
+
+            //project model
+            CreateMap<ProjectPlanDto, ProjectPlan>();
+            CreateMap<ProjectPlan, ProjectPlanDto>();
 
             //Mapping model to response
             CreateMap<ApplicationUser, UserDto>();
