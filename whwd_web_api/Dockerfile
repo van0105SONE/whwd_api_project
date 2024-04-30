@@ -14,14 +14,14 @@ WORKDIR /src
 COPY ["whwd_web_api/whwd_web_api.csproj", "whwd_web_api/"]
 COPY ["Infrastructure/Infrastructure.csproj", "Infrastructure/"]
 COPY ["Services/Services.csproj", "Services/"]
-RUN dotnet restore "./whwd_web_api/./whwd_web_api.csproj"
+RUN dotnet restore "/whwd_web_api//whwd_web_api.csproj"
 COPY . .
 WORKDIR "/src/whwd_web_api"
-RUN dotnet build "./whwd_web_api.csproj" -c %BUILD_CONFIGURATION% -o /app/build
+RUN dotnet build "/whwd_web_api.csproj" -c %BUILD_CONFIGURATION% -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./whwd_web_api.csproj" -c %BUILD_CONFIGURATION% -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "/whwd_web_api.csproj" -c %BUILD_CONFIGURATION% -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
