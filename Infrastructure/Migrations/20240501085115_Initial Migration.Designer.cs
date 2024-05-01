@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(DatabaseContexts))]
-    [Migration("20240323065331_AddMajor")]
-    partial class AddMajor
+    [Migration("20240501085115_Initial Migration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,9 +36,6 @@ namespace Infrastructure.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text");
-
-                    b.Property<Guid>("DepartmentId")
-                        .HasColumnType("uuid");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -65,6 +62,9 @@ namespace Infrastructure.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid>("MajorId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
@@ -86,6 +86,12 @@ namespace Infrastructure.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("RefreshTokenExpiry")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
 
@@ -98,9 +104,9 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DepartmentId");
-
                     b.HasIndex("GenerationReferenceCode");
+
+                    b.HasIndex("MajorId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -112,26 +118,55 @@ namespace Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Infrastructure.Model.Volunteer.Generation", b =>
+            modelBuilder.Entity("Infrastructure.Model.Student.Student", b =>
                 {
-                    b.Property<string>("ReferenceCode")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreateById")
+                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("YearEnd")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-                    b.Property<DateTime>("YearStart")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("number")
+                    b.Property<int>("ShirtSize")
                         .HasColumnType("integer");
 
-                    b.HasKey("ReferenceCode");
+                    b.Property<int>("ShoesSize")
+                        .HasColumnType("integer");
 
-                    b.ToTable("generations");
+                    b.Property<int>("SkirtSize")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdateAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdateById")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Year")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("birthDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreateById");
+
+                    b.HasIndex("UpdateById");
+
+                    b.ToTable("students");
                 });
 
-            modelBuilder.Entity("Infrastructure.Model.Work.Department", b =>
+            modelBuilder.Entity("Infrastructure.Model.Volunteer.Department", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -146,7 +181,7 @@ namespace Infrastructure.Migrations
                     b.ToTable("departments");
                 });
 
-            modelBuilder.Entity("Infrastructure.Model.Work.Major", b =>
+            modelBuilder.Entity("Infrastructure.Model.Volunteer.Faculty", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -163,7 +198,125 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("DepartmentId");
 
+                    b.ToTable("faculty");
+                });
+
+            modelBuilder.Entity("Infrastructure.Model.Volunteer.Generation", b =>
+                {
+                    b.Property<string>("ReferenceCode")
+                        .HasColumnType("text");
+
+                    b.Property<int>("number")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ReferenceCode");
+
+                    b.ToTable("generations");
+                });
+
+            modelBuilder.Entity("Infrastructure.Model.Volunteer.Major", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("FacultyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FacultyId");
+
                     b.ToTable("majors");
+                });
+
+            modelBuilder.Entity("Infrastructure.Model.Work.DonateThing", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreateById")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("double precision");
+
+                    b.Property<DateTime?>("UpdateAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdateById")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreateById");
+
+                    b.HasIndex("UpdateById");
+
+                    b.ToTable("donateThings");
+                });
+
+            modelBuilder.Entity("Infrastructure.Model.Work.ProjectPlan", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreateById")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("DonateThingId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ProjectName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<double>("TargetValue")
+                        .HasColumnType("double precision");
+
+                    b.Property<DateTime?>("UpdateAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdateById")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreateById");
+
+                    b.HasIndex("DonateThingId");
+
+                    b.HasIndex("UpdateById");
+
+                    b.ToTable("projectPlan");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -304,32 +457,102 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Infrastructure.Model.ApplicationUser", b =>
                 {
-                    b.HasOne("Infrastructure.Model.Work.Department", "Department")
-                        .WithMany()
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Infrastructure.Model.Volunteer.Generation", "Generation")
                         .WithMany()
                         .HasForeignKey("GenerationReferenceCode")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Department");
+                    b.HasOne("Infrastructure.Model.Volunteer.Major", "Major")
+                        .WithMany()
+                        .HasForeignKey("MajorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Generation");
+
+                    b.Navigation("Major");
                 });
 
-            modelBuilder.Entity("Infrastructure.Model.Work.Major", b =>
+            modelBuilder.Entity("Infrastructure.Model.Student.Student", b =>
                 {
-                    b.HasOne("Infrastructure.Model.Work.Department", "Department")
+                    b.HasOne("Infrastructure.Model.ApplicationUser", "CreateBy")
+                        .WithMany()
+                        .HasForeignKey("CreateById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Infrastructure.Model.ApplicationUser", "UpdateBy")
+                        .WithMany()
+                        .HasForeignKey("UpdateById");
+
+                    b.Navigation("CreateBy");
+
+                    b.Navigation("UpdateBy");
+                });
+
+            modelBuilder.Entity("Infrastructure.Model.Volunteer.Faculty", b =>
+                {
+                    b.HasOne("Infrastructure.Model.Volunteer.Department", "Department")
                         .WithMany()
                         .HasForeignKey("DepartmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Department");
+                });
+
+            modelBuilder.Entity("Infrastructure.Model.Volunteer.Major", b =>
+                {
+                    b.HasOne("Infrastructure.Model.Volunteer.Faculty", "Faculty")
+                        .WithMany()
+                        .HasForeignKey("FacultyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Faculty");
+                });
+
+            modelBuilder.Entity("Infrastructure.Model.Work.DonateThing", b =>
+                {
+                    b.HasOne("Infrastructure.Model.ApplicationUser", "CreateBy")
+                        .WithMany()
+                        .HasForeignKey("CreateById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Infrastructure.Model.ApplicationUser", "UpdateBy")
+                        .WithMany()
+                        .HasForeignKey("UpdateById");
+
+                    b.Navigation("CreateBy");
+
+                    b.Navigation("UpdateBy");
+                });
+
+            modelBuilder.Entity("Infrastructure.Model.Work.ProjectPlan", b =>
+                {
+                    b.HasOne("Infrastructure.Model.ApplicationUser", "CreateBy")
+                        .WithMany()
+                        .HasForeignKey("CreateById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Infrastructure.Model.Work.DonateThing", "DonateThing")
+                        .WithMany()
+                        .HasForeignKey("DonateThingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Infrastructure.Model.ApplicationUser", "UpdateBy")
+                        .WithMany()
+                        .HasForeignKey("UpdateById");
+
+                    b.Navigation("CreateBy");
+
+                    b.Navigation("DonateThing");
+
+                    b.Navigation("UpdateBy");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
