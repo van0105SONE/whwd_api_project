@@ -47,6 +47,8 @@ namespace Infrastructure.Repository.Implement
                 {
                      throw  new Exception($"Student {studentParam.Id} isn't found");
                 }
+
+
                 student.Name = studentParam.Name;
                 student.birthDate = studentParam.birthDate;
                 student.Year = studentParam.Year;
@@ -57,7 +59,7 @@ namespace Infrastructure.Repository.Implement
                _dbContext.students.Update(student);
             }catch(Exception error)
             {
-                throw error;
+                throw new Exception(error.Message);
             }
         }
     }

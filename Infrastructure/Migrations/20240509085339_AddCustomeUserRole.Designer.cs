@@ -3,6 +3,7 @@ using System;
 using Infrastructure.DataBaseContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(DatabaseContexts))]
-    partial class DatabaseContextsModelSnapshot : ModelSnapshot
+    [Migration("20240509085339_AddCustomeUserRole")]
+    partial class AddCustomeUserRole
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,59 +24,6 @@ namespace Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("Infrastructure.Model.Address.District", b =>
-                {
-                    b.Property<string>("districtCode")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ProvinceCode")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("districtName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("districtCode");
-
-                    b.HasIndex("ProvinceCode");
-
-                    b.ToTable("districts");
-                });
-
-            modelBuilder.Entity("Infrastructure.Model.Address.Province", b =>
-                {
-                    b.Property<string>("ProvinceCode")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ProvinceName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("ProvinceCode");
-
-                    b.ToTable("provinces");
-                });
-
-            modelBuilder.Entity("Infrastructure.Model.Address.Village", b =>
-                {
-                    b.Property<string>("villageCode")
-                        .HasColumnType("text");
-
-                    b.Property<string>("districtCode")
-                        .HasColumnType("text");
-
-                    b.Property<string>("villageName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("villageCode");
-
-                    b.HasIndex("districtCode");
-
-                    b.ToTable("villages");
-                });
 
             modelBuilder.Entity("Infrastructure.Model.Roles.ApplicationRole", b =>
                 {
@@ -92,7 +42,7 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
-                    b.Property<Guid>("PositionTeamId")
+                    b.Property<Guid>("UsersTeamsId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
@@ -101,7 +51,7 @@ namespace Infrastructure.Migrations
                         .IsUnique()
                         .HasDatabaseName("RoleNameIndex");
 
-                    b.HasIndex("PositionTeamId");
+                    b.HasIndex("UsersTeamsId");
 
                     b.ToTable("AspNetRoles", (string)null);
                 });
@@ -154,86 +104,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("students");
                 });
 
-            modelBuilder.Entity("Infrastructure.Model.University.Department", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("facultyId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("facultyId");
-
-                    b.ToTable("departments");
-                });
-
-            modelBuilder.Entity("Infrastructure.Model.University.Faculty", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("universityId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("universityId");
-
-                    b.ToTable("faculty");
-                });
-
-            modelBuilder.Entity("Infrastructure.Model.University.Major", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("DepartmentId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DepartmentId");
-
-                    b.ToTable("majors");
-                });
-
-            modelBuilder.Entity("Infrastructure.Model.University.University", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("university");
-                });
-
             modelBuilder.Entity("Infrastructure.Model.Users.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -242,16 +112,8 @@ namespace Infrastructure.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
-                    b.Property<string>("BornVillagevillageCode")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("text");
-
-                    b.Property<string>("CurrentVillagevillageCode")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Email")
@@ -275,8 +137,8 @@ namespace Infrastructure.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("MajorId")
-                        .HasColumnType("text");
+                    b.Property<Guid>("MajorId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -320,10 +182,6 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BornVillagevillageCode");
-
-                    b.HasIndex("CurrentVillagevillageCode");
-
                     b.HasIndex("MajorId");
 
                     b.HasIndex("NormalizedEmail")
@@ -336,46 +194,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("UserTypeId");
 
                     b.ToTable("AspNetUsers", (string)null);
-                });
-
-            modelBuilder.Entity("Infrastructure.Model.Users.Position", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("PositionName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("RefNo")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("positions");
-                });
-
-            modelBuilder.Entity("Infrastructure.Model.Users.PositionTeam", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("PositionId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("TeamId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PositionId");
-
-                    b.HasIndex("TeamId");
-
-                    b.ToTable("PositionTeam");
                 });
 
             modelBuilder.Entity("Infrastructure.Model.Users.ProjectTeam", b =>
@@ -397,6 +215,26 @@ namespace Infrastructure.Migrations
                     b.ToTable("project_teams");
                 });
 
+            modelBuilder.Entity("Infrastructure.Model.Users.University", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("FacultyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FacultyId");
+
+                    b.ToTable("university");
+                });
+
             modelBuilder.Entity("Infrastructure.Model.Users.UserType", b =>
                 {
                     b.Property<string>("Id")
@@ -408,7 +246,90 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserType");
+                    b.ToTable("generations");
+                });
+
+            modelBuilder.Entity("Infrastructure.Model.Users.UsersTeams", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TeamId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TeamId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("users_teams");
+                });
+
+            modelBuilder.Entity("Infrastructure.Model.Volunteer.Department", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("MajorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MajorId");
+
+                    b.ToTable("departments");
+                });
+
+            modelBuilder.Entity("Infrastructure.Model.Volunteer.Faculty", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("DepartmentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DepartmentId");
+
+                    b.ToTable("faculty");
+                });
+
+            modelBuilder.Entity("Infrastructure.Model.Volunteer.Major", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("majors");
                 });
 
             modelBuilder.Entity("Infrastructure.Model.Work.DonateThing", b =>
@@ -606,35 +527,15 @@ namespace Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Infrastructure.Model.Address.District", b =>
-                {
-                    b.HasOne("Infrastructure.Model.Address.Province", "province")
-                        .WithMany()
-                        .HasForeignKey("ProvinceCode")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("province");
-                });
-
-            modelBuilder.Entity("Infrastructure.Model.Address.Village", b =>
-                {
-                    b.HasOne("Infrastructure.Model.Address.District", "district")
-                        .WithMany()
-                        .HasForeignKey("districtCode");
-
-                    b.Navigation("district");
-                });
-
             modelBuilder.Entity("Infrastructure.Model.Roles.ApplicationRole", b =>
                 {
-                    b.HasOne("Infrastructure.Model.Users.PositionTeam", "PositionTeam")
+                    b.HasOne("Infrastructure.Model.Users.UsersTeams", "UsersTeams")
                         .WithMany()
-                        .HasForeignKey("PositionTeamId")
+                        .HasForeignKey("UsersTeamsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("PositionTeam");
+                    b.Navigation("UsersTeams");
                 });
 
             modelBuilder.Entity("Infrastructure.Model.Student.Student", b =>
@@ -654,87 +555,73 @@ namespace Infrastructure.Migrations
                     b.Navigation("UpdateBy");
                 });
 
-            modelBuilder.Entity("Infrastructure.Model.University.Department", b =>
-                {
-                    b.HasOne("Infrastructure.Model.University.Faculty", "faculty")
-                        .WithMany()
-                        .HasForeignKey("facultyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("faculty");
-                });
-
-            modelBuilder.Entity("Infrastructure.Model.University.Faculty", b =>
-                {
-                    b.HasOne("Infrastructure.Model.University.University", "university")
-                        .WithMany()
-                        .HasForeignKey("universityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("university");
-                });
-
-            modelBuilder.Entity("Infrastructure.Model.University.Major", b =>
-                {
-                    b.HasOne("Infrastructure.Model.University.Department", "Department")
-                        .WithMany()
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Department");
-                });
-
             modelBuilder.Entity("Infrastructure.Model.Users.ApplicationUser", b =>
                 {
-                    b.HasOne("Infrastructure.Model.Address.Village", "BornVillage")
+                    b.HasOne("Infrastructure.Model.Volunteer.Major", "Major")
                         .WithMany()
-                        .HasForeignKey("BornVillagevillageCode")
+                        .HasForeignKey("MajorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Infrastructure.Model.Address.Village", "CurrentVillage")
-                        .WithMany()
-                        .HasForeignKey("CurrentVillagevillageCode")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Infrastructure.Model.University.Major", "Major")
-                        .WithMany()
-                        .HasForeignKey("MajorId");
 
                     b.HasOne("Infrastructure.Model.Users.UserType", "UserType")
                         .WithMany()
                         .HasForeignKey("UserTypeId");
-
-                    b.Navigation("BornVillage");
-
-                    b.Navigation("CurrentVillage");
 
                     b.Navigation("Major");
 
                     b.Navigation("UserType");
                 });
 
-            modelBuilder.Entity("Infrastructure.Model.Users.PositionTeam", b =>
+            modelBuilder.Entity("Infrastructure.Model.Users.University", b =>
                 {
-                    b.HasOne("Infrastructure.Model.Users.Position", "Position")
+                    b.HasOne("Infrastructure.Model.Volunteer.Faculty", "Faculty")
                         .WithMany()
-                        .HasForeignKey("PositionId")
+                        .HasForeignKey("FacultyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Faculty");
+                });
+
+            modelBuilder.Entity("Infrastructure.Model.Users.UsersTeams", b =>
+                {
                     b.HasOne("Infrastructure.Model.Users.ProjectTeam", "Team")
                         .WithMany()
                         .HasForeignKey("TeamId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Position");
+                    b.HasOne("Infrastructure.Model.Users.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Team");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Infrastructure.Model.Volunteer.Department", b =>
+                {
+                    b.HasOne("Infrastructure.Model.Volunteer.Major", "Major")
+                        .WithMany()
+                        .HasForeignKey("MajorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Major");
+                });
+
+            modelBuilder.Entity("Infrastructure.Model.Volunteer.Faculty", b =>
+                {
+                    b.HasOne("Infrastructure.Model.Volunteer.Department", "Department")
+                        .WithMany()
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Department");
                 });
 
             modelBuilder.Entity("Infrastructure.Model.Work.DonateThing", b =>
