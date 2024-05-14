@@ -7,12 +7,11 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Model.Address
 {
-    public class Village
+    public class District
     {
         [Key]
-        public  String villageCode { get; set; }
-        public  String villageName { get; set; }
-        public District district { get; set; }
-
+        public String districtCode { get; set; }
+        public String districtName { get; set;}
+        public Province province { get; set; }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Infrastructure.DataBaseContext;
-using Infrastructure.Model;
+using Infrastructure.Model.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Services.Service.jwtService;

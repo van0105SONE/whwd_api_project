@@ -5,13 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Model.Volunteer
+namespace Infrastructure.Model.University
 {
-    public class Generation 
+    public class University
     {
         [Key]
-        public String ReferenceCode { get; set; }
-        public int number { get; set; }
-
+        public Guid Id { get; set; }
+        public string Name { get; set; }
     }
 }

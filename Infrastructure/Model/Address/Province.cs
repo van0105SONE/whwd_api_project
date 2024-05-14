@@ -10,7 +10,7 @@ namespace Infrastructure.Model.Address
     public class Province
     {
         [Key]
-        public required String ProvinceCode { get; set; }
-        public required String ProvinceName { get; set; }
+        public String ProvinceCode { get; set; }
+        public String ProvinceName { get; set; }
     }
 }

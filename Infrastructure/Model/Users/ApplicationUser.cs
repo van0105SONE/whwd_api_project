@@ -1,25 +1,20 @@
 ﻿using Infrastructure.Model.Address;
 using Infrastructure.Model.University;
-using Infrastructure.Model.Users;
-using whwd_web_api.Dtos.Address;
+using Microsoft.AspNetCore.Identity;
 
-namespace whwd_web_api.Dtos.UserDto
+namespace Infrastructure.Model.Users
 {
-    public class UserDto
+    public class ApplicationUser : IdentityUser
     {
         public string Fname { get; set; }
         public string Lname { get; set; }
-        public string UserName { get; set; }
-        public string Email { get; set; }
-        public string Password { get; set; }
         public string Occupation { get; set; }
 
-        public VillageDto CurrentVillage { get; set; }
-        public VillageDto BornVillage { get; set; }
+        public Village CurrentVillage { get; set; }
+        public Village BornVillage { get; set; }
         public UserType UserType { get; set; }
         public Major Major { get; set; }
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiry { get; set; }
-
     }
 }

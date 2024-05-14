@@ -4,14 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Model.Volunteer
+namespace Infrastructure.Model.Users
 {
-    public class Major
+    public class PositionTeam
     {
         public Guid Id { get; set; }
-        public string Name { get; set; }
-
-        public Faculty Faculty { get; set; }
-
+        public Position Position { get; set; }
+        public ProjectTeam Team { get; set; }
     }
 }

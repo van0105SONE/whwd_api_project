@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.Marshalling;
 using System.Text;
 using System.Threading.Tasks;
+using Infrastructure.Model.Users;
 
 namespace Infrastructure.Model
 {

@@ -7,87 +7,21 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class AddCustomeUserRole : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "AspNetRoles",
+                name: "generations",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
-                    Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    NormalizedName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetRoles", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "departments",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_departments", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "generations",
-                columns: table => new
-                {
-                    ReferenceCode = table.Column<string>(type: "text", nullable: false),
-                    number = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_generations", x => x.ReferenceCode);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetRoleClaims",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    RoleId = table.Column<string>(type: "text", nullable: false),
-                    ClaimType = table.Column<string>(type: "text", nullable: true),
-                    ClaimValue = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "faculty",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    DepartmentId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_faculty", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_faculty_departments_DepartmentId",
-                        column: x => x.DepartmentId,
-                        principalTable: "departments",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                    table.PrimaryKey("PK_generations", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -96,17 +30,25 @@ namespace Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    FacultyId = table.Column<Guid>(type: "uuid", nullable: false)
+                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_majors", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_majors_faculty_FacultyId",
-                        column: x => x.FacultyId,
-                        principalTable: "faculty",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "project_teams",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    RefNO = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_project_teams", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -117,8 +59,8 @@ namespace Infrastructure.Migrations
                     Fname = table.Column<string>(type: "text", nullable: false),
                     Lname = table.Column<string>(type: "text", nullable: false),
                     Occupation = table.Column<string>(type: "text", nullable: false),
+                    UserTypeId = table.Column<string>(type: "text", nullable: true),
                     MajorId = table.Column<Guid>(type: "uuid", nullable: false),
-                    GenerationReferenceCode = table.Column<string>(type: "text", nullable: false),
                     RefreshToken = table.Column<string>(type: "text", nullable: true),
                     RefreshTokenExpiry = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -140,13 +82,31 @@ namespace Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetUsers_generations_GenerationReferenceCode",
-                        column: x => x.GenerationReferenceCode,
+                        name: "FK_AspNetUsers_generations_UserTypeId",
+                        column: x => x.UserTypeId,
                         principalTable: "generations",
-                        principalColumn: "ReferenceCode",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_AspNetUsers_majors_MajorId",
+                        column: x => x.MajorId,
+                        principalTable: "majors",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "departments",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    MajorId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_departments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_departments_majors_MajorId",
                         column: x => x.MajorId,
                         principalTable: "majors",
                         principalColumn: "Id",
@@ -188,30 +148,6 @@ namespace Infrastructure.Migrations
                     table.PrimaryKey("PK_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
                     table.ForeignKey(
                         name: "FK_AspNetUserLogins_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUserRoles",
-                columns: table => new
-                {
-                    UserId = table.Column<string>(type: "text", nullable: false),
-                    RoleId = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
-                    table.ForeignKey(
-                        name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AspNetUserRoles_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -299,6 +235,50 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "users_teams",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    TeamId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_users_teams", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_users_teams_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_users_teams_project_teams_TeamId",
+                        column: x => x.TeamId,
+                        principalTable: "project_teams",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "faculty",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    DepartmentId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_faculty", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_faculty_departments_DepartmentId",
+                        column: x => x.DepartmentId,
+                        principalTable: "departments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "projectPlan",
                 columns: table => new
                 {
@@ -336,10 +316,100 @@ namespace Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "AspNetRoles",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    UsersTeamsId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    NormalizedName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetRoles", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetRoles_users_teams_UsersTeamsId",
+                        column: x => x.UsersTeamsId,
+                        principalTable: "users_teams",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "university",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    FacultyId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_university", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_university_faculty_FacultyId",
+                        column: x => x.FacultyId,
+                        principalTable: "faculty",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetRoleClaims",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    RoleId = table.Column<string>(type: "text", nullable: false),
+                    ClaimType = table.Column<string>(type: "text", nullable: true),
+                    ClaimValue = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserRoles",
+                columns: table => new
+                {
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    RoleId = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AspNetUserRoles_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
                 column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetRoles_UsersTeamsId",
+                table: "AspNetRoles",
+                column: "UsersTeamsId");
 
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
@@ -368,20 +438,25 @@ namespace Infrastructure.Migrations
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_GenerationReferenceCode",
-                table: "AspNetUsers",
-                column: "GenerationReferenceCode");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_AspNetUsers_MajorId",
                 table: "AspNetUsers",
                 column: "MajorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_UserTypeId",
+                table: "AspNetUsers",
+                column: "UserTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_departments_MajorId",
+                table: "departments",
+                column: "MajorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_donateThings_CreateById",
@@ -397,11 +472,6 @@ namespace Infrastructure.Migrations
                 name: "IX_faculty_DepartmentId",
                 table: "faculty",
                 column: "DepartmentId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_majors_FacultyId",
-                table: "majors",
-                column: "FacultyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_projectPlan_CreateById",
@@ -427,6 +497,21 @@ namespace Infrastructure.Migrations
                 name: "IX_students_UpdateById",
                 table: "students",
                 column: "UpdateById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_university_FacultyId",
+                table: "university",
+                column: "FacultyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_users_teams_TeamId",
+                table: "users_teams",
+                column: "TeamId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_users_teams_UserId",
+                table: "users_teams",
+                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -454,25 +539,34 @@ namespace Infrastructure.Migrations
                 name: "students");
 
             migrationBuilder.DropTable(
+                name: "university");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "donateThings");
 
             migrationBuilder.DropTable(
+                name: "faculty");
+
+            migrationBuilder.DropTable(
+                name: "users_teams");
+
+            migrationBuilder.DropTable(
+                name: "departments");
+
+            migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "project_teams");
 
             migrationBuilder.DropTable(
                 name: "generations");
 
             migrationBuilder.DropTable(
                 name: "majors");
-
-            migrationBuilder.DropTable(
-                name: "faculty");
-
-            migrationBuilder.DropTable(
-                name: "departments");
         }
     }
 }

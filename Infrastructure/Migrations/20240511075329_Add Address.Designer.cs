@@ -3,6 +3,7 @@ using System;
 using Infrastructure.DataBaseContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(DatabaseContexts))]
-    partial class DatabaseContextsModelSnapshot : ModelSnapshot
+    [Migration("20240511075329_Add Address")]
+    partial class AddAddress
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,17 +30,17 @@ namespace Infrastructure.Migrations
                     b.Property<string>("districtCode")
                         .HasColumnType("text");
 
-                    b.Property<string>("ProvinceCode")
+                    b.Property<string>("districtName")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("districtName")
+                    b.Property<string>("villageProvinceCode")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("districtCode");
 
-                    b.HasIndex("ProvinceCode");
+                    b.HasIndex("villageProvinceCode");
 
                     b.ToTable("districts");
                 });
@@ -196,8 +199,9 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Infrastructure.Model.University.Major", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("DepartmentId")
                         .HasColumnType("uuid");
@@ -275,8 +279,8 @@ namespace Infrastructure.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("MajorId")
-                        .HasColumnType("text");
+                    b.Property<Guid>("MajorId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -608,13 +612,13 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Infrastructure.Model.Address.District", b =>
                 {
-                    b.HasOne("Infrastructure.Model.Address.Province", "province")
+                    b.HasOne("Infrastructure.Model.Address.Province", "village")
                         .WithMany()
-                        .HasForeignKey("ProvinceCode")
+                        .HasForeignKey("villageProvinceCode")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("province");
+                    b.Navigation("village");
                 });
 
             modelBuilder.Entity("Infrastructure.Model.Address.Village", b =>
@@ -703,7 +707,9 @@ namespace Infrastructure.Migrations
 
                     b.HasOne("Infrastructure.Model.University.Major", "Major")
                         .WithMany()
-                        .HasForeignKey("MajorId");
+                        .HasForeignKey("MajorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Infrastructure.Model.Users.UserType", "UserType")
                         .WithMany()

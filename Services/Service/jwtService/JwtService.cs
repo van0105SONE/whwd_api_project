@@ -1,4 +1,4 @@
-﻿using Infrastructure.Model;
+﻿using Infrastructure.Model.Users;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
