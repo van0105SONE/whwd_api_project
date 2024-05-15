@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 
-namespace whwd_web_api.Dtos.AuthenticationDto
+namespace ApplicationCore.Dtos.AuthenticationDto
 {
     public class PasswordResetDto
     {

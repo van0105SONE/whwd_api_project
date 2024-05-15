@@ -1,9 +1,10 @@
-﻿using Infrastructure.Model.Address;
+﻿using ApplicationCore.Dtos.Roles;
+using Infrastructure.Model.Address;
 using Infrastructure.Model.University;
 using Infrastructure.Model.Users;
 using whwd_web_api.Dtos.Address;
 
-namespace whwd_web_api.Dtos.UserDto
+namespace ApplicationCore.Dtos.UserDto
 {
     public class UserDto
     {
@@ -18,8 +19,14 @@ namespace whwd_web_api.Dtos.UserDto
         public VillageDto BornVillage { get; set; }
         public UserType UserType { get; set; }
         public Major Major { get; set; }
+        public PositionTeamDto positionTeam { get; set; }
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiry { get; set; }
 
+    }
+
+    public class UserUpdateDto : UserDto
+    {
+       public string Id { get; set; }
     }
 }

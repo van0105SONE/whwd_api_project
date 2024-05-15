@@ -11,5 +11,6 @@ namespace Infrastructure.Model.Users
         public Guid Id { get; set; }
         public Position Position { get; set; }
         public ProjectTeam Team { get; set; }
+        public ApplicationUser User { get; set; }
     }
 }

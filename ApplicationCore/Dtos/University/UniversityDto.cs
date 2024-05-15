@@ -1,4 +1,4 @@
-﻿namespace whwd_web_api.Dtos.University
+﻿namespace ApplicationCore.Dtos.University
 {
     public class UniversityDto
     {

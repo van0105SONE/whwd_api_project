@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace whwd_web_api.Dtos
+namespace ApplicationCore.Dtos
 {
     public class GenerationDto
     {

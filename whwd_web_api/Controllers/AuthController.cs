@@ -1,11 +1,12 @@
-﻿using AutoMapper;
+﻿using ApplicationCore.Dtos;
+using ApplicationCore.Dtos.AuthenticationDto;
+using AutoMapper;
 using Infrastructure.DataBaseContext;
 using Infrastructure.Model.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Services.Service.jwtService;
-using whwd_web_api.Dtos;
-using whwd_web_api.Dtos.AuthenticationDto;
+
 
 namespace whwd_web_api.Controllers
 {

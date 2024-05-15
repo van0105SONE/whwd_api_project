@@ -4,6 +4,7 @@ using Infrastructure.DataBaseContext;
 using Infrastructure.Model.Users;
 using Infrastructure.Repository.IRepository;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repository.Implement
 {
@@ -12,7 +13,6 @@ namespace Infrastructure.Repository.Implement
 
         private DatabaseContexts _dbContext { get; set; }
         public  UserRepository(DatabaseContexts dbContext) { 
-       
             _dbContext = dbContext;
         }
 
@@ -138,6 +138,29 @@ namespace Infrastructure.Repository.Implement
                 return userTypes;
             }
             catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public List<ApplicationUser> getUsers()
+        {
+            try
+            {
+                List<ApplicationUser> users = _dbContext.Users.Include(t => t.UserType).Include(t => t.Major).Include(t => t.positionTeams).ThenInclude(t => t.Team).Include(t => t.positionTeams).ThenInclude(t => t.Position).Include(t => t.CurrentVillage).Include(t => t.BornVillage).ToList();
+                return users;
+            }catch(Exception ex) { 
+                throw new Exception(ex.Message);    
+            }
+        }
+
+        public ApplicationUser getUserById(string Id)
+        {
+            try
+            {
+                ApplicationUser? user = _dbContext.Users.Include(t => t.BornVillage).Include(t => t.UserType).Include(t => t.CurrentVillage).Include(t => t.positionTeams).ThenInclude(t => t.Team).Include(t => t.positionTeams).ThenInclude(t => t.Position).FirstOrDefault(t => t.Id  == Id);
+                return user;
+            }catch(Exception ex)
             {
                 throw new Exception(ex.Message);
             }
