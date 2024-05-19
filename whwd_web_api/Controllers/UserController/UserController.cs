@@ -1,21 +1,15 @@
 ﻿using ApplicationCore.Dtos;
 using ApplicationCore.Dtos.UserDto;
-using ApplicationCore.Filter;
 using AutoMapper;
 using Infrastructure.DataBaseContext;
 using Infrastructure.Model.Address;
 using Infrastructure.Model.University;
 using Infrastructure.Model.Users;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Storage.Internal;
 using Services.Service.AddressService;
 using Services.Service.UniversityService;
 using Services.Service.UserService;
-using System.Text.Json.Serialization;
-using System.Text.Json;
-using ErrorOr;
 
 
 namespace whwd_web_api.Controllers.UserController
@@ -46,13 +40,8 @@ namespace whwd_web_api.Controllers.UserController
         {
             try
             {
-
-                bool isSuccesss = await _userService.createUser(userDto);
-                if (isSuccesss)
-                {
-                    return CreatedAtAction(nameof(CreateUser), new MessageReponse() { isSuccess = true, message = "Successful created user" });
-                }
-                    return CreatedAtAction(nameof(CreateUser), new MessageReponse() { isSuccess = true, message = "Successful Created" });
+                var userResult = await _userService.createUser(userDto);
+                return userResult.Match(t => CreatedAtAction(nameof(CreateUser), new MessageReponse() { isSuccess = true, message = "Successful Created" }), err => Problem(err.FirstOrDefault().Description) );
             }
             catch (Exception ex)
             {
@@ -60,96 +49,6 @@ namespace whwd_web_api.Controllers.UserController
             }
         }
 
-
-        [HttpPost]
-        [Route("editUser")]
-        public async Task<IActionResult> EditUser([FromBody] UserUpdateDto userDto)
-        {
-            try
-            {
-                ErrorOr<bool> updateResult = await  _userService.updateUser(userDto);
-                return CreatedAtAction(nameof(EditUser), new MessageReponse() {
-                   isSuccess = updateResult.Value,
-                   message = updateResult.FirstError.Description
-                });
-            }catch(Exception ex)
-            {
-                return Problem(ex.Message);
-            }
-        }
-
-        [HttpDelete]
-        [Route("deleteUser")]
-        public async Task<IActionResult> deleteUser([FromQuery] Guid userId)
-        {
-            try
-            {
-               var deleteResult =  await _userService.deleteUser(userId);
-
-                if (deleteResult.Value)
-                {
-                    return Ok(new MessageReponse()
-                    {
-                        isSuccess = true,
-                        message = "Delete Successful"
-                    });
-                }else
-                {
-                    return NotFound(deleteResult.FirstError.Description);
-                }
-            }catch(Exception ex)
-            {
-                return Problem(ex.Message);
-            }
-        }
-
-
-
-        [HttpGet]
-        [Route("getUsersById")]
-        public async Task<IActionResult> getUserById([FromQuery] string userId)
-        {
-            try
-            {
-                ApplicationUser user = await _userService.getUserById(userId);
-                var options = new JsonSerializerOptions
-                {
-                    ReferenceHandler = ReferenceHandler.Preserve,
-                    WriteIndented = false
-                };
-
-                var jsonString = JsonSerializer.Serialize(user, options);
-                return Ok(jsonString);
-            }
-            catch (Exception ex)
-            {
-                return Problem(ex.Message);
-            }
-        }
-
-
-        [HttpGet]
-        [Route("getUsers")]
-        public async Task<IActionResult> getUsers()
-        {
-            try
-            {
-                BaseFilter baseFilter = new BaseFilter();
-                List<ApplicationUser> users =  _userService.GetUsers(baseFilter);
-
-                var options = new JsonSerializerOptions
-                {
-                    ReferenceHandler = ReferenceHandler.Preserve,
-                    WriteIndented = true
-                };
-
-                var jsonString = JsonSerializer.Serialize(users, options);
-                return Ok(jsonString);
-            }catch(Exception ex)
-            {
-                return Problem(ex.Message);
-            }
-        }
 
         [HttpGet]
         [Route("getProvinces")]
@@ -183,6 +82,7 @@ namespace whwd_web_api.Controllers.UserController
 
         [HttpGet]
         [Route("getVillages")]
+
         public IActionResult getVillages()
         {
             try
@@ -195,7 +95,6 @@ namespace whwd_web_api.Controllers.UserController
                 return Problem(ex.Message);
             }
         }
-
 
         [HttpGet]
         [Route("getUnivesities")]
@@ -227,7 +126,6 @@ namespace whwd_web_api.Controllers.UserController
                 return Problem(ex.Message);
             }
         }
-
 
         [HttpGet]
         [Route("getDepartments")]

@@ -37,31 +37,21 @@ namespace Services.Service.RoleSevice
             _roleRepository = new RoleRepository(dbContext);
         }
 
-        public ErrorOr<bool> addPosition(PositionTeamDto teamPosition,  string userName)
+        public async Task<ErrorOr<bool>> addPosition(Guid teamId, Guid positionId,  string userName)
         {
             try
             { 
-
-
-                  if (teamPosition == null)
-                   {
-
-                      return Error.Validation(code: "ValidationError", description: "Invalid data can't be null");
-                   }else if (string.IsNullOrEmpty(userName))
+                 if (teamId == Guid.Empty)
                    {
 
                       return Error.Validation(code: "ValidationError", description: "Invalid user information can't be null");
-                   }else if (teamPosition.teamId == null || teamPosition.teamId == Guid.Empty)
+                   }else if ( positionId == Guid.Empty)
                    {
 
                       return Error.Validation(code: "ValidationError", description: "Invalid team can't be null");
-                   }else if(teamPosition.positionId == null || teamPosition.teamId == Guid.Empty)
-                   {
-
-                      return Error.Validation(code: "ValidationError", description: "Position Id isn't valid");
                    }
-                   Position position = _roleRepository.getPositionById(teamPosition.positionId);
-                   ProjectTeam team = _roleRepository.getTeamById(teamPosition.teamId);
+                   Position position = _roleRepository.getPositionById(positionId);
+                   ProjectTeam team = _roleRepository.getTeamById(teamId);
                    if (team == null)
                    {
                     return Error.Validation("NotFound", "Can't find the team on the system");

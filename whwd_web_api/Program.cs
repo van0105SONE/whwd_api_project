@@ -99,7 +99,9 @@ internal class Program
 
             foreach(var team in teams)
             {
-                bool isExist = dbContext.project_teams.Any(t => t.Name == team.Name);
+                var teamss =  dbContext.project_teams.ToList();
+                Console.Write($@"=======> {teamss}");
+                bool isExist = dbContext.project_teams.Any(t => t.Name.ToLower().Replace(" ", "") == team.Name.ToLower().Replace(" ", ""));
                 if (!isExist)
                 {
                     dbContext.project_teams.Add(team);

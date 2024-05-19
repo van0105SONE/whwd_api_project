@@ -5,7 +5,6 @@ using Infrastructure.Model.Address;
 using Infrastructure.Model.University;
 using Infrastructure.Model.Users;
 using Infrastructure.Model.Work;
-using whwd_web_api.Dtos;
 using whwd_web_api.Dtos.Address;
 
 using whwd_web_api.Dtos.Work;

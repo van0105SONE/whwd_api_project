@@ -2,7 +2,6 @@
 {
     public class DistrictDto
     {
-        public string districtCode { get; set; }
-        public string districtName { get; set; }
+        public required string districtCode { get; set; }
     }
 }
