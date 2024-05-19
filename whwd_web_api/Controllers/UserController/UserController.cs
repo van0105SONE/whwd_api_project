@@ -1,17 +1,16 @@
-﻿using AutoMapper;
+﻿using ApplicationCore.Dtos;
+using ApplicationCore.Dtos.UserDto;
+using AutoMapper;
 using Infrastructure.DataBaseContext;
 using Infrastructure.Model.Address;
 using Infrastructure.Model.University;
 using Infrastructure.Model.Users;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Storage.Internal;
 using Services.Service.AddressService;
 using Services.Service.UniversityService;
 using Services.Service.UserService;
-using whwd_web_api.Dtos;
-using whwd_web_api.Dtos.UserDto;
+
 
 namespace whwd_web_api.Controllers.UserController
 {
@@ -28,7 +27,7 @@ namespace whwd_web_api.Controllers.UserController
         public UserController(UserManager<ApplicationUser> userManager,DatabaseContexts dbContext ,IMapper mapper)
         {
             _UserManager = userManager;
-            _userService = new UserService(userManager, dbContext);
+            _userService = new UserService(userManager, dbContext, mapper);
             _addressService = new AddressService(dbContext);
             _universityService = new UniversityService(dbContext);
             _Mapping = mapper;
@@ -37,19 +36,12 @@ namespace whwd_web_api.Controllers.UserController
 
         [HttpPost]
         [Route("createUser")]
-        public async Task<IActionResult> CreateUser([FromBody] UserDto userRequest)
+        public async Task<IActionResult> CreateUser([FromBody] UserDto userDto)
         {
             try
             {
-                var user = _Mapping.Map<ApplicationUser>(userRequest);
-                Console.WriteLine("check user data from auto mapper");
-                Console.WriteLine(user);
-                bool isSuccesss = await _userService.createUser(user);
-                if (isSuccesss)
-                {
-                    return CreatedAtAction(nameof(CreateUser), new MessageReponse() { isSuccess = true, message = "Successful created user" });
-                }
-                return CreatedAtAction(nameof(CreateUser), new MessageReponse() { isSuccess = true, message = "Successful Created" });
+                var userResult = await _userService.createUser(userDto);
+                return userResult.Match(t => CreatedAtAction(nameof(CreateUser), new MessageReponse() { isSuccess = true, message = "Successful Created" }), err => Problem(err.FirstOrDefault().Description) );
             }
             catch (Exception ex)
             {

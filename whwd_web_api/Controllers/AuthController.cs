@@ -1,11 +1,13 @@
-﻿using AutoMapper;
+﻿using ApplicationCore.Dtos;
+using ApplicationCore.Dtos.AuthenticationDto;
+using AutoMapper;
 using Infrastructure.DataBaseContext;
 using Infrastructure.Model.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Services.Service.jwtService;
-using whwd_web_api.Dtos;
-using whwd_web_api.Dtos.AuthenticationDto;
+using Services.Service.UserService;
+
 
 namespace whwd_web_api.Controllers
 {
@@ -15,6 +17,7 @@ namespace whwd_web_api.Controllers
         private UserManager<ApplicationUser> _UserManager { get; set; }
         private IMapper  _mapping { get; set; }
         private IJwtService _JwtService { get; set; }
+        IUserService _UserService {get; set;}
         private DatabaseContexts _DbContexts { get; set; }
 
 
@@ -24,6 +27,7 @@ namespace whwd_web_api.Controllers
             _mapping = mapping;
             _JwtService = new JwtService(configiuration);
             _DbContexts = context;
+            _UserService = new UserService(_UserManager,context, mapping );
 
         }
 
@@ -37,9 +41,9 @@ namespace whwd_web_api.Controllers
                if (user == null) {
                     return NotFound("Username isn't found");
                }
+              ApplicationUser applicationUser = await   _UserService.getUserById(user.Id);
 
-
-                bool isExist = await  _UserManager.CheckPasswordAsync(user, userRequest.Password);
+                bool isExist = await _UserManager.CheckPasswordAsync(applicationUser, userRequest.Password);
  
                if (isExist)
                 {

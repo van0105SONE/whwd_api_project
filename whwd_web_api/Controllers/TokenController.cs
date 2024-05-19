@@ -1,16 +1,17 @@
-﻿using Infrastructure.DataBaseContext;
+﻿using ApplicationCore.Dtos.AuthenticationDto;
+using Infrastructure.DataBaseContext;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Service.jwtService;
-using whwd_web_api.Dtos.AuthenticationDto;
 
 namespace whwd_web_api.Controllers
 {
+    [ApiController]
     public class TokenController : Controller
     {
 
-        private readonly DatabaseContexts _DbContext;
-        private readonly IJwtService _JwtServie;
+        private DatabaseContexts _DbContext;
+        private  IJwtService _JwtServie;
          public TokenController(DatabaseContexts DbContext, IConfiguration Configuration) { 
              this._DbContext = DbContext;
             this._JwtServie = new JwtService(Configuration);

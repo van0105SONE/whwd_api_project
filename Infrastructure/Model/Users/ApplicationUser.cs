@@ -16,5 +16,7 @@ namespace Infrastructure.Model.Users
         public Major Major { get; set; }
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiry { get; set; }
+
+        public ICollection<PositionTeam> positionTeams { get; set; }
     }
 }

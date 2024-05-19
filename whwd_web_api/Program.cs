@@ -1,5 +1,4 @@
 ﻿using Infrastructure.DataBaseContext;
-using Infrastructure.Model.Roles;
 using Infrastructure.Model.University;
 using Infrastructure.Model.Users;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -24,7 +23,7 @@ internal class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         builder.Services.AddDbContext<DatabaseContexts>(option => option.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
-        builder.Services.AddDefaultIdentity<ApplicationUser>(option => option.SignIn.RequireConfirmedEmail = false).AddRoles<ApplicationRole>().AddEntityFrameworkStores<DatabaseContexts>();
+        builder.Services.AddDefaultIdentity<ApplicationUser>(option => option.SignIn.RequireConfirmedEmail = false).AddEntityFrameworkStores<DatabaseContexts>();
 
 
         builder.Services.AddAutoMapper(typeof(Program));
@@ -100,7 +99,9 @@ internal class Program
 
             foreach(var team in teams)
             {
-                bool isExist = dbContext.project_teams.Any(t => t.Name == team.Name);
+                var teamss =  dbContext.project_teams.ToList();
+                Console.Write($@"=======> {teamss}");
+                bool isExist = dbContext.project_teams.Any(t => t.Name.ToLower().Replace(" ", "") == team.Name.ToLower().Replace(" ", ""));
                 if (!isExist)
                 {
                     dbContext.project_teams.Add(team);
@@ -125,6 +126,8 @@ internal class Program
                 }
             };
 
+
+
             foreach (var userType in userTypes)
             {
               bool isExist =  dbContext.userTypes.Any(x => x.Name == userType.Name);
@@ -133,9 +136,42 @@ internal class Program
                     dbContext.userTypes.Add(userType);
                     dbContext.SaveChanges();
                 }
-
             }
 
+            List<Position> positions = new List<Position>() {
+               new Position()
+               {
+                   Id = Guid.NewGuid(),
+                   RefNo = "L01",
+                   PositionName = "Project Manager",
+
+               },
+               new Position()
+               {
+                   Id = Guid.NewGuid(),
+                   RefNo = "L01",
+                   PositionName = "Leader",
+                   
+               },
+              new Position()
+               {
+                   Id = Guid.NewGuid(),
+                   RefNo = "M01",
+                   PositionName = "Member",
+
+               }
+            };
+
+
+            foreach (var position in positions)
+            {
+                bool isExist = dbContext.position.Any(x => x.PositionName == position.PositionName);
+                if (!isExist)
+                {
+                    dbContext.position.Add(position);
+                    dbContext.SaveChanges();
+                }
+            }
 
             List<University> universities = new List<University>()
             {

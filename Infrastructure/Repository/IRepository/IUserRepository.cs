@@ -12,6 +12,11 @@ namespace Infrastructure.Repository.IRepository
     public interface IUserRepository
     {
     
+
+
+        List<ApplicationUser> getUsers();
+        ApplicationUser getUserById(string Id);
+        
         /// <summary>
         /// position
         /// </summary>
