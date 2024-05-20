@@ -16,6 +16,7 @@ namespace Infrastructure.Repository.IRepository
 
         List<ApplicationUser> getUsers();
         ApplicationUser getUserById(string Id);
+        
         /// <summary>
         /// position
         /// </summary>

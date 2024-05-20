@@ -8,7 +8,6 @@ using Infrastructure.Model.Student;
 using Infrastructure.Model.University;
 using Infrastructure.Model.Users;
 using Infrastructure.Model.Work;
-using whwd_web_api.Dtos;
 using whwd_web_api.Dtos.Address;
 
 namespace whwd_web_api.Mapper

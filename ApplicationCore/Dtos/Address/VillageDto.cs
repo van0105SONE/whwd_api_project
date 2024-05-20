@@ -2,8 +2,8 @@
 {
     public class VillageDto
     {
-        public string villageCode { get; set; }
-        public string villageName { get; set; }
-        public DistrictDto district { get; set; }
+        public string? villageCode { get; set; }
+        public required string villageName { get; set; }
+        public required DistrictDto district { get; set; }
     }
 }

@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(DatabaseContexts))]
-    [Migration("20240510133450_RolePosition")]
-    partial class RolePosition
+    [Migration("20240519111721_ResolveProjectTeam")]
+    partial class ResolveProjectTeam
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,9 +25,46 @@ namespace Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Infrastructure.Model.Address.District", b =>
+                {
+                    b.Property<string>("districtCode")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProvinceCode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("districtName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("districtCode");
+
+                    b.HasIndex("ProvinceCode");
+
+                    b.ToTable("districts");
+                });
+
+            modelBuilder.Entity("Infrastructure.Model.Address.Province", b =>
+                {
+                    b.Property<string>("ProvinceCode")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProvinceName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("ProvinceCode");
+
+                    b.ToTable("provinces");
+                });
+
             modelBuilder.Entity("Infrastructure.Model.Address.Village", b =>
                 {
                     b.Property<string>("villageCode")
+                        .HasColumnType("text");
+
+                    b.Property<string>("districtCode")
                         .HasColumnType("text");
 
                     b.Property<string>("villageName")
@@ -36,38 +73,9 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("villageCode");
 
-                    b.ToTable("Village");
-                });
+                    b.HasIndex("districtCode");
 
-            modelBuilder.Entity("Infrastructure.Model.Roles.ApplicationRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<Guid>("PositionTeamId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex");
-
-                    b.HasIndex("PositionTeamId");
-
-                    b.ToTable("AspNetRoles", (string)null);
+                    b.ToTable("villages");
                 });
 
             modelBuilder.Entity("Infrastructure.Model.Student.Student", b =>
@@ -160,9 +168,8 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Infrastructure.Model.University.Major", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
 
                     b.Property<Guid>("DepartmentId")
                         .HasColumnType("uuid");
@@ -240,8 +247,8 @@ namespace Infrastructure.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("MajorId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("MajorId")
+                        .HasColumnType("text");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -319,7 +326,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("positions");
+                    b.ToTable("Position");
                 });
 
             modelBuilder.Entity("Infrastructure.Model.Users.PositionTeam", b =>
@@ -334,13 +341,19 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("TeamId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.HasIndex("PositionId");
 
                     b.HasIndex("TeamId");
 
-                    b.ToTable("PositionTeam");
+                    b.HasIndex("UserId");
+
+                    b.ToTable("position_teams");
                 });
 
             modelBuilder.Entity("Infrastructure.Model.Users.ProjectTeam", b =>
@@ -373,7 +386,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserType");
+                    b.ToTable("userTypes");
                 });
 
             modelBuilder.Entity("Infrastructure.Model.Work.DonateThing", b =>
@@ -459,6 +472,32 @@ namespace Infrastructure.Migrations
                     b.HasIndex("UpdateById");
 
                     b.ToTable("projectPlan");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex");
+
+                    b.ToTable("AspNetRoles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -571,15 +610,24 @@ namespace Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Infrastructure.Model.Roles.ApplicationRole", b =>
+            modelBuilder.Entity("Infrastructure.Model.Address.District", b =>
                 {
-                    b.HasOne("Infrastructure.Model.Users.PositionTeam", "PositionTeam")
+                    b.HasOne("Infrastructure.Model.Address.Province", "province")
                         .WithMany()
-                        .HasForeignKey("PositionTeamId")
+                        .HasForeignKey("ProvinceCode")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("PositionTeam");
+                    b.Navigation("province");
+                });
+
+            modelBuilder.Entity("Infrastructure.Model.Address.Village", b =>
+                {
+                    b.HasOne("Infrastructure.Model.Address.District", "district")
+                        .WithMany()
+                        .HasForeignKey("districtCode");
+
+                    b.Navigation("district");
                 });
 
             modelBuilder.Entity("Infrastructure.Model.Student.Student", b =>
@@ -648,9 +696,7 @@ namespace Infrastructure.Migrations
 
                     b.HasOne("Infrastructure.Model.University.Major", "Major")
                         .WithMany()
-                        .HasForeignKey("MajorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("MajorId");
 
                     b.HasOne("Infrastructure.Model.Users.UserType", "UserType")
                         .WithMany()
@@ -679,9 +725,17 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Infrastructure.Model.Users.ApplicationUser", "User")
+                        .WithMany("positionTeams")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Position");
 
                     b.Navigation("Team");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Infrastructure.Model.Work.DonateThing", b =>
@@ -728,7 +782,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("Infrastructure.Model.Roles.ApplicationRole", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -755,7 +809,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.HasOne("Infrastructure.Model.Roles.ApplicationRole", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -775,6 +829,11 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Infrastructure.Model.Users.ApplicationUser", b =>
+                {
+                    b.Navigation("positionTeams");
                 });
 #pragma warning restore 612, 618
         }

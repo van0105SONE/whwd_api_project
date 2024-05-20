@@ -33,57 +33,57 @@ namespace Services.Service.UserService
             userRepository = new UserRepository(dbContext); 
             _mapper = mapper;
         }
-       async  public Task<bool> createUser(UserDto user)
+       async  public Task<ErrorOr<bool>> createUser(UserDto userDto)
         {
             try
             {
 
-                //auto mapper data to model
-                ApplicationUser applicationUser =  _mapper.Map<ApplicationUser>(user);
-                if (user.UserName == null)
-                {
-                    throw new Exception("Username isn't valid, username is required");
-                }
-                else if (user.Email == null){
-                    throw new Exception("Email isn't valid, username is required");
-                }
+
+               ApplicationUser applicationUser =   _mapper.Map<ApplicationUser>(userDto);
 
 
-                if (String.IsNullOrEmpty(user.BornVillage.villageCode) ) {
-                    Village village = createVillageWithCodeNull(user.CurrentVillage.district.districtCode, user.CurrentVillage.villageName);
+
+
+                bool isUserValid = validateUser(userDto);
+                if(!isUserValid){
+                    return Error.Validation("Validation", "User information is't valid");
+                }
+
+                if (String.IsNullOrEmpty(userDto.BornVillage.villageCode) ) {
+                    Village village = createVillageWithCodeNull(userDto.CurrentVillage.district.districtCode, userDto.CurrentVillage.villageName);
                     applicationUser.BornVillage = village;
                 }
 
 
 
-                if (String.IsNullOrEmpty(user.CurrentVillage.villageCode))
+                if (String.IsNullOrEmpty(userDto.CurrentVillage.villageCode))
                 {
-                   Village village =   createVillageWithCodeNull(user.CurrentVillage.district.districtCode, user.CurrentVillage.villageName);
+                   Village village =   createVillageWithCodeNull(userDto.CurrentVillage.district.districtCode, userDto.CurrentVillage.villageName);
                     applicationUser.CurrentVillage = village;
                 }
 
 
-                if (String.IsNullOrEmpty(user.Major.Id))
+                if (String.IsNullOrEmpty(userDto.Major.Id))
                 {
-                    var department = universityRespository.getDepartmentById(user.Major.Department.Id);
+                    var department = universityRespository.getDepartmentById(userDto.Major.DepartmentId);
 
                     var newMajor = new Major()
                     {
                         Id = Guid.NewGuid().ToString(),
-                        Name = user.Major.Name,
+                        Name = userDto.Major.Name,
                         Department = department,
                     };
                     var major = universityRespository.createMajor(newMajor);
                     applicationUser.Major = major;
                 }
 
-                applicationUser.UserType = userRepository.getUserTypeById(user.UserType.Id);
-                var result = await _UserManager.CreateAsync(applicationUser);
+                applicationUser.UserType = userRepository.getUserTypeById(userDto.typeId);
+                var result = await _UserManager.CreateAsync(applicationUser, userDto.Password);
 
 
                 if (result.Succeeded)
                 {
-                    var roleResult = roleService.addPosition(user.positionTeam, applicationUser.UserName);
+                    var roleResult = await roleService.addPosition(userDto.teamId, userDto.positionId, userDto.UserName);
                     return roleResult.Value;
                 }
                 else
@@ -100,6 +100,11 @@ namespace Services.Service.UserService
 
       async  public  Task<ErrorOr<bool>> updateUser(UserUpdateDto userDto)
         {
+            if (userDto is null)
+            {
+                throw new ArgumentNullException(nameof(userDto));
+            }
+
             try
             {
                 ApplicationUser userMapper = _mapper.Map<ApplicationUser>(userDto);
@@ -219,12 +224,27 @@ namespace Services.Service.UserService
         {
             try
             {
-                ApplicationUser? user = userRepository.getUserById(Id);
+                ApplicationUser? user =  userRepository.getUserById(Id);
                 return user;
             }catch(Exception ex)
             {
                 throw new Exception(ex.Message);
             }
         }
+
+
+       private bool validateUser(UserDto userDto){
+                    //auto mapper data to model
+
+                if (userDto.UserName == null || userDto.Email == null)
+                {
+                    return false;
+                }else if(String.IsNullOrEmpty(userDto.Fname) || String.IsNullOrEmpty(userDto.Lname)){
+                    return false;
+                }else if(String.IsNullOrEmpty(userDto.Occupation)){
+                    return false;
+                }
+             return true;
+       }
     }
 }

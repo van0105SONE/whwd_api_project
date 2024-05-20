@@ -11,7 +11,7 @@ namespace Services.Service.RoleSevice
 {
     public interface IRoleService
     {
-        public ErrorOr<bool> addPosition(PositionTeamDto teamPosition, string userName);
+        public Task<ErrorOr<bool>> addPosition(Guid teamId, Guid positionId, string userName);
 
         public ErrorOr<List<Position>> getPositions();
         public ErrorOr<List<ProjectTeam>> getProjectTeam();
