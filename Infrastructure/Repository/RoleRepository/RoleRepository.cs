@@ -1,5 +1,6 @@
 ﻿using Infrastructure.DataBaseContext;
 using Infrastructure.Model.Users;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -105,6 +106,18 @@ namespace Infrastructure.Repository.RoleRepository
             {
                 ProjectTeam? projectTeam = _dbContexts.project_teams.FirstOrDefault(t => t.Id == Id);
                 return projectTeam;
+            }catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public List<string> getRoles()
+        {
+            try
+            {
+                List<string> roles =  _dbContexts.Roles.Select(t => t.Name).ToList();
+                return roles;
             }catch(Exception ex)
             {
                 throw new Exception(ex.Message);

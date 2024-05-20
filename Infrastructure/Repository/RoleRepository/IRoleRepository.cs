@@ -16,6 +16,8 @@ namespace Infrastructure.Repository.RoleRepository
         public bool addRole();
         public bool addPosition(PositionTeam position);
 
+        List<string> getRoles();
+
         List<PositionTeam> getPositionTeams();
         public List<Position> getPositions();
 

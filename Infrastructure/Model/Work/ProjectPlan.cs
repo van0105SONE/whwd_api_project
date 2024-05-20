@@ -13,7 +13,10 @@ namespace Infrastructure.Model.Work
 
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public DonateThing DonateThing { get; set; }
-        public Double  TargetValue { get; set; }       
+        public bool IsActive { get; set; }
+
+        public Double  ValueInDollar { get; set; } 
+        public Double  ValueInBath { get; set; }
+        public Double  valueInKip { get; set; }
     }
 }

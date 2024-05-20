@@ -23,7 +23,7 @@ internal class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         builder.Services.AddDbContext<DatabaseContexts>(option => option.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
-        builder.Services.AddDefaultIdentity<ApplicationUser>(option => option.SignIn.RequireConfirmedEmail = false).AddEntityFrameworkStores<DatabaseContexts>();
+        builder.Services.AddDefaultIdentity<ApplicationUser>(option => option.SignIn.RequireConfirmedEmail = false).AddRoles<IdentityRole>().AddEntityFrameworkStores<DatabaseContexts>();
 
 
         builder.Services.AddAutoMapper(typeof(Program));
@@ -34,6 +34,8 @@ internal class Program
             builder.AllowAnyHeader();
         }));
 
+
+
         builder.Services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -41,8 +43,6 @@ internal class Program
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
         }).AddJwtBearer(jwt =>
         {
-
-        
         var key = Encoding.ASCII.GetBytes(builder.Configuration.GetSection("JwtConfig:Secret").Value);
         jwt.SaveToken = true;
             jwt.TokenValidationParameters = new TokenValidationParameters()
@@ -67,7 +67,7 @@ internal class Program
         using (var scope =app.Services.CreateScope())
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<DatabaseContexts>();
-
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             //default add project team
             List<ProjectTeam> teams = new List<ProjectTeam> {
                 new ProjectTeam()
@@ -140,7 +140,7 @@ internal class Program
                new Position()
                {
                    Id = Guid.NewGuid(),
-                   RefNo = "L01",
+                   RefNo = "    P01",
                    PositionName = "Project Manager",
 
                },
@@ -261,6 +261,26 @@ internal class Program
                 }
             }
 
+
+            List<string> roles = new List<string>()
+            {
+                "view",
+                "edit",
+                "create",
+                "delete",
+                "approval",
+                "validator"
+            };
+
+            foreach (var role in roles)
+            {
+                bool isExist =   roleManager.Roles.Any(t => t.Name.Equals(role));
+                if (!isExist)
+                {
+                    roleManager.CreateAsync(new IdentityRole(role));
+                }
+            }
+
         }
    
         // Configure the HTTP request pipeline.
@@ -276,8 +296,6 @@ internal class Program
         app.MapControllers();
 
         //CREATED DEFAULT DATA WHTCH SYSTEM SHOULD HAVE AT THE BEGINNING
-
-
         app.Run();
         }
 }

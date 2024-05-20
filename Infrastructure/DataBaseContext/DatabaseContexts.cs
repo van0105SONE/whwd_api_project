@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.DataBaseContext
 {
-    public class DatabaseContexts : IdentityDbContext<ApplicationUser>
+    public class DatabaseContexts : IdentityDbContext<ApplicationUser, IdentityRole, string>
     {
         public DatabaseContexts(DbContextOptions options):base(options) 
         { 

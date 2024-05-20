@@ -1,13 +1,12 @@
-﻿using Infrastructure.Model.Work;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Model.Student
+namespace ApplicationCore.Dtos.StudentDto
 {
-    public class Student : BaseModel
+    public class StudentDto
     {
         public String Name { get; set; }
         public DateTime birthDate { get; set; }
@@ -16,6 +15,6 @@ namespace Infrastructure.Model.Student
         public int SkirtSize { get; set; }
         public int ShoesSize { get; set; }
         public int GloveSize { get; set; }
-        public ProjectPlan Project { get; set; }
+        public string userId { get; set; }
     }
 }

@@ -20,7 +20,7 @@ namespace Services.Service.RoleSevice
     {
         IMapper _mapper;
         private readonly IRoleRepository _roleRepository;
-        private readonly RoleManager<string> _roleManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<ApplicationUser> _userManager;
 
         public RoleService(UserManager<ApplicationUser> userManager, DatabaseContexts dbContext, IMapper mapper)
@@ -29,7 +29,7 @@ namespace Services.Service.RoleSevice
             _userManager = userManager;
             _roleRepository = new RoleRepository(dbContext);
         }
-        public RoleService(RoleManager<String> roleManager,UserManager<ApplicationUser> userManager,DatabaseContexts dbContext, IMapper mapper)
+        public RoleService(RoleManager<IdentityRole> roleManager,UserManager<ApplicationUser> userManager,DatabaseContexts dbContext, IMapper mapper)
         {
             _roleManager = roleManager;
             _mapper = mapper;
@@ -45,7 +45,6 @@ namespace Services.Service.RoleSevice
 
                   if (teamPosition == null)
                    {
-
                       return Error.Validation(code: "ValidationError", description: "Invalid data can't be null");
                    }else if (string.IsNullOrEmpty(userName))
                    {
@@ -70,8 +69,10 @@ namespace Services.Service.RoleSevice
                     return Error.Validation("NotFound", "Can't find the position on the system");
                    }
 
-                   ApplicationUser? user = _userManager.FindByNameAsync(userName).Result;
-                 
+
+
+
+                   ApplicationUser? user = _userManager.FindByNameAsync(userName).Result;     
                    PositionTeam positonTeam = new PositionTeam()
                    {
                         Id = Guid.NewGuid(),
@@ -80,7 +81,7 @@ namespace Services.Service.RoleSevice
                         User = user
                    };
                   
-                  bool isSuccess =  _roleRepository.addPosition(positonTeam);
+                   bool isSuccess =  _roleRepository.addPosition(positonTeam);
                   return isSuccess;
             }catch (Exception ex)
             {
@@ -107,6 +108,43 @@ namespace Services.Service.RoleSevice
             }catch(Exception ex)
             {
                throw new Exception(ex.Message);
+            }
+        }
+
+        public ErrorOr<List<string>> getRoles()
+        {
+            try
+            {
+                List<string> roles = _roleRepository.getRoles() ;
+                return roles;
+            }catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<ErrorOr<bool>> addUserRole(UserRoleDto userRole)
+        {
+            try
+            {
+                 var userResult =  await _userManager.FindByIdAsync(userRole.userId);
+                if (userResult == null)
+                {
+                    Error.Validation("NotFound", "User can't found");
+                }
+
+                var result = await _userManager.AddToRoleAsync(userResult, userRole.role);
+                if (result.Succeeded)
+                {
+                   return true;
+                }else
+                {
+                   return Error.Failure("Failure", "Something wend wrong");
+                }
+
+            }catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
     }
