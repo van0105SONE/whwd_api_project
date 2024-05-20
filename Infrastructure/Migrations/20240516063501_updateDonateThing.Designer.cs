@@ -3,6 +3,7 @@ using System;
 using Infrastructure.DataBaseContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(DatabaseContexts))]
-    partial class DatabaseContextsModelSnapshot : ModelSnapshot
+    [Migration("20240516063501_updateDonateThing")]
+    partial class updateDonateThing
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -88,19 +91,9 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("GloveSize")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Level")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uuid");
 
                     b.Property<int>("ShirtSize")
                         .HasColumnType("integer");
@@ -117,14 +110,16 @@ namespace Infrastructure.Migrations
                     b.Property<string>("UpdateById")
                         .HasColumnType("text");
 
+                    b.Property<string>("Year")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("birthDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CreateById");
-
-                    b.HasIndex("ProjectId");
 
                     b.HasIndex("UpdateById");
 
@@ -662,19 +657,11 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Infrastructure.Model.Work.ProjectPlan", "Project")
-                        .WithMany()
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Infrastructure.Model.Users.ApplicationUser", "UpdateBy")
                         .WithMany()
                         .HasForeignKey("UpdateById");
 
                     b.Navigation("CreateBy");
-
-                    b.Navigation("Project");
 
                     b.Navigation("UpdateBy");
                 });

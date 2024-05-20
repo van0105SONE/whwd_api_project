@@ -3,6 +3,7 @@ using System;
 using Infrastructure.DataBaseContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(DatabaseContexts))]
-    partial class DatabaseContextsModelSnapshot : ModelSnapshot
+    [Migration("20240516025948_updateRoleManager")]
+    partial class updateRoleManager
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -88,19 +91,9 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("GloveSize")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Level")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uuid");
 
                     b.Property<int>("ShirtSize")
                         .HasColumnType("integer");
@@ -117,14 +110,16 @@ namespace Infrastructure.Migrations
                     b.Property<string>("UpdateById")
                         .HasColumnType("text");
 
+                    b.Property<string>("Year")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("birthDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CreateById");
-
-                    b.HasIndex("ProjectId");
 
                     b.HasIndex("UpdateById");
 
@@ -414,30 +409,15 @@ namespace Infrastructure.Migrations
                     b.Property<double>("Price")
                         .HasColumnType("double precision");
 
-                    b.Property<Guid>("ProjectPlanId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("Unit")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("UnitType")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<DateTime?>("UpdateAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("UpdateById")
                         .HasColumnType("text");
 
-                    b.Property<int>("personAmount")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CreateById");
-
-                    b.HasIndex("ProjectPlanId");
 
                     b.HasIndex("UpdateById");
 
@@ -461,11 +441,11 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<Guid>("DonateThingId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
 
                     b.Property<string>("ProjectName")
                         .IsRequired()
@@ -474,24 +454,20 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<double>("TargetValue")
+                        .HasColumnType("double precision");
+
                     b.Property<DateTime?>("UpdateAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("UpdateById")
                         .HasColumnType("text");
 
-                    b.Property<double>("ValueInBath")
-                        .HasColumnType("double precision");
-
-                    b.Property<double>("ValueInDollar")
-                        .HasColumnType("double precision");
-
-                    b.Property<double>("valueInKip")
-                        .HasColumnType("double precision");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CreateById");
+
+                    b.HasIndex("DonateThingId");
 
                     b.HasIndex("UpdateById");
 
@@ -662,19 +638,11 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Infrastructure.Model.Work.ProjectPlan", "Project")
-                        .WithMany()
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Infrastructure.Model.Users.ApplicationUser", "UpdateBy")
                         .WithMany()
                         .HasForeignKey("UpdateById");
 
                     b.Navigation("CreateBy");
-
-                    b.Navigation("Project");
 
                     b.Navigation("UpdateBy");
                 });
@@ -778,19 +746,11 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Infrastructure.Model.Work.ProjectPlan", "ProjectPlan")
-                        .WithMany()
-                        .HasForeignKey("ProjectPlanId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Infrastructure.Model.Users.ApplicationUser", "UpdateBy")
                         .WithMany()
                         .HasForeignKey("UpdateById");
 
                     b.Navigation("CreateBy");
-
-                    b.Navigation("ProjectPlan");
 
                     b.Navigation("UpdateBy");
                 });
@@ -803,11 +763,19 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Infrastructure.Model.Work.DonateThing", "DonateThing")
+                        .WithMany()
+                        .HasForeignKey("DonateThingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Infrastructure.Model.Users.ApplicationUser", "UpdateBy")
                         .WithMany()
                         .HasForeignKey("UpdateById");
 
                     b.Navigation("CreateBy");
+
+                    b.Navigation("DonateThing");
 
                     b.Navigation("UpdateBy");
                 });

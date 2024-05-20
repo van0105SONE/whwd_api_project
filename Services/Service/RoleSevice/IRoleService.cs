@@ -15,5 +15,9 @@ namespace Services.Service.RoleSevice
 
         public ErrorOr<List<Position>> getPositions();
         public ErrorOr<List<ProjectTeam>> getProjectTeam();
+
+
+        public ErrorOr<List<string>> getRoles();
+        public Task<ErrorOr<bool>> addUserRole(UserRoleDto userRole);
     }
 }
