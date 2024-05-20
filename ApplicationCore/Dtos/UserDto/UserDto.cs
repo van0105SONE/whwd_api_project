@@ -22,7 +22,7 @@ namespace ApplicationCore.Dtos.UserDto
         public required MajorDto Major { get; set; }
     }
 
- public class UserUpdateDto{
+ public class UserUpdateDto : UserDto{
      public required string Id {get; set;}
  }
 

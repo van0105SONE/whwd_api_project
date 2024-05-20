@@ -88,7 +88,7 @@ namespace Services.Service.UserService
                 }
                 else
                 {
-                    return false;
+                    return Error.Failure("Failure", result.Errors.FirstOrDefault() == null  ? "Somthing went wrong" : result.Errors.FirstOrDefault().Description);
                 }
             }
             catch (Exception ex)

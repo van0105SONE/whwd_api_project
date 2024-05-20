@@ -147,7 +147,7 @@ namespace Infrastructure.Repository.Implement
         {
             try
             {
-                List<ApplicationUser> users = _dbContext.Users.Include(t => t.UserType).Include(t => t.Major).Include(t => t.positionTeams).ThenInclude(t => t.Team).Include(t => t.positionTeams).ThenInclude(t => t.Position).Include(t => t.CurrentVillage).Include(t => t.BornVillage).ToList();
+                List<ApplicationUser> users = _dbContext.Users.ToList();
                 return users;
             }catch(Exception ex) { 
                 throw new Exception(ex.Message);    
