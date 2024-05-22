@@ -1,4 +1,6 @@
-﻿using ErrorOr;
+﻿using System.Formats.Asn1;
+using ApplicationCore.Filter;
+using ErrorOr;
 using Infrastructure.DataBaseContext;
 using Infrastructure.Model.Student;
 using Microsoft.EntityFrameworkCore;
@@ -17,17 +19,17 @@ namespace Infrastructure.Repository.StudentRepository
         {
             try
             {
-                _dbContext.students.Add(student);
-                _dbContext.SaveChanges();
+              await  _dbContext.students.AddAsync(student);
+              await  _dbContext.SaveChangesAsync();
                 return true;
             }
             catch (Exception error)
             {
-                throw error;
+                throw new Exception(error.Message);
             }
         }
 
-        async public void delete(Guid Id)
+        async public Task<bool> delete(Guid Id)
         {
             try
             {
@@ -37,22 +39,44 @@ namespace Infrastructure.Repository.StudentRepository
                     throw new Exception("Error, Student information isn't found");
                 }
                 _dbContext.students.Remove(student);
-            }
-            catch (Exception error)
-            {
-                throw error;
-            }
-        }
-
-        async public void update(Student studentParam)
-        {
-            try
-            {
-                _dbContext.students.Update(studentParam);
+                _dbContext.SaveChanges();
+                return true;
             }
             catch (Exception error)
             {
                 throw new Exception(error.Message);
+            }
+        }
+
+        async public Task<bool> update(Student studentParam)
+        {
+            try
+            {
+                 _dbContext.students.Update(studentParam);
+                 await _dbContext.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception error)
+            {
+                throw new Exception(error.Message);
+            }
+        }
+
+        async public Task<List<Student>> getStudents(BaseFilter filter)
+        {
+            try{
+              return await _dbContext.students.Skip((filter.page - 1) * filter.pageSize).Take(filter.pageSize).ToListAsync();
+            }catch(Exception ex){
+              throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<Student> GetStudentById(Guid Id)
+        {
+            try{
+              return await _dbContext.students.FirstAsync(t => t.Id == Id);
+            }catch(Exception ex){
+             throw new Exception(ex.Message);
             }
         }
     }

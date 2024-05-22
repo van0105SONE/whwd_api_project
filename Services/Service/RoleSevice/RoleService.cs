@@ -123,7 +123,7 @@ namespace Services.Service.RoleSevice
                 {
                     Error.Validation("NotFound", "User can't found");
                 }
-
+                        
                 var result = await _userManager.AddToRoleAsync(userResult, userRole.role);
                 if (result.Succeeded)
                 {

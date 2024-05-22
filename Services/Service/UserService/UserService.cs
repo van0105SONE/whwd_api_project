@@ -41,9 +41,6 @@ namespace Services.Service.UserService
 
                ApplicationUser applicationUser =   _mapper.Map<ApplicationUser>(userDto);
 
-
-
-
                 bool isUserValid = validateUser(userDto);
                 if(!isUserValid){
                     return Error.Validation("Validation", "User information is't valid");

@@ -1,4 +1,5 @@
 ﻿using Infrastructure.DataBaseContext;
+using Infrastructure.Model.Account;
 using Infrastructure.Model.University;
 using Infrastructure.Model.Users;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -64,7 +65,25 @@ internal class Program
 
         var app = builder.Build();
 
-   
+       using(var scope = app.Services.CreateScope()){
+        var db = scope.ServiceProvider.GetRequiredService<DatabaseContexts>();
+        List<AccountType> items = new List<AccountType>(){
+            new AccountType(){
+                Id = Guid.NewGuid(),
+                Name = "ບັນຊີຮ່ວມ"
+            },
+            new AccountType(){
+                Id = Guid.NewGuid(),
+                Name = "ບັນຊີສ່ວນບຸກຄົນ"
+            },
+        };
+
+        foreach(var item in items){
+          db.accountTypes.Add(item);
+          db.SaveChanges();
+        }  
+
+       }
         // Configure the HTTP request pipeline.
             app.UseSwagger();
             app.UseSwaggerUI();

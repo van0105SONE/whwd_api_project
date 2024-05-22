@@ -3,6 +3,7 @@ using System;
 using Infrastructure.DataBaseContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(DatabaseContexts))]
-    partial class DatabaseContextsModelSnapshot : ModelSnapshot
+    [Migration("20240521131114_updateStudent21052024")]
+    partial class updateStudent21052024
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,159 +24,6 @@ namespace Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("Infrastructure.Model.Account.Account", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("AccountNo")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("AccountTypesId")
-                        .HasColumnType("uuid");
-
-                    b.Property<double>("Balance")
-                        .HasColumnType("double precision");
-
-                    b.Property<string>("BankName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("BookingNO")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreateAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("CreateById")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("OwnById")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("ProjectPlanId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("UpdateAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("UpdateById")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AccountTypesId");
-
-                    b.HasIndex("CreateById");
-
-                    b.HasIndex("OwnById");
-
-                    b.HasIndex("ProjectPlanId");
-
-                    b.HasIndex("UpdateById");
-
-                    b.ToTable("accounts");
-                });
-
-            modelBuilder.Entity("Infrastructure.Model.Account.AccountType", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("accountTypes");
-                });
-
-            modelBuilder.Entity("Infrastructure.Model.Account.SourceType", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("sourceTypes");
-                });
-
-            modelBuilder.Entity("Infrastructure.Model.Account.Transaction", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<double>("Amount")
-                        .HasColumnType("double precision");
-
-                    b.Property<DateTime>("CreateAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("CreateById")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("FromAccount")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("SourceTypesId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("TransactionTypeId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("UpdateAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("UpdateById")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreateById");
-
-                    b.HasIndex("SourceTypesId");
-
-                    b.HasIndex("TransactionTypeId");
-
-                    b.HasIndex("UpdateById");
-
-                    b.ToTable("transactions");
-                });
-
-            modelBuilder.Entity("Infrastructure.Model.Account.TransactionType", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("transactionTypes");
-                });
 
             modelBuilder.Entity("Infrastructure.Model.Address.District", b =>
                 {
@@ -789,80 +639,6 @@ namespace Infrastructure.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
-                });
-
-            modelBuilder.Entity("Infrastructure.Model.Account.Account", b =>
-                {
-                    b.HasOne("Infrastructure.Model.Account.AccountType", "AccountTypes")
-                        .WithMany()
-                        .HasForeignKey("AccountTypesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Infrastructure.Model.Users.ApplicationUser", "CreateBy")
-                        .WithMany()
-                        .HasForeignKey("CreateById")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Infrastructure.Model.Users.ApplicationUser", "OwnBy")
-                        .WithMany()
-                        .HasForeignKey("OwnById")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Infrastructure.Model.Work.ProjectPlan", "ProjectPlan")
-                        .WithMany()
-                        .HasForeignKey("ProjectPlanId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Infrastructure.Model.Users.ApplicationUser", "UpdateBy")
-                        .WithMany()
-                        .HasForeignKey("UpdateById");
-
-                    b.Navigation("AccountTypes");
-
-                    b.Navigation("CreateBy");
-
-                    b.Navigation("OwnBy");
-
-                    b.Navigation("ProjectPlan");
-
-                    b.Navigation("UpdateBy");
-                });
-
-            modelBuilder.Entity("Infrastructure.Model.Account.Transaction", b =>
-                {
-                    b.HasOne("Infrastructure.Model.Users.ApplicationUser", "CreateBy")
-                        .WithMany()
-                        .HasForeignKey("CreateById")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Infrastructure.Model.Account.SourceType", "SourceTypes")
-                        .WithMany()
-                        .HasForeignKey("SourceTypesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Infrastructure.Model.Account.TransactionType", "TransactionType")
-                        .WithMany()
-                        .HasForeignKey("TransactionTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Infrastructure.Model.Users.ApplicationUser", "UpdateBy")
-                        .WithMany()
-                        .HasForeignKey("UpdateById");
-
-                    b.Navigation("CreateBy");
-
-                    b.Navigation("SourceTypes");
-
-                    b.Navigation("TransactionType");
-
-                    b.Navigation("UpdateBy");
                 });
 
             modelBuilder.Entity("Infrastructure.Model.Address.District", b =>

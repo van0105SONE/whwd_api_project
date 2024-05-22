@@ -1,4 +1,5 @@
-﻿using Infrastructure.Model.Address;
+﻿using Infrastructure.Model.Account;
+using Infrastructure.Model.Address;
 using Infrastructure.Model.Student;
 using Infrastructure.Model.University;
 using Infrastructure.Model.Users;
@@ -37,5 +38,12 @@ namespace Infrastructure.DataBaseContext
         public DbSet<Province> provinces { get; set; }
         public DbSet<District> districts { get; set; }
         public DbSet<Village> villages { get; set; }
+
+        //transaction 
+        public DbSet<Account> accounts { get; set; }
+        public DbSet<AccountType> accountTypes { get; set; }
+        public DbSet<Transaction> transactions {get; set;}
+        public DbSet<TransactionType> transactionTypes { get; set; }
+        public DbSet<SourceType>  sourceTypes {get; set;}
     }
 }

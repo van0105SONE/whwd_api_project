@@ -1,4 +1,5 @@
-﻿using ErrorOr;
+﻿using ApplicationCore.Filter;
+using ErrorOr;
 using Infrastructure.Model.Student;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,10 @@ namespace Infrastructure.Repository.StudentRepository
     public interface IStudentRepository
     {
         Task<ErrorOr<bool>> create(Student student);
-        void delete(Guid Id);
-        void update(Student student);
+        Task<List<Student>>  getStudents(BaseFilter filter); 
+        Task<bool> delete(Guid Id);
+        Task<bool> update(Student student);
+
+        Task<Student> GetStudentById(Guid Id);
     }
 }

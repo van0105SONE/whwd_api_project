@@ -1,4 +1,5 @@
-﻿using ApplicationCore.Dtos.Roles;
+﻿using ApplicationCore.Dtos;
+using ApplicationCore.Dtos.Roles;
 using AutoMapper;
 using Infrastructure.DataBaseContext;
 using Infrastructure.Model.Users;
@@ -83,6 +84,25 @@ namespace whwd_web_api.Controllers.RoleController
                 return Problem(ex.Message);
             }
         }
-    
+
+        [HttpPost]
+        [Route("CreateRole")]
+      async  public  Task<IActionResult> CreateRole(){
+            try{
+                            List<string> roles = new List<string>(){
+                "create",
+                "edit",
+                "view",
+                "approve"
+            };
+            
+            foreach(var role in roles){
+             await _roleManager.CreateAsync(new IdentityRole(role));
+            }
+            return Ok(new MessageReponse(){ isSuccess = true, message = "create role successful" });
+            }catch(Exception ex){
+                return Problem(ex.Message); 
+            }
+        }
     }
 }

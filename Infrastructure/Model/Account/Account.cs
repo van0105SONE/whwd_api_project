@@ -1,4 +1,5 @@
 ﻿using Infrastructure.Model.Users;
+using Infrastructure.Model.Work;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,13 +10,14 @@ namespace Infrastructure.Model.Account
 {
     public class Account : BaseModel
     {
-        public string Name { get; set; }
-        public string AccountNo { get; set; }
-        public string BookingNO { get; set; }
-        public string BankName { get; set; }
+        public required string AccountNo { get; set; }
+        public required string BookingNO { get; set; }
+        public required string BankName { get; set; }
 
-        public string AccountType { get; set; }
-        public  ApplicationUser OwnBy { get; set; }
-        public int   Balance { get; set; }
+        public required AccountType AccountTypes { get; set; }
+        public required  ApplicationUser OwnBy { get; set; }
+
+        public required ProjectPlan ProjectPlan { get; set; }
+        public  double   Balance { get; set; }
     }
 }
