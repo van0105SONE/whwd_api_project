@@ -1,4 +1,5 @@
-﻿using ApplicationCore.Dtos.Work;
+﻿using ApplicationCore.Dtos.RecipientDto;
+using ApplicationCore.Dtos.Work;
 using ApplicationCore.Filter;
 using ErrorOr;
 using Infrastructure.Model.Work;
@@ -14,8 +15,11 @@ namespace Services.Service.PositionService
         Task<ErrorOr<bool>> createDonateThing(DonateThingDto donateThingDto);
         Task<ErrorOr<bool>> updateDonateThing(UpdateDonateThingDto donateThingDto);
         Task<ErrorOr<bool>> deleteDonateThing(Guid Id);
+
+
+        Task<ErrorOr<bool>> createSchool(SchoolDto schoolDto);
         Task<ErrorOr<List<DonateThing>>> getDonateThings(DonateThingFilter filter);
-        Task<ErrorOr<List<ProjectPlan>>> getProject();
+        Task<ErrorOr<List<ProjectPlan>>> getProjects(BaseFilter filter);
         Task<ErrorOr<ProjectPlan>> getProjectPlanById();
         Task<ErrorOr<ProjectPlan>> getActiveProjectPlan();
     }

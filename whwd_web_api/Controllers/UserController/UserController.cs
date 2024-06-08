@@ -25,13 +25,13 @@ namespace whwd_web_api.Controllers.UserController
         private IMapper _Mapping { get; set; }
         private IUserService _userService { get; set; }
         private IAddressService _addressService { get; set; }
-        private IUniversityService _universityService { get; set; }
+
         public UserController(UserManager<ApplicationUser> userManager, DatabaseContexts dbContext, IMapper mapper)
         {
             _UserManager = userManager;
             _userService = new UserService(userManager, dbContext, mapper);
             _addressService = new AddressService(dbContext);
-            _universityService = new UniversityService(dbContext);
+
             _Mapping = mapper;
         }
 
@@ -79,102 +79,28 @@ namespace whwd_web_api.Controllers.UserController
             }
         }
 
-
         [HttpGet]
-        [Route("getProvinces")]
+        [Route("getUserById")]
 
-        public IActionResult getProvinces()
-        {
-            try
-            {
-                List<Province> provinces = _addressService.getProvinces();
-                return Ok(provinces);
-            }
-            catch (Exception ex)
-            {
-                return Problem(ex.Message);
-            }
-        }
-
-        [HttpGet]
-        [Route("getDistricts")]
-        public IActionResult getDistricts()
-        {
-            try
-            {
-                List<District> districts = _addressService.getDistricts();
-                return Ok(districts);
-            }
-            catch (Exception ex)
-            {
-                return Problem(ex.Message);
-            }
-        }
-
-        [HttpGet]
-        [Route("getVillages")]
-
-        public IActionResult getVillages()
-        {
-            try
-            {
-                List<Village> villages = _addressService.getVillages();
-                return Ok(villages);
-            }
-            catch (Exception ex)
-            {
-                return Problem(ex.Message);
-            }
-        }
-
-        [HttpGet]
-        [Route("getUnivesities")]
-        public IActionResult getUniversity()
-        {
-            try
-            {
-                List<University> villages = _universityService.getUniversities();
-                return Ok(villages);
-            }
-            catch (Exception ex)
-            {
-                return Problem(ex.Message);
-            }
-        }
+		public async Task<IActionResult> GetUserById([FromQuery] String Id)
+		{
+			try
+			{
+				ApplicationUser user = await _userService.getUserById(Id);
+				var jsonString = JsonConvert.SerializeObject(user, Formatting.Indented);
+				return Ok(jsonString);
+			}
+			catch (Exception ex)
+			{
+				return Problem(ex.Message);
+			}
+		}
 
 
-        [HttpGet]
-        [Route("getFaculties")]
-        public IActionResult getFaculties()
-        {
-            try
-            {
-                List<Faculty> villages = _universityService.getFaculties();
-                return Ok(villages);
-            }
-            catch (Exception ex)
-            {
-                return Problem(ex.Message);
-            }
-        }
-
-        [HttpGet]
-        [Route("getDepartments")]
-        public IActionResult getDepartments()
-        {
-            try
-            {
-                List<Department> villages = _universityService.getDepartment();
-                return Ok(villages);
-            }
-            catch (Exception ex)
-            {
-                return Problem(ex.Message);
-            }
-        }
 
 
-        [HttpGet]
+
+		[HttpGet]
         [Route("getUserTypes")]
         public IActionResult getUserTypes()
         {

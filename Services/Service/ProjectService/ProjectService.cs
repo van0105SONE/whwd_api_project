@@ -1,11 +1,16 @@
 ﻿using ApplicationCore.Constanst;
+using ApplicationCore.Dtos.RecipientDto;
 using ApplicationCore.Dtos.Work;
 using ApplicationCore.Filter;
 using AutoMapper;
 using ErrorOr;
 using Infrastructure.DataBaseContext;
+using Infrastructure.Model.Address;
+using Infrastructure.Model.Recipient;
 using Infrastructure.Model.Users;
 using Infrastructure.Model.Work;
+using Infrastructure.Repository.Implement;
+using Infrastructure.Repository.IRepository;
 using Infrastructure.Repository.ProjectRepository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,14 +22,18 @@ namespace Services.Service.PositionService
     public class ProjectService : IProjectService
     {
         IMapper _mapper { get; set; }
+
         IProjectPlanRepository _projectRepository { get; set; }
+        IAddressRepository _addressRepository { get; set; }
         UserManager<ApplicationUser> _userManager { get; set; }
+        
         CheckUserRoles roleMiddleWare { get; set; }
         public ProjectService(UserManager<ApplicationUser> userManager, DatabaseContexts context, IMapper mapper) {
             _mapper = mapper;
             _userManager = userManager;
             _projectRepository = new ProjectPlanRepository(context);
             roleMiddleWare = new CheckUserRoles(context, userManager);
+            _addressRepository = new AddressRepository(context);
 
         }
 
@@ -69,10 +78,7 @@ namespace Services.Service.PositionService
             throw new NotImplementedException();
         }
 
-        public Task<ErrorOr<List<ProjectPlan>>> getProject()
-        {
-            throw new NotImplementedException();
-        }
+
 
         public Task<ErrorOr<ProjectPlan>> getProjectPlanById()
         {
@@ -147,6 +153,49 @@ namespace Services.Service.PositionService
             }catch(Exception e)
             {
                 throw new Exception(e.Message);
+            }
+        }
+
+        public async Task<ErrorOr<bool>> createSchool(SchoolDto schoolDto)
+        {
+            try
+            {
+                School school  = _mapper.Map<School>(schoolDto);
+                Village village = _addressRepository.getVillageById(schoolDto.villageCode);
+                if (village == null)
+                {
+                    throw new Exception("System can't find  village");
+                }
+                school.Village = village;
+                var projectError = await _projectRepository.getProjectActiveProject();
+                if (projectError.IsError)
+                {
+                    throw new Exception("System can't find project plan");
+                }
+                school.Project = projectError.Value;
+
+               var user =  await _userManager.FindByIdAsync(schoolDto.userId);
+                if(user == null)
+                {
+                    throw new Exception("Invalid user data, user id is required");
+                }
+                school.CreateBy = user;
+                var result =  await  _projectRepository.createSchool(school);
+                return result;
+            }catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<ErrorOr<List<ProjectPlan>>> getProjects(BaseFilter filter)
+        {
+            try
+            {
+              return await   _projectRepository.getProjects(filter);
+            }catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
     }

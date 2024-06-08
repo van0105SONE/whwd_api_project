@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Filter;
 using ErrorOr;
+using Infrastructure.Model.Recipient;
 using Infrastructure.Model.Work;
 
 
@@ -9,7 +10,9 @@ namespace Infrastructure.Repository.ProjectRepository
     {
         Task<ErrorOr<bool>> create(ProjectPlan projectParam);
         void delete(Guid Id);
+        Task<List<ProjectPlan>> getProjects(BaseFilter filter);
         Task<ErrorOr<ProjectPlan>> getProjectActiveProject();
+        Task<ErrorOr<bool>> createSchool(School schoolParam);
         Task<ErrorOr<bool>> createDonateThing(DonateThing projectParam);
         Task<ErrorOr<bool>> updateDonateThing(DonateThing donateThingParams);
         Task<ErrorOr<bool>> deleteDonateThing(Guid Id);

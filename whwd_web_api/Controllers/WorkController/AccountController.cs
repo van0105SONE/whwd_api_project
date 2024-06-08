@@ -71,5 +71,18 @@ namespace whwd_web_api.Controllers.WorkController
         return Problem(ex.Message);
       }
     }
+
+    [HttpGet]
+    [Route("getAccountTypes")]
+    public async Task<IActionResult> getAccountTypes()
+        {
+            try
+            {
+              return Ok(_accountService.GetAccountTypes());
+            }catch(Exception ex)
+            {
+                return Problem(ex.Message);
+            }
+        }
   }
 }

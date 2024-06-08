@@ -67,6 +67,7 @@ internal class Program
 
        using(var scope = app.Services.CreateScope()){
         var db = scope.ServiceProvider.GetRequiredService<DatabaseContexts>();
+
         List<AccountType> items = new List<AccountType>(){
             new AccountType(){
                 Id = Guid.NewGuid(),
@@ -81,9 +82,51 @@ internal class Program
         foreach(var item in items){
           db.accountTypes.Add(item);
           db.SaveChanges();
-        }  
+        }
 
-       }
+
+			List<SourceType> sourceTypes = new List<SourceType>(){
+			new SourceType(){
+				Id = Guid.NewGuid(),
+				Name = "Online"
+			},
+			new SourceType(){
+				Id = Guid.NewGuid(),
+				Name = "Offline"
+			}
+		};
+
+			foreach (var item in sourceTypes)
+			{
+				db.sourceTypes.Add(item);
+				db.SaveChanges();
+			}
+
+
+
+			List<TransactionType> trxTypes = new List<TransactionType>(){
+			new TransactionType(){
+				Id = Guid.NewGuid(),
+				Name = "Donation"
+			},
+			new TransactionType(){
+				Id = Guid.NewGuid(),
+				Name = "Tranfer"
+			},
+		    new TransactionType(){
+				Id = Guid.NewGuid(),
+				Name = "Withdraw"
+			},
+
+		};
+
+			foreach (var item in trxTypes)
+			{
+				db.transactionTypes.Add(item);
+				db.SaveChanges();
+			}
+
+		}
         // Configure the HTTP request pipeline.
             app.UseSwagger();
             app.UseSwaggerUI();

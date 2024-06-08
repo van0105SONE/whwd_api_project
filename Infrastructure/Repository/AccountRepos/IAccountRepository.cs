@@ -8,9 +8,10 @@ namespace Infrastructure.Repository.AccountRepos{
      public Task<bool> updateAccount(Account account);
      public Task<bool> deleteAccount(Guid Id);
 
-     public Account  getAccountById(Guid Id);
+     public Task<Account>  getAccountById(Guid Id);
      public Task<List<Account>> GetAllAccounts(BaseFilter filter);
 
      public Task<AccountType> GetAccountTypeById (Guid Id);
+     public Task<List<AccountType>> getAccountTypes();
   }
 }

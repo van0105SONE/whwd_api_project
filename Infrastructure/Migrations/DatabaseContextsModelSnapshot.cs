@@ -38,10 +38,6 @@ namespace Infrastructure.Migrations
                     b.Property<double>("Balance")
                         .HasColumnType("double precision");
 
-                    b.Property<string>("BankName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("BookingNO")
                         .IsRequired()
                         .HasColumnType("text");
@@ -52,6 +48,9 @@ namespace Infrastructure.Migrations
                     b.Property<string>("CreateById")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<double>("DepositAmount")
+                        .HasColumnType("double precision");
 
                     b.Property<string>("OwnById")
                         .IsRequired()
@@ -65,6 +64,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("UpdateById")
                         .HasColumnType("text");
+
+                    b.Property<double>("WithdrawAmount")
+                        .HasColumnType("double precision");
 
                     b.HasKey("Id");
 
@@ -131,13 +133,6 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("FromAccount")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("SourceTypesId")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid>("TransactionTypeId")
                         .HasColumnType("uuid");
 
@@ -150,8 +145,6 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CreateById");
-
-                    b.HasIndex("SourceTypesId");
 
                     b.HasIndex("TransactionTypeId");
 
@@ -228,7 +221,59 @@ namespace Infrastructure.Migrations
                     b.ToTable("villages");
                 });
 
-            modelBuilder.Entity("Infrastructure.Model.Student.Student", b =>
+            modelBuilder.Entity("Infrastructure.Model.Donate.Donation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreateById")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("DonationType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("DonorById")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("SourceTypesId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdateAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdateById")
+                        .HasColumnType("text");
+
+                    b.Property<double>("amount")
+                        .HasColumnType("double precision");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreateById");
+
+                    b.HasIndex("DonorById");
+
+                    b.HasIndex("SourceTypesId");
+
+                    b.HasIndex("UpdateById");
+
+                    b.ToTable("Donation");
+                });
+
+            modelBuilder.Entity("Infrastructure.Model.Donate.Donator", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -241,20 +286,157 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("GloveSize")
-                        .HasColumnType("integer");
+                    b.Property<string>("Facebook")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SponsorType")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdateAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdateById")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreateById");
+
+                    b.HasIndex("UpdateById");
+
+                    b.ToTable("donators");
+                });
+
+            modelBuilder.Entity("Infrastructure.Model.Place.FundRaisingPlace", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CoordinateById")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreateById")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Facebook")
+                        .HasColumnType("text");
+
+                    b.Property<double>("Latitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("Longtitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("Other")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PlaceName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdateAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdateById")
+                        .HasColumnType("text");
+
+                    b.Property<string>("villageCode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CoordinateById");
+
+                    b.HasIndex("CreateById");
+
+                    b.HasIndex("UpdateById");
+
+                    b.HasIndex("villageCode");
+
+                    b.ToTable("fundRaisingPlaces");
+                });
+
+            modelBuilder.Entity("Infrastructure.Model.Recipient.School", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreateById")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<Guid>("ProjectId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("ShirtSize")
-                        .HasColumnType("integer");
+                    b.Property<DateTime?>("UpdateAt")
+                        .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("ShoesSize")
-                        .HasColumnType("integer");
+                    b.Property<string>("UpdateById")
+                        .HasColumnType("text");
 
-                    b.Property<int>("SkirtSize")
-                        .HasColumnType("integer");
+                    b.Property<string>("villageCode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreateById");
+
+                    b.HasIndex("ProjectId");
+
+                    b.HasIndex("UpdateById");
+
+                    b.HasIndex("villageCode");
+
+                    b.ToTable("schoools");
+                });
+
+            modelBuilder.Entity("Infrastructure.Model.Student.Recipient", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreateById")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime?>("UpdateAt")
                         .HasColumnType("timestamp with time zone");
@@ -265,9 +447,18 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("birthDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("bodyLength")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("chestSize")
+                        .HasColumnType("integer");
+
                     b.Property<string>("fname")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("hemSize")
+                        .HasColumnType("integer");
 
                     b.Property<string>("level")
                         .IsRequired()
@@ -276,6 +467,9 @@ namespace Infrastructure.Migrations
                     b.Property<string>("lname")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("shouldSize")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -549,6 +743,51 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("userTypes");
+                });
+
+            modelBuilder.Entity("Infrastructure.Model.Work.Conjoint", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreateById")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("FundRaisingPlaceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("JoinerId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("JointCashCalculate")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("JointFundRaising")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("UpdateAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdateById")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreateById");
+
+                    b.HasIndex("FundRaisingPlaceId");
+
+                    b.HasIndex("JoinerId");
+
+                    b.HasIndex("UpdateById");
+
+                    b.ToTable("conjoints");
                 });
 
             modelBuilder.Entity("Infrastructure.Model.Work.DonateThing", b =>
@@ -840,12 +1079,6 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Infrastructure.Model.Account.SourceType", "SourceTypes")
-                        .WithMany()
-                        .HasForeignKey("SourceTypesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Infrastructure.Model.Account.TransactionType", "TransactionType")
                         .WithMany()
                         .HasForeignKey("TransactionTypeId")
@@ -857,8 +1090,6 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("UpdateById");
 
                     b.Navigation("CreateBy");
-
-                    b.Navigation("SourceTypes");
 
                     b.Navigation("TransactionType");
 
@@ -885,7 +1116,121 @@ namespace Infrastructure.Migrations
                     b.Navigation("district");
                 });
 
-            modelBuilder.Entity("Infrastructure.Model.Student.Student", b =>
+            modelBuilder.Entity("Infrastructure.Model.Donate.Donation", b =>
+                {
+                    b.HasOne("Infrastructure.Model.Users.ApplicationUser", "CreateBy")
+                        .WithMany()
+                        .HasForeignKey("CreateById");
+
+                    b.HasOne("Infrastructure.Model.Donate.Donator", "DonorBy")
+                        .WithMany()
+                        .HasForeignKey("DonorById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Infrastructure.Model.Account.SourceType", "SourceTypes")
+                        .WithMany()
+                        .HasForeignKey("SourceTypesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Infrastructure.Model.Users.ApplicationUser", "UpdateBy")
+                        .WithMany()
+                        .HasForeignKey("UpdateById");
+
+                    b.Navigation("CreateBy");
+
+                    b.Navigation("DonorBy");
+
+                    b.Navigation("SourceTypes");
+
+                    b.Navigation("UpdateBy");
+                });
+
+            modelBuilder.Entity("Infrastructure.Model.Donate.Donator", b =>
+                {
+                    b.HasOne("Infrastructure.Model.Users.ApplicationUser", "CreateBy")
+                        .WithMany()
+                        .HasForeignKey("CreateById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Infrastructure.Model.Users.ApplicationUser", "UpdateBy")
+                        .WithMany()
+                        .HasForeignKey("UpdateById");
+
+                    b.Navigation("CreateBy");
+
+                    b.Navigation("UpdateBy");
+                });
+
+            modelBuilder.Entity("Infrastructure.Model.Place.FundRaisingPlace", b =>
+                {
+                    b.HasOne("Infrastructure.Model.Users.ApplicationUser", "CoordinateBy")
+                        .WithMany()
+                        .HasForeignKey("CoordinateById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Infrastructure.Model.Users.ApplicationUser", "CreateBy")
+                        .WithMany()
+                        .HasForeignKey("CreateById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Infrastructure.Model.Users.ApplicationUser", "UpdateBy")
+                        .WithMany()
+                        .HasForeignKey("UpdateById");
+
+                    b.HasOne("Infrastructure.Model.Address.Village", "Village")
+                        .WithMany()
+                        .HasForeignKey("villageCode")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CoordinateBy");
+
+                    b.Navigation("CreateBy");
+
+                    b.Navigation("UpdateBy");
+
+                    b.Navigation("Village");
+                });
+
+            modelBuilder.Entity("Infrastructure.Model.Recipient.School", b =>
+                {
+                    b.HasOne("Infrastructure.Model.Users.ApplicationUser", "CreateBy")
+                        .WithMany()
+                        .HasForeignKey("CreateById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Infrastructure.Model.Work.ProjectPlan", "Project")
+                        .WithMany("schools")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Infrastructure.Model.Users.ApplicationUser", "UpdateBy")
+                        .WithMany()
+                        .HasForeignKey("UpdateById");
+
+                    b.HasOne("Infrastructure.Model.Address.Village", "Village")
+                        .WithMany()
+                        .HasForeignKey("villageCode")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CreateBy");
+
+                    b.Navigation("Project");
+
+                    b.Navigation("UpdateBy");
+
+                    b.Navigation("Village");
+                });
+
+            modelBuilder.Entity("Infrastructure.Model.Student.Recipient", b =>
                 {
                     b.HasOne("Infrastructure.Model.Users.ApplicationUser", "CreateBy")
                         .WithMany()
@@ -1001,6 +1346,39 @@ namespace Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Infrastructure.Model.Work.Conjoint", b =>
+                {
+                    b.HasOne("Infrastructure.Model.Users.ApplicationUser", "CreateBy")
+                        .WithMany()
+                        .HasForeignKey("CreateById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Infrastructure.Model.Place.FundRaisingPlace", "FundRaisingPlace")
+                        .WithMany()
+                        .HasForeignKey("FundRaisingPlaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Infrastructure.Model.Users.ApplicationUser", "Joiner")
+                        .WithMany()
+                        .HasForeignKey("JoinerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Infrastructure.Model.Users.ApplicationUser", "UpdateBy")
+                        .WithMany()
+                        .HasForeignKey("UpdateById");
+
+                    b.Navigation("CreateBy");
+
+                    b.Navigation("FundRaisingPlace");
+
+                    b.Navigation("Joiner");
+
+                    b.Navigation("UpdateBy");
+                });
+
             modelBuilder.Entity("Infrastructure.Model.Work.DonateThing", b =>
                 {
                     b.HasOne("Infrastructure.Model.Users.ApplicationUser", "CreateBy")
@@ -1010,7 +1388,7 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("Infrastructure.Model.Work.ProjectPlan", "ProjectPlan")
-                        .WithMany()
+                        .WithMany("donateThings")
                         .HasForeignKey("ProjectPlanId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1097,6 +1475,13 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Infrastructure.Model.Users.ApplicationUser", b =>
                 {
                     b.Navigation("positionTeams");
+                });
+
+            modelBuilder.Entity("Infrastructure.Model.Work.ProjectPlan", b =>
+                {
+                    b.Navigation("donateThings");
+
+                    b.Navigation("schools");
                 });
 #pragma warning restore 612, 618
         }

@@ -13,18 +13,18 @@ using Services.Service.StudentService;
 namespace whwd_web_api.Controllers.WorkController
 {
     [ApiController]
-    public class StudentController : Controller
+    public class RecipientController : Controller
     {
         private IMapper _mapper { get; set; }
         private IStudentService _studentService;
         private UserManager<ApplicationUser> _userManager { get; set; }
-        public StudentController(UserManager<ApplicationUser> userManager ,DatabaseContexts context, IMapper mapper) {
+        public RecipientController(UserManager<ApplicationUser> userManager ,DatabaseContexts context, IMapper mapper) {
             _studentService = new StudentService(context, userManager, mapper);
         }
 
       [HttpPost]
-     [Route("createStudent")]
-       async  public Task<IActionResult> createStudent([FromBody] StudentDto studentDto)
+     [Route("createRecipient")]
+       async  public Task<IActionResult> createStudent([FromBody] RecipientDto studentDto)
         {
             try
             {
@@ -36,7 +36,7 @@ namespace whwd_web_api.Controllers.WorkController
             }
         }
     [HttpDelete]
-    [Route("deleteStudent")]
+    [Route("deleteRecipient")]
     public async Task<IActionResult> deleteStudent([FromQuery] Guid Id){
         try{
             var result = await _studentService.deleteStudent(Id);
@@ -50,7 +50,7 @@ namespace whwd_web_api.Controllers.WorkController
     }
 
     [HttpPut]
-    [Route("updateStudent")]
+    [Route("updateRecipient")]
     public async Task<IActionResult> updateStudent([FromBody] StudentUpdateDto studentDto){
         try{
             var result = await _studentService.updateStudent(studentDto);
@@ -63,7 +63,7 @@ namespace whwd_web_api.Controllers.WorkController
         }
     }
     [HttpGet]
-    [Route("getStudents")]
+    [Route("getRecipient")]
     async public Task<IActionResult> getStudents([FromQuery] BaseFilter filter){
      try{
         var result = await _studentService.getStudents(filter);
@@ -74,7 +74,7 @@ namespace whwd_web_api.Controllers.WorkController
     }
 
     [HttpGet]
-    [Route("GetStudentById")]
+    [Route("GetRecipientById")]
     async public Task<IActionResult>  GetStudentById([FromQuery] Guid Id){
         try{
           var result =  await _studentService.getStudentById(Id);

@@ -15,7 +15,7 @@ namespace Infrastructure.Repository.StudentRepository
         {
             _dbContext = dbContext;
         }
-       async public Task<ErrorOr<bool>> create(Student student)
+       async public Task<ErrorOr<bool>> create(Recipient student)
         {
             try
             {
@@ -33,7 +33,7 @@ namespace Infrastructure.Repository.StudentRepository
         {
             try
             {
-                Student? student = await _dbContext.students.FirstOrDefaultAsync();
+                Recipient? student = await _dbContext.students.FirstOrDefaultAsync();
                 if (student == null)
                 {
                     throw new Exception("Error, Student information isn't found");
@@ -48,7 +48,7 @@ namespace Infrastructure.Repository.StudentRepository
             }
         }
 
-        async public Task<bool> update(Student studentParam)
+        async public Task<bool> update(Recipient studentParam)
         {
             try
             {
@@ -62,7 +62,7 @@ namespace Infrastructure.Repository.StudentRepository
             }
         }
 
-        async public Task<List<Student>> getStudents(BaseFilter filter)
+        async public Task<List<Recipient>> getStudents(BaseFilter filter)
         {
             try{
               return await _dbContext.students.Skip((filter.page - 1) * filter.pageSize).Take(filter.pageSize).ToListAsync();
@@ -71,7 +71,7 @@ namespace Infrastructure.Repository.StudentRepository
             }
         }
 
-        public async Task<Student> GetStudentById(Guid Id)
+        public async Task<Recipient> GetStudentById(Guid Id)
         {
             try{
               return await _dbContext.students.FirstAsync(t => t.Id == Id);

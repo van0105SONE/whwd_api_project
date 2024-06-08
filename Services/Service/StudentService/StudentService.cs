@@ -33,11 +33,11 @@ namespace Services.Service.StudentService
             _mapper = mapper;
         }
 
-      async  public Task<ErrorOr<bool>> createStudent(StudentDto studentDto)
+      async  public Task<ErrorOr<bool>> createStudent(RecipientDto studentDto)
         {
             try
             {
-                Student studentData =  _mapper.Map<Student>(studentDto);
+                Recipient studentData =  _mapper.Map<Recipient>(studentDto);
                 var projectPlanResult = await _projectService.getProjectActiveProject();
                 if (projectPlanResult.Value == null)
                 {
@@ -63,9 +63,9 @@ namespace Services.Service.StudentService
        async public Task<ErrorOr<bool>> updateStudent(StudentUpdateDto studentDto)
         {
            try{
-                Student studentData =  _mapper.Map<Student>(studentDto);
+                Recipient studentData =  _mapper.Map<Recipient>(studentDto);
    
-                Student student = await _studentRepository.GetStudentById(studentData.Id);
+                Recipient student = await _studentRepository.GetStudentById(studentData.Id);
                 var projectPlanResult = await _projectService.getProjectActiveProject();
                 if (projectPlanResult.Value == null)
                 {
@@ -79,10 +79,10 @@ namespace Services.Service.StudentService
                 }
                 student.fname = studentData.fname;
                 student.lname = studentData.lname;
-                student.SkirtSize = studentData.SkirtSize;
-                student.ShirtSize = studentData.ShirtSize;  
-                student.ShirtSize = studentData.ShirtSize;  
-                student.ShoesSize = studentData.ShoesSize;
+                student.chestSize = studentData.chestSize;
+                student.shouldSize = studentData.shouldSize;  
+                student.hemSize = studentData.hemSize;  
+                student.bodyLength = studentData.bodyLength;
                 student.birthDate = studentData.birthDate;
                 student.level = studentData.level;
                 student.UpdateBy = user;
@@ -103,7 +103,7 @@ namespace Services.Service.StudentService
              }
         }
 
-      async  public Task<ErrorOr<List<Student>>> getStudents(BaseFilter filter)
+      async  public Task<ErrorOr<List<Recipient>>> getStudents(BaseFilter filter)
         {
              try{
                var student = await _studentRepository.getStudents(filter);
@@ -113,7 +113,7 @@ namespace Services.Service.StudentService
              }
         }
 
-        public async Task<ErrorOr<Student>> getStudentById(Guid Id)
+        public async Task<ErrorOr<Recipient>> getStudentById(Guid Id)
         {
             try{
               return await _studentRepository.GetStudentById(Id);

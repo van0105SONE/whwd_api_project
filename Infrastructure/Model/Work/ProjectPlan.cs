@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Infrastructure.Model.Recipient;
+using Infrastructure.Model.Users;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,5 +20,7 @@ namespace Infrastructure.Model.Work
         public Double  ValueInDollar { get; set; } 
         public Double  ValueInBath { get; set; }
         public Double  valueInKip { get; set; }
-    }
+        public ICollection<DonateThing> donateThings { get; set; }
+		public ICollection<School> schools { get; set; }
+	}
 }

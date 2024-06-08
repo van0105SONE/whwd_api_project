@@ -12,6 +12,7 @@ namespace Infrastructure.Repository.IRepository
         public bool createVillage(Village village);
 
         public bool isVillageExist(string name);
+        public Village getVillageById(string villageCode);
         public List<Village> getVillages();
         public List<Village> getVillagesByDistrict(string districtCode);
 

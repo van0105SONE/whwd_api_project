@@ -63,6 +63,19 @@ namespace Infrastructure.Repository.Implement
             }
         }
 
+        public Village getVillageById(string villageCode)
+        {
+            try
+            {
+                Village? villages = _dbContext.villages.FirstOrDefault(t => t.villageCode == villageCode);
+                return villages;
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public List<Village> getVillages()
         {
             try

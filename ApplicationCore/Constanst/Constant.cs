@@ -10,5 +10,18 @@ namespace ApplicationCore.Constanst
     {
         public static string POSITIONSTARTPROJECT = "Project Manager";
         public static string CREATEROLE = "create";
-    }
+        public static List<string> COORDINATE_STATUSES = new List<string>() {
+                     "NOTYET",
+                   "ONPROGRESS",
+                    "REJECT",
+                    "CONFIRM",
+        };
+
+		public static List<string> SPONSOR_TYPES = new List<string>() {
+					 "PERSONAL",
+				   "ORGANIZATION",
+					"COMPANY"
+		};
+
+	}
 }

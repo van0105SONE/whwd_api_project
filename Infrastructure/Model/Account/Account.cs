@@ -12,12 +12,11 @@ namespace Infrastructure.Model.Account
     {
         public required string AccountNo { get; set; }
         public required string BookingNO { get; set; }
-        public required string BankName { get; set; }
-
         public required AccountType AccountTypes { get; set; }
         public required  ApplicationUser OwnBy { get; set; }
-
         public required ProjectPlan ProjectPlan { get; set; }
+        public double DepositAmount { get; set; }
+        public double WithdrawAmount { get; set; }
         public  double   Balance { get; set; }
     }
 }

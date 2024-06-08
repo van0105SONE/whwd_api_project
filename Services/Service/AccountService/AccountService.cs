@@ -53,7 +53,20 @@ namespace Services.Service.AccountService {
             }
         }
 
-      async  public Task<List<Account>> GetAllAccounts(BaseFilter filter)
+		public Task<List<AccountType>> GetAccountTypes()
+		{
+            try
+            {
+				return _accountRepository.getAccountTypes();
+			}
+			catch(Exception ex)
+            {
+                throw new Exception(ex.Message);    
+            }
+
+		}
+
+		async  public Task<List<Account>> GetAllAccounts(BaseFilter filter)
         {
             try{
             return await _accountRepository.GetAllAccounts(filter);
@@ -67,14 +80,13 @@ namespace Services.Service.AccountService {
            try{
               Account accountMapper = _mapper.Map<Account>(accountDto);
               
-               Account account = _accountRepository.getAccountById(accountDto.Id);
+               Account account = await _accountRepository.getAccountById(accountDto.Id);
               ApplicationUser? userCreate = await  _userManager.FindByIdAsync(accountDto.userId);
               ApplicationUser? userOwner = await _userManager.FindByIdAsync(accountDto.userId);
               var projectPlanResult = await _projectPlanRepository.getProjectActiveProject();
               ProjectPlan projectPlan =  projectPlanResult.Value;
               AccountType accountType = await _accountRepository.GetAccountTypeById(accountDto.AccountTypeId);
               account.AccountNo = accountMapper.AccountNo;
-              account.BankName = accountMapper.BankName;
               account.ProjectPlan = projectPlan;
               account.OwnBy = userOwner;
               account.CreateBy = userCreate;
@@ -84,5 +96,8 @@ namespace Services.Service.AccountService {
               throw new Exception($"{ex.Message}");
            }
         }
+
+
+
     }
 }

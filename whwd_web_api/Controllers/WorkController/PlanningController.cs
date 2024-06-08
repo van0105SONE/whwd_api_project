@@ -1,9 +1,11 @@
-﻿using ApplicationCore.Dtos.Work;
+﻿using ApplicationCore.Dtos.RecipientDto;
+using ApplicationCore.Dtos.Work;
 using ApplicationCore.Filter;
 using AutoMapper;
 using ErrorOr;
 using Infrastructure.DataBaseContext;
 using Infrastructure.Model.Users;
+using Infrastructure.Model.Work;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Services.Service.PositionService;
@@ -24,7 +26,7 @@ namespace whwd_web_api.Controllers.WorkController
         }
 
 
-        [Route("/create-plan")]
+        [Route("createPlan")]
         [HttpPost]
         public async Task<IActionResult> CreateProjectPlan([FromBody] ProjectPlanDto projectDto)
         {
@@ -38,7 +40,21 @@ namespace whwd_web_api.Controllers.WorkController
                 return Problem(ex.Message);
 
             }
+        }
 
+        [Route("getProjectPlans")]
+        [HttpGet]
+        public async Task<IActionResult> GetProjectPLan([FromQuery] BaseFilter filter)
+        {
+            try
+            {
+                var result = await _projectService.getProjects(filter);
+               var responseData = _mapper.Map<List<ProjectPlanResponseDto>>(result.Value.ToList());
+			   return  Ok(responseData);
+            }catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
        
@@ -55,6 +71,8 @@ namespace whwd_web_api.Controllers.WorkController
                 return Problem(ex.Message); 
             }
         }
+
+
         [HttpPatch]
         [Route("updateDonateThing")]
         public async Task<IActionResult> updateDonateThing([FromBody] UpdateDonateThingDto donateThing)
@@ -85,6 +103,8 @@ namespace whwd_web_api.Controllers.WorkController
             }
         }
 
+
+
         [HttpGet]
         [Route("getDonateThings")]
         public async Task<IActionResult> getDonateThing([FromQuery] DonateThingFilter filter)
@@ -93,6 +113,21 @@ namespace whwd_web_api.Controllers.WorkController
             {
                 var result = await _projectService.getDonateThings(filter);
                 return result.Match(t => Ok(t), err => Problem(err.FirstOrDefault().Description));
+            }catch(Exception ex)
+            {
+                return Problem(ex.Message);
+            }
+        }
+
+
+        [HttpPost]
+        [Route("createSchool")]
+        public async Task<IActionResult> createSchool([FromBody] SchoolDto schoolDto)
+        {
+            try
+            {
+                var result = await   _projectService.createSchool(schoolDto);
+                return result.Match(t => CreatedAtAction(nameof(createSchool), t), err => Problem(err.FirstOrDefault().Description));
             }catch(Exception ex)
             {
                 return Problem(ex.Message);

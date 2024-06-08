@@ -9,6 +9,7 @@ namespace Services.Service.AccountService {
      public Task<ErrorOr<bool>> updateAccount(AccountUpdateDto accountDto);
      public Task<ErrorOr<bool>> deleteAccount(Guid Id);
      public Task<List<Account>> GetAllAccounts(BaseFilter filter);
+     public Task<List<AccountType>> GetAccountTypes();
 
     }
 }

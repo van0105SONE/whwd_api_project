@@ -11,11 +11,11 @@ namespace Infrastructure.Repository.StudentRepository
 {
     public interface IStudentRepository
     {
-        Task<ErrorOr<bool>> create(Student student);
-        Task<List<Student>>  getStudents(BaseFilter filter); 
+        Task<ErrorOr<bool>> create(Recipient student);
+        Task<List<Recipient>>  getStudents(BaseFilter filter); 
         Task<bool> delete(Guid Id);
-        Task<bool> update(Student student);
+        Task<bool> update(Recipient student);
 
-        Task<Student> GetStudentById(Guid Id);
+        Task<Recipient> GetStudentById(Guid Id);
     }
 }

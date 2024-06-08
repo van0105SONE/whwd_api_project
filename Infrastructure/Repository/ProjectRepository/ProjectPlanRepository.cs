@@ -2,6 +2,7 @@
 using ApplicationCore.Filter;
 using ErrorOr;
 using Infrastructure.DataBaseContext;
+using Infrastructure.Model.Recipient;
 using Infrastructure.Model.Work;
 using Microsoft.EntityFrameworkCore;
 
@@ -122,5 +123,29 @@ namespace Infrastructure.Repository.ProjectRepository
                 throw new Exception(ex.Message);
             }
         }
-    }
+
+        public async Task<ErrorOr<bool>> createSchool(School schoolParam)
+        {
+            try
+            {
+                _DbContext.schoools.Add(schoolParam);
+                _DbContext.SaveChanges();
+                return true;
+            }catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+		public async Task<List<ProjectPlan>> getProjects(BaseFilter filter)
+		{
+            try
+            {
+              return await  _DbContext.projectPlan.Include(t => t.donateThings).Include(t => t.schools).Skip((filter.page - 1) * filter.pageSize).Take(filter.pageSize).ToListAsync() ;
+            }catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+		}
+	}
 }
