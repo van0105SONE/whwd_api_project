@@ -5,6 +5,7 @@ using Infrastructure.DataBaseContext;
 using Infrastructure.Model.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Services.Middleware;
 using Services.Service.RoleSevice;
 
 namespace whwd_web_api.Controllers.RoleController
@@ -35,6 +36,21 @@ namespace whwd_web_api.Controllers.RoleController
                var roleResult =  roleService.getRoles();
                return  roleResult.Match(t => Ok(t), err => Problem(err.FirstOrDefault().Description));
             }catch(Exception ex)
+            {
+                return Problem(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("getRoleByUserId")]
+        public async Task<IActionResult> getUsers([FromQuery] CheckRole userRole )
+        {
+            try
+            {
+                var result = await roleService.checkUserRole(userRole);
+
+			  return Ok(result.Value);
+            }catch( Exception ex )
             {
                 return Problem(ex.Message);
             }

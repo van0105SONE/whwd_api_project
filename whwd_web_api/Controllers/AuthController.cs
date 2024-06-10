@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Dtos;
 using ApplicationCore.Dtos.AuthenticationDto;
+using ApplicationCore.Dtos.UserDto;
 using AutoMapper;
 using Infrastructure.DataBaseContext;
 using Infrastructure.Model.Users;
@@ -52,10 +53,12 @@ namespace whwd_web_api.Controllers
                     user.RefreshToken = refreshToken;
                     user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(7);
                     _DbContexts.SaveChanges();
+                    UserReponseDto userResponse =  _mapping.Map<UserReponseDto>(user);
                     return Ok(new AuthenticatedResponse()
                     {
                      Token  =  token,
                      RefreshToken = refreshToken,
+                     userDto = userResponse
                     });
                 }
                 else

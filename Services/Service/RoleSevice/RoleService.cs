@@ -6,6 +6,7 @@ using Infrastructure.Model.Users;
 using Infrastructure.Repository.RoleRepository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using Services.Middleware;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -138,5 +139,37 @@ namespace Services.Service.RoleSevice
                 throw new Exception(ex.Message);
             }
         }
-    }
+
+		public async Task<ErrorOr<bool>> checkUserRole(CheckRole userRole)
+		{
+            try
+            {
+                if (string.IsNullOrEmpty(userRole.userId))
+                {
+                    return Error.Validation("User id is required");
+                }else if (string.IsNullOrEmpty( userRole.pageName))
+                {
+                    return Error.Validation("Page nam is required");
+                }
+
+                    ApplicationUser user = await _userManager.FindByIdAsync(userRole.userId);
+                    List<PositionTeam> positionTeams = _roleRepository.getPositionTeamByUserId(userRole.userId);
+                    bool isInRole =  await    _userManager.IsInRoleAsync(user, userRole.actionName);
+                    if (!isInRole)
+                    {
+                    return false;
+                    }
+				    bool inTeam = positionTeams.Any(t => t.Team.Name == userRole.pageName);
+				    if (!inTeam)
+                    {
+                    return false;
+                    }
+
+                    return true;
+            }catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+		}
+	}
 }

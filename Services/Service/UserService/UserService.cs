@@ -178,7 +178,7 @@ namespace Services.Service.UserService
         public List<ApplicationUser> GetUsers(BaseFilter filter)
         {
             try{
-                 return  userRepository.getUsers();
+                 return  userRepository.getUsers(filter);
             }catch(Exception ex)
             {
                 throw new Exception(ex.Message);

@@ -18,7 +18,9 @@ namespace Infrastructure.Repository.RoleRepository
 
         List<string> getRoles();
 
-        List<PositionTeam> getPositionTeams();
+		List<PositionTeam> getPositionTeamByUserId(string userId);
+
+		List<PositionTeam> getPositionTeams();
         public List<Position> getPositions();
 
         public List<ProjectTeam> getTeams();

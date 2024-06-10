@@ -1,6 +1,7 @@
 ﻿using Infrastructure.DataBaseContext;
 using Infrastructure.Model.Users;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -123,5 +124,16 @@ namespace Infrastructure.Repository.RoleRepository
                 throw new Exception(ex.Message);
             }
         }
-    }
+
+		public List<PositionTeam> getPositionTeamByUserId(string userId)
+		{
+            try
+            {
+                return _dbContexts.position_teams.Include( t=> t.Position).Include(t => t.Team).Where(t => t.User.Id == userId).ToList();
+            }catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+		}
+	}
 }

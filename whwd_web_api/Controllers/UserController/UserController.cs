@@ -87,7 +87,13 @@ namespace whwd_web_api.Controllers.UserController
 			try
 			{
 				ApplicationUser user = await _userService.getUserById(Id);
-				var jsonString = JsonConvert.SerializeObject(user, Formatting.Indented);
+                UserReponseDto userReponse =   _Mapping.Map<UserReponseDto>(user);
+				var jsonString = JsonConvert.SerializeObject(userReponse, Formatting.Indented,
+						new JsonSerializerSettings()
+						{
+							ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+						}
+					);
 				return Ok(jsonString);
 			}
 			catch (Exception ex)

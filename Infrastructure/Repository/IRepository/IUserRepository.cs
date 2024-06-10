@@ -1,4 +1,5 @@
-﻿using Infrastructure.Model.University;
+﻿using ApplicationCore.Filter;
+using Infrastructure.Model.University;
 using Infrastructure.Model.Users;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using System;
@@ -14,7 +15,7 @@ namespace Infrastructure.Repository.IRepository
     
 
 
-        List<ApplicationUser> getUsers();
+        List<ApplicationUser> getUsers(BaseFilter filter);
         ApplicationUser getUserById(string Id);
         
         /// <summary>

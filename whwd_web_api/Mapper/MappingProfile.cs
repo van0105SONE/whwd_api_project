@@ -2,6 +2,7 @@
 using ApplicationCore.Dtos.Donate;
 using ApplicationCore.Dtos.FunRaisingPlaceDto;
 using ApplicationCore.Dtos.RecipientDto;
+using ApplicationCore.Dtos.Roles;
 using ApplicationCore.Dtos.StudentDto;
 using ApplicationCore.Dtos.University;
 using ApplicationCore.Dtos.UserDto;
@@ -33,6 +34,18 @@ namespace whwd_web_api.Mapper
             CreateMap<VillageDto, Village>();
             CreateMap<DistrictDto, District>();
 
+			//Mapping model to response
+			CreateMap<ApplicationUser, UserReponseDto>();
+			CreateMap<Department, DepartmentDto>();
+            CreateMap<PositionTeam, PositiontTeamResponseDto>();
+			CreateMap<ProjectTeam, ProjectTeamResponse>();
+			CreateMap<Position, PositionResponse>();
+			CreateMap<PositionTeam, PositionTeamDto>();
+			CreateMap<Major, MajorDto > ();
+			CreateMap<Village, VillageDto>();
+			CreateMap<District, DistrictDto>();
+            CreateMap <UserType, UserTypeDto>();
+
 			CreateMap<AccountDto, Account>();
             CreateMap<DonationDto, Donation>();
 
@@ -45,14 +58,16 @@ namespace whwd_web_api.Mapper
             //project model
             CreateMap<ProjectPlanDto, ProjectPlan>();
             CreateMap<ProjectPlan, ProjectPlanResponseDto>();
+
 			CreateMap<DonateThingDto, DonateThing>();
 			CreateMap<DonateThing, DonateThingResponseDto>();
 
 			CreateMap<SchoolDto, School>();
 			CreateMap<School, SchoolResponseDto>();
-			//Mapping model to response
-			CreateMap<ApplicationUser, UserDto>();
-            CreateMap<Department, DepartmentDto>();
+
+
+
+
 
 
             //Mapper 
