@@ -17,7 +17,7 @@ namespace Services.Service.PositionService
         Task<ErrorOr<bool>> deleteDonateThing(Guid Id);
 
 
-        Task<ErrorOr<bool>> createSchool(SchoolDto schoolDto);
+        Task<ErrorOr<bool>> createSchool(List<SchoolDto> schoolDto);
         Task<ErrorOr<List<DonateThing>>> getDonateThings(DonateThingFilter filter);
         Task<ErrorOr<List<ProjectPlan>>> getProjects(BaseFilter filter);
         Task<ErrorOr<ProjectPlan>> getProjectPlanById();

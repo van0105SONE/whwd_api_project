@@ -122,7 +122,7 @@ namespace whwd_web_api.Controllers.WorkController
 
         [HttpPost]
         [Route("createSchool")]
-        public async Task<IActionResult> createSchool([FromBody] SchoolDto schoolDto)
+        public async Task<IActionResult> createSchool([FromBody] List<SchoolDto> schoolDto)
         {
             try
             {

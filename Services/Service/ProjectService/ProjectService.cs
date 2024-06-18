@@ -156,57 +156,50 @@ namespace Services.Service.PositionService
             }
         }
 
-        public async Task<ErrorOr<bool>> createSchool(SchoolDto schoolDto)
+        public async Task<ErrorOr<bool>> createSchool(List<SchoolDto> schoolDtos)
         {
             try
             {
                 bool isSuccess = false;
-                Village village = _addressRepository.getVillageById(schoolDto.villageCode);
-                if (village == null)
+                foreach(var  schoolDto in schoolDtos)
                 {
-                    District district = _addressRepository.getDistrictById(schoolDto.districtCode);
+                    School school = _mapper.Map<School>(schoolDto);
+                    Village village = _addressRepository.getVillageById(schoolDto.villageCode);
+                    if (village == null)
+                    {
+                        District district = _addressRepository.getDistrictById(schoolDto.districtCode);
+    
+
                     Village villageCreate = new Village()
                     {
                         villageCode = Guid.NewGuid().ToString(),
                         villageName = schoolDto.VillageName,
                         district = district
                     };
-                    _addressRepository.createVillage(villageCreate);
-                    village = villageCreate;
-                }
-                if (village == null)
-                {
-                    throw new Exception("System can't find  village");
-                }
-
-               
-                var projectError = await _projectRepository.getProjectActiveProject();
-                if (projectError.IsError)
-                {
-                    throw new Exception("System can't find project plan");
-                }
-
-                var user = await _userManager.FindByIdAsync(schoolDto.userId);
-                if (user == null)
-                {
-                    throw new Exception("Invalid user data, user id is required");
-                }
-                
-
-                foreach (String name in schoolDto.Names)
-                {
-                    School school = new School()
+                        _addressRepository.createVillage(villageCreate);
+                        village = villageCreate;
+                    }
+                    if (village == null)
                     {
-                        Name = name,
-                        Village = village,
-                        Project = projectError.Value,
-                        CreateBy = user
-                    };
+                        throw new Exception("System can't find  village");
+                    }
+                    school.Village = village;
+                    var projectError = await _projectRepository.getProjectActiveProject();
+                    if (projectError.IsError)
+                    {
+                        throw new Exception("System can't find project plan");
+                    }
+                    school.Project = projectError.Value;
 
+                    var user = await _userManager.FindByIdAsync(schoolDto.userId);
+                    if (user == null)
+                    {
+                        throw new Exception("Invalid user data, user id is required");
+                    }
+                    school.CreateBy = user;
                     var result = await _projectRepository.createSchool(school);
                     isSuccess = result.Value;
                 }
- 
                 return isSuccess;
             }catch(Exception ex)
             {
