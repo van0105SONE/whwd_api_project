@@ -10,8 +10,10 @@ namespace ApplicationCore.Dtos.RecipientDto
     public class SchoolDto
     {
 
-        public required string Name { get; set; }
+        public required List<string> Names { get; set; }
+        public required string VillageName { get; set; }
         public string villageCode { get; set; }
+        public string districtCode { get; set; }
         public required Guid projectPlanId { get; set; }
         public required string userId { get; set; }
     }

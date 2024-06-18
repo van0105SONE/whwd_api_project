@@ -20,10 +20,6 @@ namespace ApplicationCore.Dtos.UserDto
 		public VillageDto BornVillage { get; set; }
 		public UserTypeDto UserType { get; set; }
 		public MajorDto Major { get; set; }
-		public string? RefreshToken { get; set; }
-		public DateTime? RefreshTokenExpiry { get; set; }
-
-		public ICollection<PositiontTeamResponseDto> positionTeams { get; set; }
 
 	}
 }

@@ -160,28 +160,54 @@ namespace Services.Service.PositionService
         {
             try
             {
-                School school  = _mapper.Map<School>(schoolDto);
+                bool isSuccess = false;
                 Village village = _addressRepository.getVillageById(schoolDto.villageCode);
+                if (village == null)
+                {
+                    District district = _addressRepository.getDistrictById(schoolDto.districtCode);
+                    Village villageCreate = new Village()
+                    {
+                        villageCode = Guid.NewGuid().ToString(),
+                        villageName = schoolDto.VillageName,
+                        district = district
+                    };
+                    _addressRepository.createVillage(villageCreate);
+                    village = villageCreate;
+                }
                 if (village == null)
                 {
                     throw new Exception("System can't find  village");
                 }
-                school.Village = village;
+
+               
                 var projectError = await _projectRepository.getProjectActiveProject();
                 if (projectError.IsError)
                 {
                     throw new Exception("System can't find project plan");
                 }
-                school.Project = projectError.Value;
 
-               var user =  await _userManager.FindByIdAsync(schoolDto.userId);
-                if(user == null)
+                var user = await _userManager.FindByIdAsync(schoolDto.userId);
+                if (user == null)
                 {
                     throw new Exception("Invalid user data, user id is required");
                 }
-                school.CreateBy = user;
-                var result =  await  _projectRepository.createSchool(school);
-                return result;
+                
+
+                foreach (String name in schoolDto.Names)
+                {
+                    School school = new School()
+                    {
+                        Name = name,
+                        Village = village,
+                        Project = projectError.Value,
+                        CreateBy = user
+                    };
+
+                    var result = await _projectRepository.createSchool(school);
+                    isSuccess = result.Value;
+                }
+ 
+                return isSuccess;
             }catch(Exception ex)
             {
                 throw new Exception(ex.Message);
