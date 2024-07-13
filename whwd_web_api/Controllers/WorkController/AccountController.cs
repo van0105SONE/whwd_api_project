@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Dtos;
+using ApplicationCore.Dtos.Accounts;
 using ApplicationCore.Filter;
 using AutoMapper;
 using ErrorOr;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Services.Service.AccountService;
 using whwd_web_api.Dtos.Accounts;
+using whwd_web_api.Errors;
 
 namespace whwd_web_api.Controllers.WorkController
 {
@@ -26,24 +28,36 @@ namespace whwd_web_api.Controllers.WorkController
     public async Task<IActionResult> createUser([FromBody] AccountDto accountDto){
          try{
            var result =  await  _accountService.createAccount(accountDto);
-           return  result.Match(t => CreatedAtAction(nameof(createUser), new MessageReponse<Account>(){
-            isSuccess = true,
-            message = "Create Successful"
-           }),err => Problem(err.FirstOrDefault().Description) );
-         }catch(Exception ex){
+
+
+                if (result.IsError)
+                {
+                    return Ok(ErrorHandler<AccountResponseDto>.HandleErrorResponse(result.Errors.FirstOrDefault().Code, result.Errors.FirstOrDefault().Description));
+                }
+                else
+                {
+                    return Ok(result.Value);
+                }
+            }
+            catch(Exception ex){
             return Problem(ex.Message);
          }
     }
 
     [HttpPut]
-    [Route("updateAccount")]
-    public async Task<IActionResult> UpdateAccount([FromQuery] AccountUpdateDto accountDto){
+    [Route("updateAccount/{accId}")]
+    public async Task<IActionResult> UpdateAccount(Guid accId, [FromBody] AccountDto accountDto){
       try{
-          var result =  await _accountService.updateAccount(accountDto);
-          return  result.Match(t => Ok(new MessageReponse<Account>(){
-            isSuccess = t,
-            message = "Update Successful"
-          }), err => Problem(err.FirstOrDefault().Description));
+          var result =  await _accountService.updateAccount(accId,accountDto);
+
+                if (result.IsError)
+                {
+                    return Ok(ErrorHandler<AccountResponseDto>.HandleErrorResponse(result.Errors.FirstOrDefault().Code, result.Errors.FirstOrDefault().Description));
+                }
+                else
+                {
+                    return Ok(result.Value);
+                }
       }catch(Exception ex){
         return Problem(ex.Message);
       }
@@ -79,7 +93,12 @@ namespace whwd_web_api.Controllers.WorkController
         {
             try
             {
-              return Ok(_accountService.GetAccountTypes());
+              return Ok(new List<String>()
+              {
+                  "Joint",
+                  "Personal",
+                  "Hand"
+              });
             }catch(Exception ex)
             {
                 return Problem(ex.Message);

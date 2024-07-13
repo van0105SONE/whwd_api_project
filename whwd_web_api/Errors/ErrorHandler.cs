@@ -1,39 +1,60 @@
 ﻿using ApplicationCore.Constanst;
+using ApplicationCore.Dtos;
 using Microsoft.AspNetCore.Mvc;
+using System.Security;
 
 namespace whwd_web_api.Errors
 {
-    public class ErrorHandler
+    public class ErrorHandler<T>
     {
         public ErrorHandler() {
         }
 
-        public ObjectResult HandleErrorResponse(ErrorMsg errorMsg)
+        public static MessageReponse<T> HandleErrorResponse(string ErrorCode, string errorMessage)
         {
             try
             {
-                switch (errorMsg.ErrorCode)
+                switch (ErrorCode)
                 {
                     case ErrorCodes.Conflict:
-                        return new ObjectResult(errorMsg)
-                        {
-                            StatusCode = StatusCodes.Status409Conflict
+                        return new MessageReponse<T>() { 
+                            statusCode = 409,
+                            isSuccess = false,
+                            message = errorMessage
                         };
 
                     case ErrorCodes.Unauthorized:
-                        return new ObjectResult(errorMsg)
+                        return new MessageReponse<T>()
                         {
-                            StatusCode = StatusCodes.Status401Unauthorized
+                            statusCode = 401,
+                            isSuccess = false,
+                            message = errorMessage,
+
+                        };
+
+                    case ErrorCodes.Validation:
+                        return new MessageReponse<T>()
+                        {
+                            statusCode = 400,
+                            isSuccess = false,
+                            message = errorMessage,
+
                         };
                     case ErrorCodes.InternalError:
-                        return new ObjectResult(errorMsg)
+                        return new MessageReponse<T>()
                         {
-                            StatusCode = StatusCodes.Status500InternalServerError
+                            statusCode = 500,
+                            isSuccess = false,
+                            message = errorMessage,
+
                         };
                     default:
-                        return new ObjectResult(errorMsg)
+                        return new MessageReponse<T>()
                         {
-                            StatusCode = StatusCodes.Status500InternalServerError
+                            statusCode = 500,
+                            isSuccess = false,
+                            message = "Unexpect error, system can't regonize this error",
+
                         };
                 }
  

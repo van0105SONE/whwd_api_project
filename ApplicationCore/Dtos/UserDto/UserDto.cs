@@ -21,8 +21,5 @@ namespace ApplicationCore.Dtos.UserDto
         public required Guid RoleId { get; set; }
     }
 
- public class UserUpdateDto : UserDto{
-     public required string Id {get; set;}
- }
 
 }

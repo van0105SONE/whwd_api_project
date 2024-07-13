@@ -53,7 +53,6 @@ namespace Infrastructure.DataBaseContext
         //#done: need to fix
         //Account
         public DbSet<Account> accounts { get; set; }
-        public DbSet<AccountType> accountTypes { get; set; }
 
         //transaction
         public DbSet<Transaction> transactions { get; set; }

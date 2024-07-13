@@ -68,14 +68,6 @@ namespace Infrastructure.Repository.AccountRepos
             }
         }
 
-        public async Task<AccountType> GetAccountTypeById(Guid Id)
-        {
-           try{
-            return await  _DbContext.accountTypes.FirstOrDefaultAsync(t => t.Id == Id);
-           }catch(Exception ex){
-            throw new Exception(ex.Message);    
-           }
-        }
 
         public async Task<Account> getAccountById(Guid Id)
         {
@@ -90,15 +82,5 @@ namespace Infrastructure.Repository.AccountRepos
             }
         }
 
-		public async Task<List<AccountType>> getAccountTypes()
-		{
-            try
-            {
-                return  _DbContext.accountTypes.ToList();
-            }catch(Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-		}
 	}
 }

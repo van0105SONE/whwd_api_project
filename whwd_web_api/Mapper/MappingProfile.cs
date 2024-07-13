@@ -1,4 +1,5 @@
-﻿using ApplicationCore.Dtos.ConjointDto;
+﻿using ApplicationCore.Dtos.Accounts;
+using ApplicationCore.Dtos.ConjointDto;
 using ApplicationCore.Dtos.Donate;
 using ApplicationCore.Dtos.FunRaisingPlaceDto;
 using ApplicationCore.Dtos.RecipientDto;
@@ -36,7 +37,10 @@ namespace whwd_web_api.Mapper
 
 			//Mapping model to response
 			CreateMap<ApplicationUser, UserReponseDto>();
-			CreateMap<Department, DepartmentDto>();
+            CreateMap<ApplicationRoles, RoleDto>();
+
+
+            CreateMap<Department, DepartmentDto>();
             CreateMap<PositionTeam, PositiontTeamResponseDto>();
 			CreateMap<ProjectTeam, ProjectTeamResponse>();
 			CreateMap<Position, PositionResponse>();
@@ -57,8 +61,10 @@ namespace whwd_web_api.Mapper
             //project model
             CreateMap<ProjectPlanDto, ProjectPlan>();
             CreateMap<ProjectPlan, ProjectPlanResponseDto>();
+            CreateMap<AccountDto, Account>();
+            CreateMap<Account, AccountResponseDto>();
 
-			CreateMap<DonateThingDto, DonateThing>();
+            CreateMap<DonateThingDto, DonateThing>();
 			CreateMap<DonateThing, DonateThingResponseDto>();
 
 			CreateMap<SchoolDto, School>();

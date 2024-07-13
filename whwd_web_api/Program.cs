@@ -68,21 +68,8 @@ internal class Program
        using(var scope = app.Services.CreateScope()){
         var db = scope.ServiceProvider.GetRequiredService<DatabaseContexts>();
 
-        List<AccountType> items = new List<AccountType>(){
-            new AccountType(){
-                Id = Guid.NewGuid(),
-                Name = "ບັນຊີຮ່ວມ"
-            },
-            new AccountType(){
-                Id = Guid.NewGuid(),
-                Name = "ບັນຊີສ່ວນບຸກຄົນ"
-            },
-        };
 
-        foreach(var item in items){
-          db.accountTypes.Add(item);
-          db.SaveChanges();
-        }
+
 
 
 			List<SourceType> sourceTypes = new List<SourceType>(){

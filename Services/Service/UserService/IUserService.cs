@@ -10,10 +10,10 @@ namespace Services.Service.UserService
 {
     public interface IUserService
     {
-        Task<ErrorOr<MessageReponse<ApplicationUser>>> createUser(UserDto user);
-        Task<ErrorOr<ApplicationUser>> updateUser(UserUpdateDto user);
+        Task<ErrorOr<MessageReponse<UserReponseDto>>> createUser(UserDto user);
+        Task<ErrorOr<MessageReponse<UserReponseDto>>> updateUser(string userId, UserDto user);
         Task<ErrorOr<bool>> deleteUser(Guid Id);
         Task<ApplicationUser> getUserById(string Id);
-        List<ApplicationUser> GetUsers(BaseFilter filter);
+        List<UserReponseDto> GetUsers(BaseFilter filter);
     }
 }

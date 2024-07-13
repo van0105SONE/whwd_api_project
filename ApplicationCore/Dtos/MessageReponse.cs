@@ -2,6 +2,7 @@
 {
     public class MessageReponse<T>
     {
+        public int statusCode { get; set; }
         public bool isSuccess { get; set; }
         public String message { get; set; }
 

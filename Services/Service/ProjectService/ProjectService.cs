@@ -48,19 +48,15 @@ namespace Services.Service.PositionService
                 {
                     return Error.NotFound("NotFound", "User ist found on system"); 
                 }
-                bool isAllowed = await roleMiddleWare.IsUserAllowed(user, Constant.CREATEROLE, Constant.POSITIONSTARTPROJECT);
-                if (isAllowed)
-                {
+         
+
                     projectPlan.IsActive = true;
                     projectPlan.valueInKip = 0;
                     projectPlan.ValueInBath = 0;
                     projectPlan.ValueInBath = 0;
                     projectPlan.CreateBy = user;
                     return await _projectRepository.create(projectPlan);
-                }else
-                {
-                   return Error.Unauthorized("Unauthorized", "User Role or Position isn't allowed to create");
-                }
+   
 
             }catch(Exception ex)
             {

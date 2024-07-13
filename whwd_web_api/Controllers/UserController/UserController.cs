@@ -3,16 +3,14 @@ using ApplicationCore.Dtos.UserDto;
 using ApplicationCore.Filter;
 using AutoMapper;
 using Infrastructure.DataBaseContext;
-using Infrastructure.Model.Address;
-using Infrastructure.Model.University;
 using Infrastructure.Model.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Services.Service.AddressService;
-using Services.Service.UniversityService;
 using Services.Service.UserService;
-using System.Text.Json;
+using whwd_web_api.Errors;
+
 
 namespace whwd_web_api.Controllers.UserController
 {
@@ -20,7 +18,6 @@ namespace whwd_web_api.Controllers.UserController
 
     public class UserController : Controller
     {
-
         private UserManager<ApplicationUser> _UserManager { get; set; }
         private IMapper _Mapping { get; set; }
         private IUserService _userService { get; set; }
@@ -42,17 +39,11 @@ namespace whwd_web_api.Controllers.UserController
             try
             {
                 var userResult = await _userService.createUser(userDto);
-                if (userResult.FirstError.Code == "Validation")
+
+                if (userResult.IsError)
                 {
-                    return StatusCode(400, new MessageReponse<ApplicationUser>()
-                    {
-                        isSuccess = false,
-                        message = userResult.FirstError.Description,
-                        data = null
-                    }); ;
-                    ;
-                }
-                else
+                    return   Ok(ErrorHandler<ApplicationUser>.HandleErrorResponse(userResult.FirstError.Code, userResult.FirstError.Description));
+                }else
                 {
                     return Ok(userResult.Value);
                 }
@@ -60,21 +51,37 @@ namespace whwd_web_api.Controllers.UserController
             }
             catch (Exception ex)
             {
-                return Problem(ex.Message);
+                return Ok(new MessageReponse<ApplicationUser>() { 
+                      statusCode = 500,
+                      isSuccess = false,
+                      message = ex.Message
+                });;
+
             }
         }
         
         [HttpPut]
-        [Route("updateUser")]
-        public  async Task<IActionResult> UpdateUser([FromBody] UserUpdateDto userDto){
+        [Route("updateUser/{userId}")]
+        public  async Task<IActionResult> UpdateUser(Guid userId, [FromBody] UserDto userDto){
            try{
-                var updateResult = await _userService.updateUser(userDto);
+                var updateResult = await _userService.updateUser(userId.ToString(), userDto);
+                if (updateResult.IsError)
+                {
+                    return Ok(ErrorHandler<ApplicationUser>.HandleErrorResponse(updateResult.FirstError.Code, updateResult.FirstError.Description));
+                }
+                else
+                {
+                    return Ok(updateResult.Value);
+                }
 
-                return NoContent(); ;
-                // need to implement to retrurn user
            }catch(Exception ex){
-             return Problem(ex.Message);
-           }
+                return Ok(new MessageReponse<ApplicationUser>()
+                {
+                    statusCode = 500,
+                    isSuccess = false,
+                    message = ex.Message
+                }); 
+            }
         }
 
         [HttpGet]
@@ -83,10 +90,8 @@ namespace whwd_web_api.Controllers.UserController
         {
             try
             {
-                List<ApplicationUser> users = _userService.GetUsers(filter);
-
+                List<UserReponseDto> users = _userService.GetUsers(filter);
                 var jsonString = JsonConvert.SerializeObject(users, Formatting.Indented);
-               
                 return Ok(jsonString);
             }
             catch (Exception ex)

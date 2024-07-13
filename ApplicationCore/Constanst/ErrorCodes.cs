@@ -10,8 +10,10 @@ namespace ApplicationCore.Constanst
     public static class ErrorCodes
     {
         public const String NotFound = "NotFound";
-         public const String InternalError = "InternalError";
+        public const String InternalError = "InternalError";
         public const String Unauthorized = "Unauthorized";
         public const  String Conflict = "Conflict";
-    }
+        public const String Validation = "Validation";
+    
+}
 }

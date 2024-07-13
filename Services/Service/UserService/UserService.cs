@@ -1,4 +1,5 @@
-﻿using ApplicationCore.Dtos;
+﻿using ApplicationCore.Constanst;
+using ApplicationCore.Dtos;
 using ApplicationCore.Dtos.UserDto;
 using ApplicationCore.Filter;
 using AutoMapper;
@@ -23,11 +24,11 @@ namespace Services.Service.UserService
         IMapper _mapper { get; set; }
         private UserManager<ApplicationUser> _UserManager { get; set; }
         IRoleService roleService { get; set; }
-
         private IUserRepository userRepository { get; set; }
         private IAddressRepository addressRepository { get; set; }
         private IUniversityRespository  universityRespository { get; set; }
         private readonly IRoleRepository _roleRepository;
+
         public UserService(UserManager<ApplicationUser> userManager, DatabaseContexts dbContext, IMapper mapper) { 
             _UserManager = userManager;
             roleService = new RoleService(userManager,dbContext, mapper);
@@ -37,64 +38,64 @@ namespace Services.Service.UserService
             _roleRepository = new RoleRepository(dbContext);
             _mapper = mapper;
         }
-       async  public Task<ErrorOr<MessageReponse<ApplicationUser>>> createUser(UserDto userDto)
+       async  public Task<ErrorOr<MessageReponse<UserReponseDto>>> createUser(UserDto userDto)
         {
             try
             {
-
-
                 ApplicationUser applicationUser = _mapper.Map<ApplicationUser>(userDto);
 
                 bool isUserValid = validateUser(userDto);
-                if (!isUserValid)
-                {
-                    return Error.Validation("Validation", "User information is't valid");
-                }
-
                 District bornDistrict = addressRepository.getDistrictById(userDto.BornVillage.district.districtCode);
                 District currentDistrict = addressRepository.getDistrictById(userDto.CurrentVillage.district.districtCode);
                 ApplicationRoles role = _roleRepository.getRoleById(userDto.RoleId);
+                Village bornVillage = addressRepository.getVillageById(userDto.BornVillage.villageCode);
+                Village currentVillage = addressRepository.getVillageById(userDto.CurrentVillage.villageCode);
+                Major major = universityRespository.getMajorById(userDto.Major.Id);
                 var department = universityRespository.getDepartmentById(userDto.Major.DepartmentId);
+
+
+                if (!isUserValid)
+                {
+                    return Error.Validation(ErrorCodes.Validation, "User information is't valid");
+                }
                 if (role == null)
                 {
-                    return Error.Validation("Validation", "User Role isn't found in the system");
+                    return Error.Validation(ErrorCodes.Validation, "User Role isn't found in the system");
                 }
                 if (department == null)
                 {
-                    return Error.Validation("Validation", "Department isn't found in the system");
+                    return Error.Validation(ErrorCodes.Validation, "Department isn't found in the system");
                 }
                 if (bornDistrict == null)
                 {
-                    return Error.Validation("Validation", "District isn't found in the system");
+                    return Error.Validation(ErrorCodes.Validation, "District isn't found in the system");
                 }
-
                 if (currentDistrict == null)
                 {
-                    return Error.Validation("Validation", "District isn't found in the system");
+                    return Error.Validation(ErrorCodes.Validation, "District isn't found in the system");
                 }
-                
-                if (String.IsNullOrEmpty(userDto.BornVillage.villageCode))
+
+
+                if (bornVillage == null)
                 {
                     Village village = createVillageWithCodeNull(userDto.CurrentVillage.district.districtCode, userDto.CurrentVillage.villageName);
                     applicationUser.BornVillage = village;
                 }
-                if (String.IsNullOrEmpty(userDto.CurrentVillage.villageCode))
+                if (currentVillage == null)
                 {
                     Village village = createVillageWithCodeNull(userDto.CurrentVillage.district.districtCode, userDto.CurrentVillage.villageName);
                     applicationUser.CurrentVillage = village;
                 }
-
-                if (String.IsNullOrEmpty(userDto.Major.Id))
+                if (major == null)
                 {
- 
                     var newMajor = new Major()
                     {
                         Id = Guid.NewGuid().ToString(),
                         Name = userDto.Major.Name,
                         Department = department,
                     };
-                    var major = universityRespository.createMajor(newMajor);
-                    applicationUser.Major = major;
+                    var majorCreate = universityRespository.createMajor(newMajor);
+                    applicationUser.Major = majorCreate;
                 }
 
                 applicationUser.Role = role;
@@ -102,21 +103,20 @@ namespace Services.Service.UserService
 
                 if (result.Succeeded)
                 {
-                    return new MessageReponse<ApplicationUser>()
+
+                    UserReponseDto userResponse = _mapper.Map<UserReponseDto>(applicationUser);
+                    return new MessageReponse<UserReponseDto>()
                     {
                         isSuccess = true,
                         message = "Successful",
-                        data = applicationUser
+                        data = userResponse
                     };
                 }
                 else
                 {
-                    return new MessageReponse<ApplicationUser>() {
-                        isSuccess = false,
-                        message = result.Errors.FirstOrDefault().Description
-                    };
-                    
+                    return Error.Validation(ErrorCodes.InternalError, result.Errors.FirstOrDefault().Description);
                 }
+
             }
             catch (Exception ex)
             {
@@ -125,46 +125,66 @@ namespace Services.Service.UserService
         }
 
 
-      async  public  Task<ErrorOr<ApplicationUser>> updateUser(UserUpdateDto userDto)
+      async  public Task<ErrorOr<MessageReponse<UserReponseDto>>> updateUser(string userId, UserDto userDto)
         {
-            if (userDto is null)
-            {
-                throw new ArgumentNullException(nameof(userDto));
-            }
-
             try
             {
                 ApplicationUser userMapper = _mapper.Map<ApplicationUser>(userDto);
-                ApplicationUser? userData = await _UserManager.FindByIdAsync(userDto.Id);
+                Village bornVillage = addressRepository.getVillageById(userDto.BornVillage.villageCode);
+                Village currentVillage = addressRepository.getVillageById(userDto.CurrentVillage.villageCode);
+                ApplicationUser? userData = await _UserManager.FindByIdAsync(userId);
+                Major major = universityRespository.getMajorById(userDto.Major.Id);
+                var department = universityRespository.getDepartmentById(userDto.Major.DepartmentId);
+
                 if (userData == null)
                 {
-                    return Error.NotFound("ValidationError", "User isn't exist");
+                    return Error.Validation(ErrorCodes.NotFound, "User Id is invalid, User is required");
+                }else if (major == null)
+                {
+                    return Error.Validation(ErrorCodes.Validation, "Major Id is invalid, Major is required");
+                }
+
+
+                if (bornVillage == null)
+                {
+                    Village village = createVillageWithCodeNull(userMapper.CurrentVillage.district.districtCode, userMapper.CurrentVillage.villageName);
+                    bornVillage = village;
+                }
+                if (currentVillage == null)
+                {
+                    Village village = createVillageWithCodeNull(userMapper.CurrentVillage.district.districtCode, userMapper.CurrentVillage.villageName);
+                    currentVillage = village;
                 }
 
                 userData.Fname = userMapper.Fname;
                 userData.Lname = userMapper.Lname;
                 userData.UserName = userMapper.UserName;
-                if (String.IsNullOrEmpty(userMapper.BornVillage.villageCode))
-                {
-                    Village village = createVillageWithCodeNull(userMapper.CurrentVillage.district.districtCode, userMapper.CurrentVillage.villageName);
-                    userData.BornVillage = village;
-                }
-
-
-
-                if (String.IsNullOrEmpty(userMapper.CurrentVillage.villageCode))
-                {
-                    Village village = createVillageWithCodeNull(userMapper.CurrentVillage.district.districtCode, userMapper.CurrentVillage.villageName);
-                    userData.CurrentVillage = village;
-                }
-
-          
                 userData.PhoneNumber = userMapper.PhoneNumber;
                 userData.Email = userMapper.Email;
+                userData.BornVillage = bornVillage;
+                userData.CurrentVillage = currentVillage;
                 userData.Occupation = userMapper.Occupation;
-
                 var updateResult = await _UserManager.UpdateAsync(userData);
-                return userData;
+
+                if (updateResult.Succeeded)
+                {
+                    UserReponseDto userResponse = _mapper.Map<UserReponseDto>(userData);
+                    return new MessageReponse<UserReponseDto>()
+                    {
+                        isSuccess = true,
+                        message = "Successful",
+                        data = userResponse
+                    };
+                }
+                else
+                {
+                    return new MessageReponse<UserReponseDto>()
+                    {
+                        isSuccess = false,
+                        message = updateResult.Errors.First().Description,
+                    };
+                }
+
             }
             catch (Exception ex)
             {
@@ -198,10 +218,14 @@ namespace Services.Service.UserService
             }
         }
 
-        public List<ApplicationUser> GetUsers(BaseFilter filter)
+        public List<UserReponseDto> GetUsers(BaseFilter filter)
         {
             try{
-                 return  userRepository.getUsers(filter);
+
+               List<ApplicationUser> users =  userRepository.getUsers(filter);
+               List<UserReponseDto> userResponse = _mapper.Map<List<UserReponseDto>>(users);
+
+                return userResponse;
             }catch(Exception ex)
             {
                 throw new Exception(ex.Message);

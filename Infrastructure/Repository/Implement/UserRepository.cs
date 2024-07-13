@@ -123,7 +123,7 @@ namespace Infrastructure.Repository.Implement
         {
             try
             {
-                List<ApplicationUser> users = _dbContext.Users.Skip((filter.page - 1) * filter.pageSize).ToList();
+                List<ApplicationUser> users = _dbContext.Users.Skip((filter.page - 1) * filter.pageSize).Include(t => t.BornVillage).Include(t => t.CurrentVillage).Include(t => t.Role).Include(t => t.Major).ToList();
                 return users;
             }catch(Exception ex) { 
                 throw new Exception(ex.Message);    
