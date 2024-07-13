@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace ApplicationCore.Dtos.Roles
 {
-    public class UserRoleDto
+    public class RoleAccessDto
     {
-        public string userId { get; set; }
-        public string role { get; set; }
+        
+        public Guid   Id { get; set; }
+        public string accessName { get; set; }
+        public bool isActive { get; set; }
     }
 }

@@ -5,6 +5,8 @@ using Infrastructure.DataBaseContext;
 using Infrastructure.Model.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic;
+using Newtonsoft.Json;
 using Services.Middleware;
 using Services.Service.RoleSevice;
 
@@ -15,11 +17,11 @@ namespace whwd_web_api.Controllers.RoleController
     {
 
         private IMapper _mapper { get; set; }
-        private RoleManager<IdentityRole> _roleManager { get; set; }
+        private RoleManager<ApplicationRoles> _roleManager { get; set; }
         private UserManager<ApplicationUser> _userManager { get; set; }
         private IRoleService roleService { get; set; }
 
-        public RoleController(RoleManager<IdentityRole>  roleManager , UserManager<ApplicationUser> userManager, DatabaseContexts dbContext, IMapper mapper) { 
+        public RoleController(RoleManager<ApplicationRoles>  roleManager , UserManager<ApplicationUser> userManager, DatabaseContexts dbContext, IMapper mapper) { 
              _userManager = userManager;
              _mapper = mapper;
             _roleManager = roleManager;
@@ -27,15 +29,72 @@ namespace whwd_web_api.Controllers.RoleController
      
         }
 
-        [HttpGet]
-        [Route("getRoles")]
-        public IActionResult getRoles()
+
+        [HttpPost]
+        [Route("createRole")]
+        public async Task<IActionResult> getRoles(string roleName)
         {
             try
             {
-               var roleResult =  roleService.getRoles();
-               return  roleResult.Match(t => Ok(t), err => Problem(err.FirstOrDefault().Description));
+                var roleResult = await roleService.createRole(roleName);
+                var jsonString = JsonConvert.SerializeObject(roleResult.Value, Formatting.Indented);
+                return Ok(jsonString);
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("getRoles")]
+        public async Task<IActionResult> getRoles()
+        {
+            try
+            {
+                var settings = new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                    Formatting = Formatting.Indented
+                };
+                var roleResult =  roleService.getUserRoles();
+                var jsonString = JsonConvert.SerializeObject(roleResult.Value, settings );
+                
+                return Ok(jsonString);
+
+               
             }catch(Exception ex)
+            {
+                return Problem(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("createRoleAccess")]
+        public async Task<IActionResult> createRoleAccess([FromBody] RoleAccessDto roleAccessDto)
+        {
+            try
+            {
+                var roleResult = await roleService.createRoleAccess(roleAccessDto);
+                var jsonString = JsonConvert.SerializeObject(roleResult.Value, Formatting.Indented);
+                return Ok(jsonString);
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("getRoleAccessByRoleId")]
+        public async Task<IActionResult> getRoleAccess([FromQuery] Guid Id)
+        {
+            try
+            {
+                var roleAccessResult = await roleService.getRoleAccesses(Id);
+                return Ok(roleAccessResult.Value);
+            }
+            catch (Exception ex)
             {
                 return Problem(ex.Message);
             }
@@ -48,8 +107,7 @@ namespace whwd_web_api.Controllers.RoleController
             try
             {
                 var result = await roleService.checkUserRole(userRole);
-
-			  return Ok(result.Value);
+			    return Ok(result.Value);
             }catch( Exception ex )
             {
                 return Problem(ex.Message);
@@ -57,23 +115,10 @@ namespace whwd_web_api.Controllers.RoleController
         }
 
 
-        [HttpPost]
-        [Route("addUserRole")]
-        public async Task<IActionResult> addUserRole(UserRoleDto userRoleDto)
-        {
-            try
-            {
-                var result = await roleService.addUserRole(userRoleDto);
-                return result.Match(t => Ok(t), err => Problem(err.FirstOrDefault().Description));
-            }
-            catch (Exception ex)
-            {
-                return Problem(ex.Message);
-            }
-        }        
+     
 
         [HttpGet]
-        [Route("getPositioin")]
+        [Route("getPosition")]
         public IActionResult getPositions()
         {
             try
@@ -101,24 +146,5 @@ namespace whwd_web_api.Controllers.RoleController
             }
         }
 
-        [HttpPost]
-        [Route("CreateRole")]
-      async  public  Task<IActionResult> CreateRole(){
-            try{
-                            List<string> roles = new List<string>(){
-                "create",
-                "edit",
-                "view",
-                "approve"
-            };
-            
-            foreach(var role in roles){
-             await _roleManager.CreateAsync(new IdentityRole(role));
-            }
-            return Ok(new MessageReponse(){ isSuccess = true, message = "create role successful" });
-            }catch(Exception ex){
-                return Problem(ex.Message); 
-            }
-        }
     }
 }

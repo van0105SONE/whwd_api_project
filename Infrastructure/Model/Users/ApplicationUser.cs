@@ -12,11 +12,12 @@ namespace Infrastructure.Model.Users
 
         public Village CurrentVillage { get; set; }
         public Village BornVillage { get; set; }
-        public UserType UserType { get; set; }
+
         public Major Major { get; set; }
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiry { get; set; }
 
+        public ApplicationRoles Role { get; set; }
         public ICollection<PositionTeam> positionTeams { get; set; }
     }
 }

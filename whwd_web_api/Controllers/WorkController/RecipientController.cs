@@ -40,7 +40,7 @@ namespace whwd_web_api.Controllers.WorkController
     public async Task<IActionResult> deleteStudent([FromQuery] Guid Id){
         try{
             var result = await _studentService.deleteStudent(Id);
-            return result.Match(t => Ok(new MessageReponse(){
+            return result.Match(t => Ok(new MessageReponse<Recipient>(){
                 isSuccess = t,
                 message = "Delete successful"
             }), err => Problem(err.FirstOrDefault().Description));
@@ -54,7 +54,7 @@ namespace whwd_web_api.Controllers.WorkController
     public async Task<IActionResult> updateStudent([FromBody] StudentUpdateDto studentDto){
         try{
             var result = await _studentService.updateStudent(studentDto);
-            return result.Match(t => Ok(new MessageReponse(){
+            return result.Match(t => Ok(new MessageReponse<Recipient>(){
                 isSuccess = t,
                 message = "Delete successful"
             }), err => Problem(err.FirstOrDefault().Description));

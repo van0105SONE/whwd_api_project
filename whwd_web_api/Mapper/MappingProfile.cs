@@ -44,9 +44,8 @@ namespace whwd_web_api.Mapper
 			CreateMap<Major, MajorDto > ();
 			CreateMap<Village, VillageDto>();
 			CreateMap<District, DistrictDto>();
-            CreateMap <UserType, UserTypeDto>();
 
-			CreateMap<AccountDto, Account>();
+            CreateMap<AccountDto, Account>();
             CreateMap<DonationDto, Donation>();
 
             CreateMap<FundRaisingPlaceDto, FundRaisingPlace>();
@@ -64,11 +63,6 @@ namespace whwd_web_api.Mapper
 
 			CreateMap<SchoolDto, School>();
 			CreateMap<School, SchoolResponseDto>();
-
-
-
-
-
 
             //Mapper 
             CreateMap<ConjointDto, Conjoint>();

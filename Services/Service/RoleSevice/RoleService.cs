@@ -1,4 +1,5 @@
-﻿using ApplicationCore.Dtos.Roles;
+﻿using ApplicationCore.Constanst;
+using ApplicationCore.Dtos.Roles;
 using AutoMapper;
 using ErrorOr;
 using Infrastructure.DataBaseContext;
@@ -21,7 +22,7 @@ namespace Services.Service.RoleSevice
     {
         IMapper _mapper;
         private readonly IRoleRepository _roleRepository;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly RoleManager<ApplicationRoles> _roleManager;
         private readonly UserManager<ApplicationUser> _userManager;
 
         public RoleService(UserManager<ApplicationUser> userManager, DatabaseContexts dbContext, IMapper mapper)
@@ -30,55 +31,13 @@ namespace Services.Service.RoleSevice
             _userManager = userManager;
             _roleRepository = new RoleRepository(dbContext);
         }
-        public RoleService(RoleManager<IdentityRole> roleManager,UserManager<ApplicationUser> userManager,DatabaseContexts dbContext, IMapper mapper)
+
+        public RoleService(RoleManager<ApplicationRoles> roleManager,UserManager<ApplicationUser> userManager,DatabaseContexts dbContext, IMapper mapper)
         {
             _roleManager = roleManager;
             _mapper = mapper;
             _userManager = userManager;
             _roleRepository = new RoleRepository(dbContext);
-        }
-
-        public async Task<ErrorOr<bool>> addPosition(Guid teamId, Guid positionId,  string userName)
-        {
-            try
-            { 
-                 if (teamId == Guid.Empty)
-                   {
-
-                      return Error.Validation(code: "ValidationError", description: "Invalid user information can't be null");
-                   }else if ( positionId == Guid.Empty)
-                   {
-
-                      return Error.Validation(code: "ValidationError", description: "Invalid team can't be null");
-                   }
-                   Position position = _roleRepository.getPositionById(positionId);
-                   ProjectTeam team = _roleRepository.getTeamById(teamId);
-                   if (team == null)
-                   {
-                    return Error.Validation("NotFound", "Can't find the team on the system");
-                   }else if(position == null)
-                   {
-                    return Error.Validation("NotFound", "Can't find the position on the system");
-                   }
-
-
-
-
-                   ApplicationUser? user = _userManager.FindByNameAsync(userName).Result;     
-                   PositionTeam positonTeam = new PositionTeam()
-                   {
-                        Id = Guid.NewGuid(),
-                        Position = position,
-                        Team = team,
-                        User = user
-                   };
-                  
-                   bool isSuccess =  _roleRepository.addPosition(positonTeam);
-                  return isSuccess;
-            }catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
         }
 
         public ErrorOr<List<Position>> getPositions()
@@ -103,11 +62,11 @@ namespace Services.Service.RoleSevice
             }
         }
 
-        public ErrorOr<List<string>> getRoles()
+        public ErrorOr<List<ApplicationRoles>> getUserRoles()
         {
             try
             {
-                List<string> roles = _roleRepository.getRoles() ;
+                List<ApplicationRoles> roles = _roleRepository.getRoles() ;
                 return roles;
             }catch(Exception ex)
             {
@@ -115,30 +74,6 @@ namespace Services.Service.RoleSevice
             }
         }
 
-        public async Task<ErrorOr<bool>> addUserRole(UserRoleDto userRole)
-        {
-            try
-            {
-                 var userResult =  await _userManager.FindByIdAsync(userRole.userId);
-                if (userResult == null)
-                {
-                    Error.Validation("NotFound", "User can't found");
-                }
-                        
-                var result = await _userManager.AddToRoleAsync(userResult, userRole.role);
-                if (result.Succeeded)
-                {
-                   return true;
-                }else
-                {
-                   return Error.Failure("Failure", "Something wend wrong");
-                }
-
-            }catch(Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
 
 		public async Task<ErrorOr<bool>> checkUserRole(CheckRole userRole)
 		{
@@ -171,5 +106,60 @@ namespace Services.Service.RoleSevice
                 throw new Exception(ex.Message);
             }
 		}
-	}
+
+
+        public async Task<ErrorOr<AccessRight>> createRoleAccess(RoleAccessDto roleParams)
+        {
+            try { 
+
+             ApplicationRoles role = _roleRepository.getRoleById(roleParams.Id);
+            if (role != null)
+            {
+                  AccessRight accessRight = new AccessRight()
+                  {
+                    Id = Guid.NewGuid(),
+                    Name = roleParams.accessName,
+                    Roles = role
+                };
+
+
+             return   _roleRepository.createRoleAccess(accessRight);
+            }
+            else
+            {
+                    throw new Exception("Role isn't exist");
+            }
+            }catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<ErrorOr<List<AccessRight>>> getRoleAccesses(Guid roleId)
+        {
+            try
+            {
+              return   _roleRepository.GetRoleAccess(roleId);
+            }catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<ErrorOr<ApplicationRoles>> createRole(string roleName)
+        {
+            try
+            {
+                ApplicationRoles role = new ApplicationRoles() {
+                   Name = roleName,
+                   NormalizedName = roleName.ToUpper()
+                };
+
+                return _roleRepository.createRole(role);
+            }catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+    }
 }

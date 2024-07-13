@@ -119,31 +119,6 @@ namespace Infrastructure.Repository.Implement
             }
         }
 
-        public List<UserType> getUserTypes()
-        {
-            try
-            {
-              List<UserType> userTypes =  _dbContext.userTypes.ToList();
-             return userTypes;
-            }catch(Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        public UserType getUserTypeById(string Id)
-        {
-            try
-            {
-                UserType userTypes = _dbContext.userTypes.FirstOrDefault(t => t.Id == Id.ToString());
-                return userTypes;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
         public List<ApplicationUser> getUsers(BaseFilter filter)
         {
             try
@@ -159,7 +134,7 @@ namespace Infrastructure.Repository.Implement
         {
             try
             {
-                ApplicationUser? user = _dbContext.Users.Include(t => t.BornVillage).ThenInclude(t => t.district).Include(t => t.UserType).Include(t => t.CurrentVillage).ThenInclude(t => t.district).Include(t => t.Major).Include(t => t.positionTeams).ThenInclude(t => t.Team).Include(t => t.positionTeams).ThenInclude(t => t.Position).FirstOrDefault(t => t.Id  == Id);
+                ApplicationUser? user = _dbContext.Users.Include(t => t.BornVillage).ThenInclude(t => t.district).Include(t => t.CurrentVillage).ThenInclude(t => t.district).Include(t => t.Major).Include(t => t.positionTeams).ThenInclude(t => t.Team).Include(t => t.positionTeams).ThenInclude(t => t.Position).FirstOrDefault(t => t.Id  == Id);
                 return user;
             }catch(Exception ex)
             {

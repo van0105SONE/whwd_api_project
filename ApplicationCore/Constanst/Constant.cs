@@ -23,5 +23,8 @@ namespace ApplicationCore.Constanst
 					"COMPANY"
 		};
 
-	}
+
+
+
+    }
 }

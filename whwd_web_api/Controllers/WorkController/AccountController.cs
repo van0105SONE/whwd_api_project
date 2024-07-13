@@ -3,6 +3,7 @@ using ApplicationCore.Filter;
 using AutoMapper;
 using ErrorOr;
 using Infrastructure.DataBaseContext;
+using Infrastructure.Model.Account;
 using Infrastructure.Model.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -25,7 +26,7 @@ namespace whwd_web_api.Controllers.WorkController
     public async Task<IActionResult> createUser([FromBody] AccountDto accountDto){
          try{
            var result =  await  _accountService.createAccount(accountDto);
-           return  result.Match(t => CreatedAtAction(nameof(createUser), new MessageReponse(){
+           return  result.Match(t => CreatedAtAction(nameof(createUser), new MessageReponse<Account>(){
             isSuccess = true,
             message = "Create Successful"
            }),err => Problem(err.FirstOrDefault().Description) );
@@ -39,7 +40,7 @@ namespace whwd_web_api.Controllers.WorkController
     public async Task<IActionResult> UpdateAccount([FromQuery] AccountUpdateDto accountDto){
       try{
           var result =  await _accountService.updateAccount(accountDto);
-          return  result.Match(t => Ok(new MessageReponse(){
+          return  result.Match(t => Ok(new MessageReponse<Account>(){
             isSuccess = t,
             message = "Update Successful"
           }), err => Problem(err.FirstOrDefault().Description));
@@ -52,7 +53,7 @@ namespace whwd_web_api.Controllers.WorkController
     public async Task<IActionResult> deleteAccount([FromQuery] Guid  Id ){
         try{
           var result = await _accountService.deleteAccount(Id);
-          return result.Match(t => Ok(new MessageReponse(){
+          return result.Match(t => Ok(new MessageReponse<Account>(){
             isSuccess = true,
             message = "Delete Successful"
           } ), err => Problem(err.FirstOrDefault().Description));

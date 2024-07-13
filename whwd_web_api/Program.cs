@@ -24,7 +24,7 @@ internal class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         builder.Services.AddDbContext<DatabaseContexts>(option => option.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
-        builder.Services.AddDefaultIdentity<ApplicationUser>(option => option.SignIn.RequireConfirmedEmail = false).AddRoles<IdentityRole>().AddEntityFrameworkStores<DatabaseContexts>();
+        builder.Services.AddDefaultIdentity<ApplicationUser>(option => option.SignIn.RequireConfirmedEmail = false).AddRoles<ApplicationRoles>().AddEntityFrameworkStores<DatabaseContexts>();
 
 
         builder.Services.AddAutoMapper(typeof(Program));
@@ -126,7 +126,34 @@ internal class Program
 				db.SaveChanges();
 			}
 
-		}
+
+
+            List<Position> position = new List<Position>(){
+            new Position(){
+                Id = Guid.NewGuid(),
+                RefNo = DateTime.Now.Date.ToString(),
+                PositionName = "Project Leader"
+            },
+            new Position(){
+                Id = Guid.NewGuid(),
+                RefNo = DateTime.Now.Date.ToString(),
+                PositionName = "Leader"
+            },
+            new Position(){
+                Id = Guid.NewGuid(),
+                RefNo = DateTime.Now.Date.ToString(),
+                PositionName = "Member"
+            },
+
+        };
+
+            foreach (var item in position)
+            {
+                db.position.Add(item);
+                db.SaveChanges();
+            }
+
+        }
         // Configure the HTTP request pipeline.
             app.UseSwagger();
             app.UseSwaggerUI();

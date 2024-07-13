@@ -13,13 +13,12 @@ namespace ApplicationCore.Dtos.UserDto
         public required string Email { get; set; }
         public required string Password { get; set; }
         public required string Occupation { get; set; }
-
-        public required string typeId { get; set; }
         public required Guid positionId {get; set;}
         public required Guid teamId {get; set;}
         public required VillageDto CurrentVillage { get; set; }
         public required VillageDto BornVillage { get; set; }
         public required MajorDto Major { get; set; }
+        public required Guid RoleId { get; set; }
     }
 
  public class UserUpdateDto : UserDto{

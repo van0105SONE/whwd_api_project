@@ -1,4 +1,5 @@
-﻿using ApplicationCore.Dtos.UserDto;
+﻿using ApplicationCore.Dtos;
+using ApplicationCore.Dtos.UserDto;
 using ApplicationCore.Filter;
 using AutoMapper;
 using ErrorOr;
@@ -8,8 +9,10 @@ using Infrastructure.Model.University;
 using Infrastructure.Model.Users;
 using Infrastructure.Repository.Implement;
 using Infrastructure.Repository.IRepository;
+using Infrastructure.Repository.RoleRepository;
 using Infrastructure.Repository.UniversityRepos;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 using Services.Service.RoleSevice;
 
 
@@ -24,46 +27,66 @@ namespace Services.Service.UserService
         private IUserRepository userRepository { get; set; }
         private IAddressRepository addressRepository { get; set; }
         private IUniversityRespository  universityRespository { get; set; }
-       
-       public UserService(UserManager<ApplicationUser> userManager, DatabaseContexts dbContext, IMapper mapper) { 
+        private readonly IRoleRepository _roleRepository;
+        public UserService(UserManager<ApplicationUser> userManager, DatabaseContexts dbContext, IMapper mapper) { 
             _UserManager = userManager;
             roleService = new RoleService(userManager,dbContext, mapper);
             addressRepository = new AddressRepository(dbContext);
             universityRespository = new UniversityRepository(dbContext);
-            userRepository = new UserRepository(dbContext); 
+            userRepository = new UserRepository(dbContext);
+            _roleRepository = new RoleRepository(dbContext);
             _mapper = mapper;
         }
-       async  public Task<ErrorOr<bool>> createUser(UserDto userDto)
+       async  public Task<ErrorOr<MessageReponse<ApplicationUser>>> createUser(UserDto userDto)
         {
             try
             {
 
 
-               ApplicationUser applicationUser =   _mapper.Map<ApplicationUser>(userDto);
+                ApplicationUser applicationUser = _mapper.Map<ApplicationUser>(userDto);
 
                 bool isUserValid = validateUser(userDto);
-                if(!isUserValid){
+                if (!isUserValid)
+                {
                     return Error.Validation("Validation", "User information is't valid");
                 }
 
-                if (String.IsNullOrEmpty(userDto.BornVillage.villageCode) ) {
+                District bornDistrict = addressRepository.getDistrictById(userDto.BornVillage.district.districtCode);
+                District currentDistrict = addressRepository.getDistrictById(userDto.CurrentVillage.district.districtCode);
+                ApplicationRoles role = _roleRepository.getRoleById(userDto.RoleId);
+                var department = universityRespository.getDepartmentById(userDto.Major.DepartmentId);
+                if (role == null)
+                {
+                    return Error.Validation("Validation", "User Role isn't found in the system");
+                }
+                if (department == null)
+                {
+                    return Error.Validation("Validation", "Department isn't found in the system");
+                }
+                if (bornDistrict == null)
+                {
+                    return Error.Validation("Validation", "District isn't found in the system");
+                }
+
+                if (currentDistrict == null)
+                {
+                    return Error.Validation("Validation", "District isn't found in the system");
+                }
+                
+                if (String.IsNullOrEmpty(userDto.BornVillage.villageCode))
+                {
                     Village village = createVillageWithCodeNull(userDto.CurrentVillage.district.districtCode, userDto.CurrentVillage.villageName);
                     applicationUser.BornVillage = village;
                 }
-
-
-
                 if (String.IsNullOrEmpty(userDto.CurrentVillage.villageCode))
                 {
-                   Village village =   createVillageWithCodeNull(userDto.CurrentVillage.district.districtCode, userDto.CurrentVillage.villageName);
+                    Village village = createVillageWithCodeNull(userDto.CurrentVillage.district.districtCode, userDto.CurrentVillage.villageName);
                     applicationUser.CurrentVillage = village;
                 }
 
-
                 if (String.IsNullOrEmpty(userDto.Major.Id))
                 {
-                    var department = universityRespository.getDepartmentById(userDto.Major.DepartmentId);
-
+ 
                     var newMajor = new Major()
                     {
                         Id = Guid.NewGuid().ToString(),
@@ -74,18 +97,25 @@ namespace Services.Service.UserService
                     applicationUser.Major = major;
                 }
 
-                applicationUser.UserType = userRepository.getUserTypeById(userDto.typeId);
+                applicationUser.Role = role;
                 var result = await _UserManager.CreateAsync(applicationUser, userDto.Password);
-
 
                 if (result.Succeeded)
                 {
-                    var roleResult = await roleService.addPosition(userDto.teamId, userDto.positionId, userDto.UserName);
-                    return roleResult.Value;
+                    return new MessageReponse<ApplicationUser>()
+                    {
+                        isSuccess = true,
+                        message = "Successful",
+                        data = applicationUser
+                    };
                 }
                 else
                 {
-                    return Error.Failure("Failure", result.Errors.FirstOrDefault() == null  ? "Somthing went wrong" : result.Errors.FirstOrDefault().Description);
+                    return new MessageReponse<ApplicationUser>() {
+                        isSuccess = false,
+                        message = result.Errors.FirstOrDefault().Description
+                    };
+                    
                 }
             }
             catch (Exception ex)
@@ -95,7 +125,7 @@ namespace Services.Service.UserService
         }
 
 
-      async  public  Task<ErrorOr<bool>> updateUser(UserUpdateDto userDto)
+      async  public  Task<ErrorOr<ApplicationUser>> updateUser(UserUpdateDto userDto)
         {
             if (userDto is null)
             {
@@ -105,7 +135,6 @@ namespace Services.Service.UserService
             try
             {
                 ApplicationUser userMapper = _mapper.Map<ApplicationUser>(userDto);
-
                 ApplicationUser? userData = await _UserManager.FindByIdAsync(userDto.Id);
                 if (userData == null)
                 {
@@ -132,18 +161,10 @@ namespace Services.Service.UserService
           
                 userData.PhoneNumber = userMapper.PhoneNumber;
                 userData.Email = userMapper.Email;
-                userData.UserType = userRepository.getUserTypeById(userMapper.Id);
                 userData.Occupation = userMapper.Occupation;
 
                 var updateResult = await _UserManager.UpdateAsync(userData);
-                if (updateResult.Succeeded)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return userData;
             }
             catch (Exception ex)
             {
@@ -161,7 +182,8 @@ namespace Services.Service.UserService
                     return Error.NotFound("NotFound", "User isn't found");
                 }
 
-                var deleteResult = await   _UserManager.DeleteAsync(applicationUser);
+
+                var deleteResult = await _UserManager.DeleteAsync(applicationUser);
                 if (deleteResult.Succeeded)
                 {
                     return true;
@@ -169,6 +191,7 @@ namespace Services.Service.UserService
                 {
                     return false;
                 }
+
             }catch (Exception ex)
             {
                 throw new Exception(ex.Message);
@@ -186,16 +209,6 @@ namespace Services.Service.UserService
         }
 
 
-        public List<UserType> getUserTypes()
-        {
-            try
-            {
-                 return  userRepository.getUserTypes();
-            } catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
 
         private Village createVillageWithCodeNull(string districtCode, string villageName)
         {

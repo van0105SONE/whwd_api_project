@@ -31,7 +31,6 @@ namespace whwd_web_api.Controllers.UserController
             _UserManager = userManager;
             _userService = new UserService(userManager, dbContext, mapper);
             _addressService = new AddressService(dbContext);
-
             _Mapping = mapper;
         }
 
@@ -43,7 +42,21 @@ namespace whwd_web_api.Controllers.UserController
             try
             {
                 var userResult = await _userService.createUser(userDto);
-                return userResult.Match(t => CreatedAtAction(nameof(CreateUser), new MessageReponse() { isSuccess = true, message = "Successful Created" }), err => Problem(err.FirstOrDefault().Description));
+                if (userResult.FirstError.Code == "Validation")
+                {
+                    return StatusCode(400, new MessageReponse<ApplicationUser>()
+                    {
+                        isSuccess = false,
+                        message = userResult.FirstError.Description,
+                        data = null
+                    }); ;
+                    ;
+                }
+                else
+                {
+                    return Ok(userResult.Value);
+                }
+
             }
             catch (Exception ex)
             {
@@ -55,8 +68,10 @@ namespace whwd_web_api.Controllers.UserController
         [Route("updateUser")]
         public  async Task<IActionResult> UpdateUser([FromBody] UserUpdateDto userDto){
            try{
-            var updateResult = await _userService.updateUser(userDto);
-            return updateResult.Match(t => CreatedAtAction(nameof(UpdateUser), new MessageReponse(){ isSuccess = t, message= "User Update Successful"}), err => Problem(err.FirstOrDefault().Description));
+                var updateResult = await _userService.updateUser(userDto);
+
+                return NoContent(); ;
+                // need to implement to retrurn user
            }catch(Exception ex){
              return Problem(ex.Message);
            }
@@ -70,7 +85,8 @@ namespace whwd_web_api.Controllers.UserController
             {
                 List<ApplicationUser> users = _userService.GetUsers(filter);
 
-             var jsonString = JsonConvert.SerializeObject(users, Formatting.Indented);
+                var jsonString = JsonConvert.SerializeObject(users, Formatting.Indented);
+               
                 return Ok(jsonString);
             }
             catch (Exception ex)
@@ -81,7 +97,6 @@ namespace whwd_web_api.Controllers.UserController
 
         [HttpGet]
         [Route("getUserById")]
-
 		public async Task<IActionResult> GetUserById([FromQuery] String Id)
 		{
 			try
@@ -101,24 +116,5 @@ namespace whwd_web_api.Controllers.UserController
 				return Problem(ex.Message);
 			}
 		}
-
-
-
-
-
-		[HttpGet]
-        [Route("getUserTypes")]
-        public IActionResult getUserTypes()
-        {
-            try
-            {
-                List<UserType> userTypes = _userService.getUserTypes();
-                return Ok(userTypes);
-            }
-            catch (Exception ex)
-            {
-                return Problem(ex.Message);
-            }
-        }
     }
 }

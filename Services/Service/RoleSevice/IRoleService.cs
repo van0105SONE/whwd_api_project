@@ -12,13 +12,15 @@ namespace Services.Service.RoleSevice
 {
     public interface IRoleService
     {
-        public Task<ErrorOr<bool>> addPosition(Guid teamId, Guid positionId, string userName);
-
+        public Task<ErrorOr<ApplicationRoles>> createRole(string roleName);
         public ErrorOr<List<Position>> getPositions();
         public ErrorOr<List<ProjectTeam>> getProjectTeam();
-
         public Task<ErrorOr<bool>> checkUserRole(CheckRole userRole);
-        public ErrorOr<List<string>> getRoles();
-        public Task<ErrorOr<bool>> addUserRole(UserRoleDto userRole);
+        public ErrorOr<List<ApplicationRoles>> getUserRoles();
+        public Task<ErrorOr<List<AccessRight>>> getRoleAccesses(Guid roleId);
+        public  Task<ErrorOr<AccessRight>> createRoleAccess(RoleAccessDto roleAccessParams);
+
+
+
     }
 }

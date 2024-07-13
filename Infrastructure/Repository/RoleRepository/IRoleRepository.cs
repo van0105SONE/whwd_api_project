@@ -1,4 +1,5 @@
 ﻿using Infrastructure.Model.Users;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,22 +11,20 @@ namespace Infrastructure.Repository.RoleRepository
 {
     public interface IRoleRepository
     {
-
-
-        public bool createRole();
-        public bool addRole();
+        public ApplicationRoles createRole(ApplicationRoles role);
         public bool addPosition(PositionTeam position);
-
-        List<string> getRoles();
-
-		List<PositionTeam> getPositionTeamByUserId(string userId);
-
+        public List<ApplicationRoles> getRoles();
+        public ApplicationRoles getRoleById(Guid Id);
+        List<PositionTeam> getPositionTeamByUserId(string userId);
 		List<PositionTeam> getPositionTeams();
         public List<Position> getPositions();
-
         public List<ProjectTeam> getTeams();
-
         public Position getPositionById(Guid Id);
         public ProjectTeam getTeamById(Guid Id);
+        public AccessRight createRoleAccess(AccessRight roleAccess);
+        public List<AccessRight> GetRoleAccess(Guid Id);
+        public AccessRight getAccessRightById(Guid Id);
+
+
     }
 }

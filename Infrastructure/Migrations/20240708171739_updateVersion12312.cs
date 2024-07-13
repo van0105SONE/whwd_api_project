@@ -7,25 +7,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class AddToNewDatabase : Migration
+    public partial class updateVersion12312 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "AspNetRoles",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "text", nullable: false),
-                    Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    NormalizedName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetRoles", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "Position",
                 columns: table => new
@@ -125,24 +111,23 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetRoleClaims",
+                name: "AspNetRoles",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    RoleId = table.Column<string>(type: "text", nullable: false),
-                    ClaimType = table.Column<string>(type: "text", nullable: true),
-                    ClaimValue = table.Column<string>(type: "text", nullable: true)
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    PositionId = table.Column<Guid>(type: "uuid", nullable: true),
+                    Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    NormalizedName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
+                    table.PrimaryKey("PK_AspNetRoles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_AspNetRoles_Position_PositionId",
+                        column: x => x.PositionId,
+                        principalTable: "Position",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -179,6 +164,46 @@ namespace Infrastructure.Migrations
                         name: "FK_faculty_university_universityId",
                         column: x => x.universityId,
                         principalTable: "university",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetRoleClaims",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    RoleId = table.Column<string>(type: "text", nullable: false),
+                    ClaimType = table.Column<string>(type: "text", nullable: true),
+                    ClaimValue = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "accessRight",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    RolesId = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_accessRight", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_accessRight_AspNetRoles_RolesId",
+                        column: x => x.RolesId,
+                        principalTable: "AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -251,10 +276,10 @@ namespace Infrastructure.Migrations
                     Occupation = table.Column<string>(type: "text", nullable: false),
                     CurrentVillagevillageCode = table.Column<string>(type: "text", nullable: false),
                     BornVillagevillageCode = table.Column<string>(type: "text", nullable: false),
-                    UserTypeId = table.Column<string>(type: "text", nullable: true),
                     MajorId = table.Column<string>(type: "text", nullable: true),
                     RefreshToken = table.Column<string>(type: "text", nullable: true),
                     RefreshTokenExpiry = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    RoleId = table.Column<string>(type: "text", nullable: false),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -274,14 +299,15 @@ namespace Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_AspNetUsers_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_AspNetUsers_majors_MajorId",
                         column: x => x.MajorId,
                         principalTable: "majors",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_AspNetUsers_userTypes_UserTypeId",
-                        column: x => x.UserTypeId,
-                        principalTable: "userTypes",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_AspNetUsers_villages_BornVillagevillageCode",
@@ -467,7 +493,7 @@ namespace Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     PositionId = table.Column<Guid>(type: "uuid", nullable: false),
                     TeamId = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<string>(type: "text", nullable: false)
+                    UserId = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -476,8 +502,7 @@ namespace Infrastructure.Migrations
                         name: "FK_position_teams_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_position_teams_Position_PositionId",
                         column: x => x.PositionId,
@@ -824,6 +849,11 @@ namespace Infrastructure.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AspNetRoles_PositionId",
+                table: "AspNetRoles",
+                column: "PositionId");
+
+            migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
                 table: "AspNetRoles",
                 column: "NormalizedName",
@@ -865,9 +895,9 @@ namespace Infrastructure.Migrations
                 column: "MajorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_UserTypeId",
+                name: "IX_AspNetUsers_RoleId",
                 table: "AspNetUsers",
-                column: "UserTypeId");
+                column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
@@ -894,6 +924,11 @@ namespace Infrastructure.Migrations
                 name: "IX_Donation_UpdateById",
                 table: "Donation",
                 column: "UpdateById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_accessRight_RolesId",
+                table: "accessRight",
+                column: "RolesId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_accounts_AccountTypesId",
@@ -1108,6 +1143,9 @@ namespace Infrastructure.Migrations
                 name: "Donation");
 
             migrationBuilder.DropTable(
+                name: "accessRight");
+
+            migrationBuilder.DropTable(
                 name: "accounts");
 
             migrationBuilder.DropTable(
@@ -1129,7 +1167,7 @@ namespace Infrastructure.Migrations
                 name: "transactions");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles");
+                name: "userTypes");
 
             migrationBuilder.DropTable(
                 name: "donators");
@@ -1144,9 +1182,6 @@ namespace Infrastructure.Migrations
                 name: "fundRaisingPlaces");
 
             migrationBuilder.DropTable(
-                name: "Position");
-
-            migrationBuilder.DropTable(
                 name: "project_teams");
 
             migrationBuilder.DropTable(
@@ -1159,13 +1194,16 @@ namespace Infrastructure.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
+                name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
                 name: "majors");
 
             migrationBuilder.DropTable(
-                name: "userTypes");
+                name: "villages");
 
             migrationBuilder.DropTable(
-                name: "villages");
+                name: "Position");
 
             migrationBuilder.DropTable(
                 name: "departments");

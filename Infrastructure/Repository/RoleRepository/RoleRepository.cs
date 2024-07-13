@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -31,22 +32,15 @@ namespace Infrastructure.Repository.RoleRepository
             }
         }
 
-        public bool addRole()
-        {
-            try
-            {
-                return true;
-            }catch(Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
 
-        public bool createRole()
+
+        public ApplicationRoles createRole(ApplicationRoles role)
         {
             try
             {
-                return true;
+                _dbContexts.Roles.Add(role);
+                _dbContexts.SaveChanges();
+                return role;
             }catch(Exception ex)
             {
                 throw new Exception(ex.Message);
@@ -113,11 +107,11 @@ namespace Infrastructure.Repository.RoleRepository
             }
         }
 
-        public List<string> getRoles()
+        public List<ApplicationRoles> getRoles()
         {
             try
             {
-                List<string> roles =  _dbContexts.Roles.Select(t => t.Name).ToList();
+                List<ApplicationRoles> roles =  _dbContexts.Roles.Include(t => t.accessRights).ToList();
                 return roles;
             }catch(Exception ex)
             {
@@ -135,5 +129,64 @@ namespace Infrastructure.Repository.RoleRepository
                 throw new Exception(ex.Message);
             }
 		}
-	}
+
+
+        public AccessRight getAccessRightById(Guid Id)
+        {
+            try
+            {
+               return  _dbContexts.accessRight.FirstOrDefault(t => t.Id == Id);
+            }catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public AccessRight getAccessById(Guid Id)
+        {
+            try
+            {
+                return _dbContexts.accessRight.FirstOrDefault(t => t.Id == Id);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public  AccessRight createRoleAccess(AccessRight roleAccess)
+        {
+            try
+            {
+
+                _dbContexts.accessRight.Add(roleAccess);
+                _dbContexts.SaveChanges();
+                return roleAccess;
+            }catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public ApplicationRoles getRoleById(Guid Id)
+        {
+            try
+            {
+               return _dbContexts.Roles.FirstOrDefault(t => t.Id == Id.ToString());
+            }catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        List<AccessRight> IRoleRepository.GetRoleAccess(Guid Id)
+        {
+            try
+            {
+               return _dbContexts.accessRight.ToList();
+            }catch(Exception ex) {
+                throw new Exception(ex.Message);
+            }
+        }
+    }
 }

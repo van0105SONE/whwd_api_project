@@ -14,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.DataBaseContext
 {
-    public class DatabaseContexts : IdentityDbContext<ApplicationUser, IdentityRole, string>
+    public class DatabaseContexts : IdentityDbContext<ApplicationUser, ApplicationRoles, string>
     {
         public DatabaseContexts(DbContextOptions options):base(options) 
         { 
@@ -22,11 +22,9 @@ namespace Infrastructure.DataBaseContext
 
 
        public DbSet<Position> positions { get; set; }
-       public DbSet<UserType> userTypes { get; set; }
        public DbSet<PositionTeam> position_teams { get; set; }
        public DbSet<Position> position { get; set; }
-
-
+       public DbSet<AccessRight> accessRight { get; set; }
        public DbSet<ProjectTeam> project_teams { get; set; }
        public DbSet<Major>   majors { get; set; }
        public DbSet<Department> departments { get; set; }

@@ -90,7 +90,7 @@ namespace whwd_web_api.Controllers
 
                 if (result.Succeeded)
                 {
-                    return Ok(new MessageReponse() { isSuccess = true, message = "Succesful changed password"});
+                    return Ok(new MessageReponse<ApplicationUser>() { isSuccess = true, message = "Succesful changed password"});
                 }
                 else
                 {

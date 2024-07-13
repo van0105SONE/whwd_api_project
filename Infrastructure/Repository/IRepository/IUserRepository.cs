@@ -37,14 +37,5 @@ namespace Infrastructure.Repository.IRepository
         List<ProjectTeam> GetTeams();
 
 
-
-        /// get user Types
-        /// 
-
-        List<UserType> getUserTypes();
-        UserType getUserTypeById(string Id);
-
-        
-
     }
 }
