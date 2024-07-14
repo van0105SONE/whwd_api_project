@@ -7,7 +7,6 @@
 
         public string UnitType { get; set; }
         public int Unit { get; set; }
-        public int personAmount { get; set; }
         public string userId { get; set; }
     }
 

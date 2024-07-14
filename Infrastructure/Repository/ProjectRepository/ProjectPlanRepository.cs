@@ -147,5 +147,18 @@ namespace Infrastructure.Repository.ProjectRepository
                 throw new Exception(ex.Message);
             }
 		}
-	}
+
+        public async Task<ErrorOr<bool>> closeCurrentPlan()
+        {
+            try
+            {
+              var currentProjectPlan =  _DbContext.projectPlan.FirstOrDefault(t => t.IsActive);
+              currentProjectPlan.IsActive = false;
+              return true;
+            }catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+    }
 }

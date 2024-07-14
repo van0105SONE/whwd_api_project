@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Constanst;
+using ApplicationCore.Dtos;
 using ApplicationCore.Dtos.RecipientDto;
 using ApplicationCore.Dtos.Work;
 using ApplicationCore.Filter;
@@ -14,8 +15,11 @@ using Infrastructure.Repository.IRepository;
 using Infrastructure.Repository.ProjectRepository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.VisualBasic;
 using Services.Middleware;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using Error = ErrorOr.Error;
 
 namespace Services.Service.PositionService
 {
@@ -34,7 +38,6 @@ namespace Services.Service.PositionService
             _projectRepository = new ProjectPlanRepository(context);
             roleMiddleWare = new CheckUserRoles(context, userManager);
             _addressRepository = new AddressRepository(context);
-
         }
 
         public async Task<ErrorOr<bool>> createProject(ProjectPlanDto projectPlanParam)
@@ -44,12 +47,22 @@ namespace Services.Service.PositionService
 
                 ProjectPlan projectPlan  =  _mapper.Map<ProjectPlan>(projectPlanParam);
                 ApplicationUser user = await _userManager.FindByIdAsync(projectPlanParam.userId);
-                if (user == null)
-                {
-                    return Error.NotFound("NotFound", "User ist found on system"); 
-                }
-         
 
+                
+                  if (user == null)
+                  {
+                    return Error.Validation(ErrorCodes.Validation, "User ist found on system"); 
+                  }else if (projectPlanParam.StartDate <= projectPlanParam.EndDate.Date)
+                  {
+                    return Error.Validation(ErrorCodes.Validation, "End date must be greater than start date");
+                  }
+                  var result  = await  _projectRepository.closeCurrentPlan();
+
+                  if (!result.Value)
+                  {
+                     return Error.Validation(ErrorCodes.Validation, "End date must be greater than start date");
+                  }
+                 
                     projectPlan.IsActive = true;
                     projectPlan.valueInKip = 0;
                     projectPlan.ValueInBath = 0;
@@ -81,21 +94,57 @@ namespace Services.Service.PositionService
             throw new NotImplementedException();
         }
 
-        public async Task<ErrorOr<bool>> createDonateThing(DonateThingDto donateThingDto)
+        public async Task<ErrorOr<MessageReponse<List<DonateThingResponseDto>>>> createDonateThing(List<DonateThingDto> donateThingDtos)
         {
             try
             {
-                DonateThing donateThing = _mapper.Map<DonateThing>(donateThingDto);
-                donateThing.CreateBy = await _userManager.FindByIdAsync(donateThingDto.userId);
-                var projectResult = await _projectRepository.getProjectActiveProject();
-                if (projectResult.Value == null)
+                List<DonateThing> donateThingList = new List<DonateThing>();
+                bool isSuccess = false;
+                foreach(var donateThingDto in donateThingDtos)
                 {
-                    return Error.NotFound("NotFound", "project is not found");
+                    DonateThing donateThing = _mapper.Map<DonateThing>(donateThingDto);
+                    donateThing.totalPrice = donateThing.Unit * donateThingDto.Price;
+                    ApplicationUser? user = await _userManager.FindByIdAsync(donateThingDto.userId);
+
+                    var projectResult = await _projectRepository.getProjectActiveProject();
+                    if (projectResult.Value == null)
+                    {
+                        return Error.Validation(ErrorCodes.Validation, "project is not found");
+                    }
+                    else if (user == null)
+                    {
+                        return Error.Validation(ErrorCodes.Validation, "User is not found");
+                    }
+
+                    donateThing.CreateBy = user;
+                    donateThing.ProjectPlan = projectResult.Value;
+                    var result = await _projectRepository.createDonateThing(donateThing);
+                    isSuccess = result.Value;
+                    donateThingList.Add(donateThing);
                 }
-                donateThing.ProjectPlan = projectResult.Value;
-                var result = await  _projectRepository.createDonateThing(donateThing);
-                return result;
-            }catch(Exception ex)
+
+                if (!isSuccess)
+                {
+                    return new MessageReponse<List<DonateThingResponseDto>>()
+                    {
+                        isSuccess = true,
+                        statusCode = 500,
+                        message = "Fail to create donate thing, due to something went wrong"
+                    };
+                }
+                else
+                {
+                    List<DonateThingResponseDto> donateThingReponse = _mapper.Map<List<DonateThingResponseDto>>(donateThingList);
+                    return new MessageReponse<List<DonateThingResponseDto>>() {
+                        isSuccess = true,
+                        statusCode = 200,
+                        message = "Successful",
+                        data = donateThingReponse
+                    };
+                }
+
+            }
+            catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
@@ -112,7 +161,7 @@ namespace Services.Service.PositionService
             }
         }
 
-        public async Task<ErrorOr<bool>> updateDonateThing(UpdateDonateThingDto donateThingDto)
+       public async Task<ErrorOr<MessageReponse<DonateThingResponseDto>>>  updateDonateThing(UpdateDonateThingDto donateThingDto)
         {
             try
             {
@@ -132,10 +181,30 @@ namespace Services.Service.PositionService
                 donateThing.Price = donateThingDto.Price;
                 donateThing.Unit = donateThingDto.Unit;
                 donateThing.UnitType = donateThingDto.UnitType;
-                donateThing.personAmount = donateThing.personAmount;
+                donateThing.totalPrice = donateThing.Price * donateThing.Unit; 
                 var result =  await _projectRepository.updateDonateThing(donateThing);
-                return result;
-            }catch(Exception e)
+                if (result.IsError)
+                {
+                    return new MessageReponse<DonateThingResponseDto>()
+                    {
+                        isSuccess = true,
+                        statusCode = 500,
+                        message = "Fail to create donate thing, due to something went wrong"
+                    };
+                }
+                else
+                {
+                    DonateThingResponseDto donateThingReponse = _mapper.Map<DonateThingResponseDto>(donateThingDto);
+                    return new MessageReponse<DonateThingResponseDto>()
+                    {
+                        isSuccess = true,
+                        statusCode = 200,
+                        message = "Successful",
+                        data = donateThingReponse
+                    };
+                }
+            }
+            catch(Exception e)
             {
                 throw new Exception(e.Message);
             }
@@ -152,14 +221,16 @@ namespace Services.Service.PositionService
             }
         }
 
-        public async Task<ErrorOr<bool>> createSchool(List<SchoolDto> schoolDtos)
+      public async  Task<ErrorOr<MessageReponse<List<SchoolResponseDto>>>> createSchool(List<SchoolDto> schoolDtos)
         {
             try
             {
                 bool isSuccess = false;
+                List<School>? schools = new List<School>();
                 foreach(var  schoolDto in schoolDtos)
                 {
                     School school = _mapper.Map<School>(schoolDto);
+
                     Village village = _addressRepository.getVillageById(schoolDto.villageCode);
                     if (village == null)
                     {
@@ -195,8 +266,30 @@ namespace Services.Service.PositionService
                     school.CreateBy = user;
                     var result = await _projectRepository.createSchool(school);
                     isSuccess = result.Value;
+                    schools.Add(school);
                 }
-                return isSuccess;
+
+                if (isSuccess)
+                {
+                    List<SchoolResponseDto> schoolResponse = _mapper.Map<List<SchoolResponseDto>>(schools);
+                    return new MessageReponse<List<SchoolResponseDto>>() {
+                        isSuccess = true,
+                        statusCode = 200,
+                        message = "Successful",
+                        data = schoolResponse
+                    };
+                }
+                else
+                {
+                    return new MessageReponse<List<SchoolResponseDto>>()
+                    {
+                        isSuccess = false,
+                        statusCode = 500,
+                        message = "Fail to create school list"
+                    };
+                }
+                
+
             }catch(Exception ex)
             {
                 throw new Exception(ex.Message);

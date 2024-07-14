@@ -8,7 +8,10 @@ using Infrastructure.Model.Users;
 using Infrastructure.Model.Work;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Services.Service.PositionService;
+using System.Diagnostics.CodeAnalysis;
+using whwd_web_api.Errors;
 
 
 namespace whwd_web_api.Controllers.WorkController
@@ -33,7 +36,14 @@ namespace whwd_web_api.Controllers.WorkController
             try
             {
                 var result =  await _projectService.createProject(projectDto);
-                return result.Match(t => Ok(t), err => Problem(err.FirstOrDefault().Description));
+                if (result.IsError)
+                {
+                    return Ok(ErrorHandler<ProjectPlanResponseDto>.HandleErrorResponse(result.FirstError.Code, result.FirstError.Description));
+                }
+                else
+                {
+                    return Ok(result.Value);
+                }
             }
             catch (Exception ex)
             {
@@ -60,12 +70,18 @@ namespace whwd_web_api.Controllers.WorkController
        
         [HttpPost]
         [Route("createDonateThing")]
-        public async Task<IActionResult> createDonateThing([FromBody] DonateThingDto donateThing)
+        public async Task<IActionResult> createDonateThing([FromBody] List<DonateThingDto> donateThings)
         {
             try
             {
-                 var result = await _projectService.createDonateThing(donateThing);
-                return result.Match(t => Ok(t), err => Problem(err.FirstOrDefault().Description));
+                 var result = await _projectService.createDonateThing(donateThings);
+                if (result.IsError)
+                {
+                    return Ok(ErrorHandler<DonateThingResponseDto>.HandleErrorResponse(result.FirstError.Code, result.FirstError.Description));
+                }else
+                {
+                    return Ok(result.Value);
+                }
             }catch(Exception ex)
             {
                 return Problem(ex.Message); 
@@ -80,7 +96,13 @@ namespace whwd_web_api.Controllers.WorkController
             try
             {
                 var result = await _projectService.updateDonateThing(donateThing);
-                return result.Match(t => Ok(t), err => Problem(err.FirstOrDefault().Description));
+                if (result.IsError)
+                {
+                    return Ok(ErrorHandler<DonateThingResponseDto>.HandleErrorResponse(result.FirstError.Code, result.FirstError.Description));
+                }else
+                {
+                    return Ok(result.Value);
+                }
             }
             catch (Exception ex)
             {
@@ -95,7 +117,14 @@ namespace whwd_web_api.Controllers.WorkController
             try
             {
                 var result = await _projectService.deleteDonateThing(Id);
-                return result.Match(t => Ok(t), err => Problem(err.FirstOrDefault().Description));
+                if (result.IsError)
+                {
+                    return Ok(ErrorHandler<DonateThingResponseDto>.HandleErrorResponse(result.FirstError.Code, result.FirstError.Description));
+                }
+                else
+                {
+                    return Ok(result.Value);
+                }
             }
             catch (Exception ex)
             {
@@ -127,8 +156,16 @@ namespace whwd_web_api.Controllers.WorkController
             try
             {
                 var result = await   _projectService.createSchool(schoolDto);
-                return result.Match(t => CreatedAtAction(nameof(createSchool), t), err => Problem(err.FirstOrDefault().Description));
-            }catch(Exception ex)
+                if (result.IsError)
+                {
+                    return Ok(ErrorHandler<DonateThingResponseDto>.HandleErrorResponse(result.FirstError.Code, result.FirstError.Description));
+                }
+                else
+                {
+                    return Ok(result.Value);
+                }
+            }
+            catch(Exception ex)
             {
                 return Problem(ex.Message);
             }

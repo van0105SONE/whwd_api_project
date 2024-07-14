@@ -15,7 +15,7 @@ namespace Infrastructure.Model.Work
 
         public string UnitType { get; set; }
         public int Unit { get; set; }
-        public int personAmount { get; set; }
+        public double totalPrice { get; set; }
         public ProjectPlan ProjectPlan { get; set; } 
     }
 }

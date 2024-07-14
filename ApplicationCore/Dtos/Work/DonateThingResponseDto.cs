@@ -14,6 +14,6 @@ namespace ApplicationCore.Dtos.Work
 
 		public string UnitType { get; set; }
 		public int Unit { get; set; }
-		public int personAmount { get; set; }
-	}
+		public double totalPrice { get; set; }
+	};
 }

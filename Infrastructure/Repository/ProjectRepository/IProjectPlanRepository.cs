@@ -9,6 +9,8 @@ namespace Infrastructure.Repository.ProjectRepository
     public interface IProjectPlanRepository
     {
         Task<ErrorOr<bool>> create(ProjectPlan projectParam);
+
+        Task<ErrorOr<bool>> closeCurrentPlan();
         void delete(Guid Id);
         Task<List<ProjectPlan>> getProjects(BaseFilter filter);
         Task<ErrorOr<ProjectPlan>> getProjectActiveProject();
