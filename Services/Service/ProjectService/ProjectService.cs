@@ -44,11 +44,9 @@ namespace Services.Service.PositionService
         {
             try
             {
-
-                ProjectPlan projectPlan  =  _mapper.Map<ProjectPlan>(projectPlanParam);
-                ApplicationUser user = await _userManager.FindByIdAsync(projectPlanParam.userId);
-
-                
+ 
+                  ProjectPlan projectPlan  =  _mapper.Map<ProjectPlan>(projectPlanParam);
+                  ApplicationUser user = await _userManager.FindByIdAsync(projectPlanParam.userId);
                   if (user == null)
                   {
                     return Error.Validation(ErrorCodes.Validation, "User ist found on system"); 
@@ -64,9 +62,10 @@ namespace Services.Service.PositionService
                   }
                  
                     projectPlan.IsActive = true;
-                    projectPlan.valueInKip = 0;
-                    projectPlan.ValueInBath = 0;
-                    projectPlan.ValueInBath = 0;
+                    projectPlan.TotalRecieve = 0;
+                    projectPlan.TotalFund = 0;
+                    projectPlan.totalFundRaisedPlace = 0;
+                    projectPlan.totalFundRaisedPlace = 0;
                     projectPlan.CreateBy = user;
                     return await _projectRepository.create(projectPlan);
    
@@ -84,7 +83,13 @@ namespace Services.Service.PositionService
 
         public Task<ErrorOr<ProjectPlan>> getActiveProjectPlan()
         {
-            throw new NotImplementedException();
+            try
+            {
+                return _projectRepository.getProjectActiveProject();
+            }catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
 
@@ -303,6 +308,24 @@ namespace Services.Service.PositionService
               return await   _projectRepository.getProjects(filter);
             }catch(Exception ex)
             {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<ErrorOr<MessageReponse<List<SchoolResponseDto>>>> getSchools()
+        {
+            try
+            {
+               var schoolResult = await _projectRepository.getSchools();
+                List<SchoolResponseDto> schools =  _mapper.Map<List<SchoolResponseDto>>(schoolResult.Value);
+                return new MessageReponse<List<SchoolResponseDto>>()
+                {
+                    statusCode = 200,
+                    isSuccess = true,
+                    message = "Successful",
+                    data = schools
+                };
+            }catch(Exception ex) {
                 throw new Exception(ex.Message);
             }
         }

@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Dtos.Accounts;
 using ApplicationCore.Dtos.Address;
 using ApplicationCore.Dtos.ConjointDto;
+using ApplicationCore.Dtos.Dashboard;
 using ApplicationCore.Dtos.Donate;
 using ApplicationCore.Dtos.FunRaisingPlaceDto;
 using ApplicationCore.Dtos.RecipientDto;
@@ -71,7 +72,7 @@ namespace whwd_web_api.Mapper
 
 			CreateMap<SchoolDto, School>();
 			CreateMap<School, SchoolResponseDto>();
-
+            CreateMap<SchoolResponseDto, SchoolSerieResponseDto>();
             //Mapper 
             CreateMap<ConjointDto, Conjoint>();
         }

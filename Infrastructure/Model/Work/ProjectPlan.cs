@@ -16,10 +16,14 @@ namespace Infrastructure.Model.Work
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public bool IsActive { get; set; }
+        
+        public Double TotalRecieve { get; set; }
+        public Double  TotalFund { get; set; } 
 
-        public Double  ValueInDollar { get; set; } 
-        public Double  ValueInBath { get; set; }
-        public Double  valueInKip { get; set; }
+        public int totalTargetFundRaisingPlace { get; set; }
+
+        public int totalFundRaisedPlace { get; set; }
+
         public ICollection<DonateThing> donateThings { get; set; }
 		public ICollection<School> schools { get; set; }
 	}

@@ -19,6 +19,7 @@ namespace Services.Service.PositionService
 
 
         Task<ErrorOr<MessageReponse<List<SchoolResponseDto>>>> createSchool(List<SchoolDto> schoolDto);
+        Task<ErrorOr<MessageReponse<List<SchoolResponseDto>>>> getSchools();
         Task<ErrorOr<List<DonateThing>>> getDonateThings(DonateThingFilter filter);
         Task<ErrorOr<List<ProjectPlan>>> getProjects(BaseFilter filter);
         Task<ErrorOr<ProjectPlan>> getProjectPlanById();

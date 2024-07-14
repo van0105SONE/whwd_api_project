@@ -11,6 +11,7 @@ namespace Infrastructure.Model.Recipient
     public class School : BaseModel
     {
         public required string Name { get; set; }
+        public int totalFund { get; set; }
         public Village Village { get; set; }
         public required ProjectPlan Project { get; set; }
     }

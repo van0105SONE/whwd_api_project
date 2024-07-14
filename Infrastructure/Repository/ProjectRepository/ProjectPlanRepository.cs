@@ -160,5 +160,17 @@ namespace Infrastructure.Repository.ProjectRepository
                 throw new Exception(ex.Message);
             }
         }
+
+        public async Task<ErrorOr<List<School>>> getSchools()
+        {
+            try
+            {
+                ProjectPlan? currentProjectPlan = _DbContext.projectPlan.FirstOrDefault(t => t.IsActive);
+                return _DbContext.schoools.Where(t => t.Project.Id == currentProjectPlan.Id).ToList();
+            }catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }
