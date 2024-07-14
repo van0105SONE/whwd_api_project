@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Dtos.Accounts;
+using ApplicationCore.Dtos.Address;
 using ApplicationCore.Dtos.ConjointDto;
 using ApplicationCore.Dtos.Donate;
 using ApplicationCore.Dtos.FunRaisingPlaceDto;
@@ -47,7 +48,7 @@ namespace whwd_web_api.Mapper
 			CreateMap<PositionTeam, PositionTeamDto>();
 			CreateMap<Major, MajorDto > ();
 			CreateMap<Village, VillageDto>();
-			CreateMap<District, DistrictDto>();
+			CreateMap<District, DistrictResponseDto>();
 
             CreateMap<AccountDto, Account>();
             CreateMap<DonationDto, Donation>();
