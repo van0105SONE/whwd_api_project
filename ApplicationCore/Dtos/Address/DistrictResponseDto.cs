@@ -10,5 +10,6 @@ namespace ApplicationCore.Dtos.Address
     {
         public String districtCode { get; set; }
         public String districtName { get; set; }
+        public ProvinceResponseDto province { get; set; }
     }
 }

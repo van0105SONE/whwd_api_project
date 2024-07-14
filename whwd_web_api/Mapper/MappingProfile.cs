@@ -49,6 +49,7 @@ namespace whwd_web_api.Mapper
 			CreateMap<Major, MajorDto > ();
 			CreateMap<Village, VillageDto>();
 			CreateMap<District, DistrictResponseDto>();
+            CreateMap<Province, ProvinceResponseDto>();
 
             CreateMap<AccountDto, Account>();
             CreateMap<DonationDto, Donation>();

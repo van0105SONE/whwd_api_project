@@ -134,7 +134,7 @@ namespace Infrastructure.Repository.Implement
         {
             try
             {
-                ApplicationUser? user = _dbContext.Users.Include(t => t.BornVillage).ThenInclude(t => t.district).Include(t => t.CurrentVillage).ThenInclude(t => t.district).Include(t => t.Major).Include(t => t.positionTeams).ThenInclude(t => t.Team).Include(t => t.positionTeams).ThenInclude(t => t.Position).FirstOrDefault(t => t.Id  == Id);
+                ApplicationUser? user = _dbContext.Users.Include(t => t.BornVillage).ThenInclude(t => t.district).ThenInclude(t => t.province).Include(t => t.CurrentVillage).ThenInclude(t => t.district).ThenInclude(t => t.province).Include(t => t.Major).Include(t => t.positionTeams).ThenInclude(t => t.Team).Include(t => t.positionTeams).ThenInclude(t => t.Position).Include(t => t.Role).FirstOrDefault(t => t.Id  == Id);
                 return user;
             }catch(Exception ex)
             {
