@@ -17,9 +17,6 @@ namespace Infrastructure.Repository.TransactionRepository
 		public Task<List<Transaction>> getTransactions(BaseFilter filter);
         public Task<Transaction> getTransactionId(Guid Id);
 
-		public Task<List<TransactionType>> getTransactionTypes();
-		public Task<TransactionType> getTransactionTypeById(Guid Id);
-		public Task<TransactionType> getTransactionTypeByName(string typeName);
 		
 	}
 }

@@ -45,16 +45,11 @@ namespace Services.Service.TransactionService
 				}
 
 
-				TransactionType transactionType = await _transactionRepos.getTransactionTypeById(transactionParam.TransactionTypeId);
 
-				if (transactionType == null)
-				{
-					return Error.NotFound("transaction type not found, required transaction type id");
-				}
+
 
 
 				transaction.CreateBy = user;
-				transaction.TransactionType = transactionType;
 				transaction.Account = account;
 
 				return await _transactionRepos.createTransaction(transaction);
@@ -100,17 +95,7 @@ namespace Services.Service.TransactionService
 		}
 
 
-		public async Task<List<TransactionType>> getTransactionTypes()
-		{
-			try
-			{
-				return await _transactionRepos.getTransactionTypes();
-			}
-			catch (Exception ex)
-			{
-				throw new Exception(ex.Message);
-			}
-		}
+
 
 	}
 }

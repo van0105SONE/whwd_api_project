@@ -15,17 +15,11 @@ namespace ApplicationCore.Dtos.Donate
 		public string? SponsorType { get; set; }
 		public string? PhoneNumber { get; set; }
 		public string? Facebook { get; set; }
-
+	    public string? SourceType { get; set; }
 		public string userId { get; set; }
 		public Guid  DonatorId { get; set; }
-		public Guid  sourceTypeId { get; set; }
 
 		public Guid accountId { get; set; }
 	}
 
-
-	public class DonationUpdateDto : DonationDto
-	{
-		public Guid Id { get; set; }
-	}
 }

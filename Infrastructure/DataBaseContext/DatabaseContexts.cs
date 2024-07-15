@@ -56,7 +56,7 @@ namespace Infrastructure.DataBaseContext
 
         //transaction
         public DbSet<Transaction> transactions { get; set; }
-        public DbSet<TransactionType> transactionTypes { get; set; }
+
         public DbSet<SourceType> sourceTypes { get; set; }
 
         //conjoint

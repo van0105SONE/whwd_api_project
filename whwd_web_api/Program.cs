@@ -91,28 +91,6 @@ internal class Program
 
 
 
-			List<TransactionType> trxTypes = new List<TransactionType>(){
-			new TransactionType(){
-				Id = Guid.NewGuid(),
-				Name = "Donation"
-			},
-			new TransactionType(){
-				Id = Guid.NewGuid(),
-				Name = "Tranfer"
-			},
-		    new TransactionType(){
-				Id = Guid.NewGuid(),
-				Name = "Withdraw"
-			},
-
-		};
-
-			foreach (var item in trxTypes)
-			{
-				db.transactionTypes.Add(item);
-				db.SaveChanges();
-			}
-
 
 
             List<Position> position = new List<Position>(){

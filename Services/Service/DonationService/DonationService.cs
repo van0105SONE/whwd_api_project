@@ -1,4 +1,6 @@
-﻿using ApplicationCore.Dtos.Donate;
+﻿using ApplicationCore.Constanst;
+using ApplicationCore.Dtos;
+using ApplicationCore.Dtos.Donate;
 using ApplicationCore.Filter;
 using AutoMapper;
 using ErrorOr;
@@ -32,7 +34,7 @@ namespace Services.Service.DonationService
 			_transacitonRepos = new TransactionRepository(contexts);
 
 		}
-		public async Task<ErrorOr<bool>> createDonation([FromBody] DonationDto donationParam)
+        public async Task<ErrorOr<MessageReponse<DonationResponseDto>>> createDonation([FromBody] DonationDto donationParam)
 		{
 			try
 			{
@@ -41,32 +43,72 @@ namespace Services.Service.DonationService
 			     ApplicationUser? user =  await	_UserManager.FindByIdAsync(donationParam.userId);
 			     Donator donator = await	_DonationRepository.getDonatorById(donationParam.DonatorId);
 			     Account account = await	_accountRepository.getAccountById(donationParam.accountId);
-				SourceType sourceType = await _DonationRepository.getSourceTypeById(donationParam.sourceTypeId);
-				TransactionType trxtypes = await _transacitonRepos.getTransactionTypeByName("Donation");
+
+
 				Transaction transaction = new Transaction()
 				{
 					Account = account,
 					Description = "Donate from donator",
 					Amount = donationParam.amount,
-					TransactionType = trxtypes,
+					TransactionType = donation.DonationType,
 					CreateBy = user
 				};
 
-				if (donator == null)
-				{
+				var trxResult = await _transacitonRepos.createTransaction(transaction);
 
-				  donator = new Donator()
-					{
-						Name = donationParam.Name,
-						Facebook = donationParam.Facebook,
-						PhoneNumber = donationParam.PhoneNumber,
-						CreateBy = user
-					};
-					await _DonationRepository.creattDonator(donator);
-				}
-				donation.SourceTypes = sourceType; 
-				donation.DonorBy = donator;
-			  return await	_DonationRepository.createDonation(donation);
+
+				if (trxResult.IsError)
+				{
+                    return new MessageReponse<DonationResponseDto>()
+                    {
+                        isSuccess = false,
+                        statusCode = 500,
+                        message = "Can not create transactoin, unexpect system crash",
+                    };
+                }
+                else
+				{
+                    if (donator == null)
+                    {
+
+                        donator = new Donator()
+                        {
+                            Name = donationParam.Name,
+                            Facebook = donationParam.Facebook,
+                            PhoneNumber = donationParam.PhoneNumber,
+                            CreateBy = user
+                        };
+                        await _DonationRepository.creattDonator(donator);
+                    }
+
+                    donation.DonorBy = donator;
+
+
+                    var result = await _DonationRepository.createDonation(donation);
+
+                    if (result.Value)
+                    {
+                        DonationResponseDto donationResponse = _Mapper.Map<DonationResponseDto>(donation);
+                        return new MessageReponse<DonationResponseDto>()
+                        {
+                            isSuccess = false,
+                            statusCode = 200,
+                            message = "Successful",
+                            data = donationResponse
+                        };
+                    }
+                    else
+                    {
+                        return new MessageReponse<DonationResponseDto>()
+                        {
+                            isSuccess = false,
+                            statusCode = 500,
+                            message = "Fail to create donation data"
+                        };
+
+                    }
+                }
+
 			}
 			catch(Exception ex)
 			{
@@ -106,16 +148,16 @@ namespace Services.Service.DonationService
 			}
 		}
 
-		public async Task<ErrorOr<bool>> updateDonation(DonationUpdateDto donationParam)
+        public async Task<ErrorOr<MessageReponse<DonationResponseDto>>> updateDonation(Guid Id,DonationDto donationParam)
 		{
 			try
 			{
 
-			    Donation donation = await	_DonationRepository.getDonationById(donationParam.Id);
+			    Donation donation = await	_DonationRepository.getDonationById(Id);
 
 				if (donation == null)
 				{
-					return Error.NotFound("Donation not found");
+					return Error.Validation(ErrorCodes.Validation,"Donation not found");
 				}
 
 				donation.Description = donationParam.Description;
@@ -133,8 +175,30 @@ namespace Services.Service.DonationService
 					UpdateAt = DateTime.UtcNow
 				};
 
-				return await _DonationRepository.updateDonation(donation);
-			}catch(Exception ex)
+				var result = await _DonationRepository.updateDonation(donation);
+                if (result.Value)
+                {
+                    DonationResponseDto donationResponse = _Mapper.Map<DonationResponseDto>(donation);
+                    return new MessageReponse<DonationResponseDto>()
+                    {
+                        isSuccess = false,
+                        statusCode = 200,
+                        message = "Successful",
+                        data = donationResponse
+                    };
+                }
+                else
+                {
+                    return new MessageReponse<DonationResponseDto>()
+                    {
+                        isSuccess = false,
+                        statusCode = 500,
+                        message = "Fail to create donation data"
+                    };
+
+                }
+            }
+            catch(Exception ex)
 			{
 				throw new Exception(ex.Message);
 			}
@@ -152,5 +216,6 @@ namespace Services.Service.DonationService
 				throw new Exception(ex.Message);
 			}
 		}
-	}
+
+    }
 }

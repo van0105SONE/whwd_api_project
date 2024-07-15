@@ -26,10 +26,9 @@ namespace whwd_web_api.Controllers
         {
             try
             {
-               var currentProjectPlan = await  _projectService.getActiveProjectPlan();
-               var school = await _projectService.getSchools();
-               DashboardDataResponseDto response = new DashboardDataResponseDto();
-
+                var currentProjectPlan = await  _projectService.getActiveProjectPlan();
+                var school = await _projectService.getSchools();
+                DashboardDataResponseDto response = new DashboardDataResponseDto();
                 response.remainingDate = DateTime.Now.CompareTo(currentProjectPlan.Value.StartDate);
                 response.totalFund = currentProjectPlan.Value.TotalFund;
                 response.totalRecieve = currentProjectPlan.Value.TotalRecieve;

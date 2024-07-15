@@ -62,7 +62,11 @@ namespace whwd_web_api.Controllers.WorkController
 		{
 			try
 			{
-				return Ok(await _transactionService.getTransactionTypes());
+				return Ok(new List<String>() { 
+				   "Donation",
+				   "Income",
+				   "Expense"
+				});
 			}
 			catch (Exception ex)
 			{

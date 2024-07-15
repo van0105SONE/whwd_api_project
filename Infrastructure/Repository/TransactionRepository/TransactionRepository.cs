@@ -73,37 +73,5 @@ namespace Infrastructure.Repository.TransactionRepository
 			}
 		}
 
-		public async Task<TransactionType> getTransactionTypeById(Guid Id)
-		{
-			try
-			{
-				return _DbContexts.transactionTypes.FirstOrDefault(t => t.Id == Id);
-			}catch(Exception ex)
-			{
-				throw new Exception(ex.Message);
-			}
-		}
-
-		public async Task<TransactionType> getTransactionTypeByName(string typeName)
-		{
-			try
-			{
-				return _DbContexts.transactionTypes.First(t => t.Name.ToUpper() == typeName.ToUpper());
-			}catch(Exception ex)
-			{
-				throw new Exception(ex.Message);
-			}
-		}
-
-		public async Task<List<TransactionType>> getTransactionTypes()
-		{
-			try
-			{
-		       return	_DbContexts.transactionTypes.ToList();
-			}catch(Exception ex)
-			{
-				throw new Exception(ex.Message);
-			}
-		}
 	}
 }

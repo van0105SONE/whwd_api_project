@@ -54,9 +54,10 @@ namespace whwd_web_api.Mapper
 
             CreateMap<AccountDto, Account>();
             CreateMap<DonationDto, Donation>();
+            CreateMap<Donation, DonationResponseDto>();
+            CreateMap<Donator, DonatorResponseDto>();
 
             CreateMap<FundRaisingPlaceDto, FundRaisingPlace>();
-
             CreateMap<DepartmentDto, Department>();
             CreateMap<FacultyDto, Faculty>();
             CreateMap<UniversityDto, University>();

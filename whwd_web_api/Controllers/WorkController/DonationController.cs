@@ -8,6 +8,8 @@ using Infrastructure.Repository.DonationRepostiory;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Services.Service.DonationService;
+using System.Diagnostics.CodeAnalysis;
+using whwd_web_api.Errors;
 
 
 namespace whwd_web_api.Controllers.WorkController
@@ -45,13 +47,20 @@ namespace whwd_web_api.Controllers.WorkController
 		}
 
 		[HttpPut]
-		[Route("updateDonation")]
-		public async Task<IActionResult> updateDonaton([FromBody] DonationUpdateDto donationDto)
+		[Route("updateDonation/{donationId}")]
+		public async Task<IActionResult> updateDonaton(Guid donationId,[FromBody] DonationDto donationDto)
 		{
 			try
 			{
-				var result = await _donationService.updateDonation(donationDto);
-				return result.Match(t => CreatedAtAction(nameof(updateDonaton), t), err => Problem(err.FirstOrDefault().Description));
+				var result = await _donationService.updateDonation(donationId, donationDto);
+				if (result.IsError)
+				{
+					return Ok(ErrorHandler<DonationResponseDto>.HandleErrorResponse(result.FirstError.Code, result.FirstError.Description));
+				}
+				else
+				{
+					return Ok(result.Value);
+				}
 			}
 			catch (Exception ex)
 			{
@@ -78,7 +87,11 @@ namespace whwd_web_api.Controllers.WorkController
 		{
 			try
 			{
-				return Ok(await _donationService.getSourceTypes());
+				return Ok(new List<string>()
+				{
+					"Online",
+					"Offline",
+				});
 			}
 			catch (Exception ex)
 			{

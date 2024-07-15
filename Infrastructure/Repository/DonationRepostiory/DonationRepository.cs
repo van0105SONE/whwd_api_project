@@ -78,7 +78,7 @@ namespace Infrastructure.Repository.DonationRepostiory
 		{
 			try
 			{
-			   return  _dbContext.Donation.Include(t => t.DonorBy).Include(t => t.SourceTypes).Skip((filter.page - 1) * filter.pageSize).Take(filter.pageSize).ToList();
+			   return  _dbContext.Donation.Include(t => t.DonorBy).Skip((filter.page - 1) * filter.pageSize).Take(filter.pageSize).ToList();
 			}catch(Exception ex)
 			{
 				throw new Exception(ex.Message);
