@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Constanst;
+using ApplicationCore.Dtos;
 using ApplicationCore.Dtos.FunRaisingPlaceDto;
 using ApplicationCore.Filter;
 using AutoMapper;
@@ -14,7 +15,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
+using System.Net.WebSockets;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -34,7 +37,7 @@ namespace Services.Service.FundRaisingPlaceService
             _fundRaisingPlaceService = new FundRaisingPlaceRepos(context);
             
         }
-        public async Task<ErrorOr<bool>> createPlace(FundRaisingPlaceDto placeDto)
+        public async Task<ErrorOr<MessageReponse<PlaceResponseDto>>> createPlace(FundRaisingPlaceDto placeDto)
         {
             try
             {
@@ -42,26 +45,55 @@ namespace Services.Service.FundRaisingPlaceService
 
                 if (user == null)
                 {
-                    return Error.NotFound("User invalid, require user data");
+                    return Error.Validation(ErrorCodes.Validation,"User invalid, require user data");
                 }
                 ApplicationUser? coordinator = await _userManager.FindByIdAsync(placeDto.coordinatorId);
                 if (coordinator == null)
                 {
-                    return Error.NotFound("Coordinator invalid, require coordinato data");
+                    return Error.Validation(ErrorCodes.Validation,"Coordinator invalid, require coordinato data");
                 }
-                Village village = _addressRepository.getVillageById(placeDto.villageCode);
+                Village village = _addressRepository.getVillageById(placeDto.Village.villageCode);
 
                 if (village == null)
                 {
-                    return Error.NotFound("Village invalid, require village data");
+                    return Error.Validation(ErrorCodes.Validation, "Village invalid, require village data");
                 }
+
+                if (placeDto.startDate >= DateTime.Now)
+                {
+                    return Error.Validation(ErrorCodes.Validation, "Start date must be greater or equal to date now");
+                }
+
                 FundRaisingPlace newPlace = _mapper.Map<FundRaisingPlace>(placeDto);
+
                 newPlace.Status  = Constant.COORDINATE_STATUSES[0];
                 newPlace.CreateBy = user;
                 newPlace.CoordinateBy = coordinator;
                 newPlace.Village = village;
                 var result =  await _fundRaisingPlaceService.createPlace(newPlace);
-                return result;
+
+                if (result)
+                {
+                    PlaceResponseDto response =   _mapper.Map<PlaceResponseDto>(newPlace);
+                    return new MessageReponse<PlaceResponseDto>()
+                    {
+                        isSuccess = true,
+                        statusCode = 200,
+                        message = "Successful",
+                        data = response
+                    };
+                }
+                else
+                {
+                    return new MessageReponse<PlaceResponseDto>()
+                    {
+                        isSuccess = false,
+                        statusCode = 500,
+                        message = "Fail to create fund raising place"
+                    };
+                }
+
+
             }
             catch (Exception ex)
             {
@@ -98,14 +130,46 @@ namespace Services.Service.FundRaisingPlaceService
             }
         }
 
-       async public Task<ErrorOr<bool>> updatePlace(PlaceUpdateStatusDto placeDto)
+        public async Task<ErrorOr<MessageReponse<PlaceResponseDto>>> updatePlace(PlaceUpdateStatusDto placeDto)
         {
             try
             {
                 var place =  await _fundRaisingPlaceService.getPlaceById(placeDto.Id);
                 place.Status = placeDto.status;
+                place.startDate = placeDto.startDate;
+                place.endDate = placeDto.endDate;
+                if (place.startDate.Value.Date >= DateTime.Now.Date)
+                {
+                    return new MessageReponse<PlaceResponseDto>()
+                    {
+                        isSuccess = false,
+                        statusCode = 400,
+                        message = "Start date must greater than current date"
+                    };
+                }
+
+
                 var result = await _fundRaisingPlaceService.updatePlace(place);
-                return result;
+                if (result)
+                {
+                    var response = _mapper.Map<PlaceResponseDto>(place);
+                    return new MessageReponse<PlaceResponseDto>()
+                    {
+                        isSuccess = true,
+                        statusCode = 200,
+                        message = "Successful",
+                        data = response
+                    };
+                }
+                else
+                {
+                    return new MessageReponse<PlaceResponseDto>()
+                    {
+                        isSuccess = false,
+                        statusCode = 400,
+                        message = "Fail to create, "
+                    };
+                }
             }
             catch (Exception ex)
             {

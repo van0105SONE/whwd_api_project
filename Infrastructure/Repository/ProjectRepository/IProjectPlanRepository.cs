@@ -15,8 +15,9 @@ namespace Infrastructure.Repository.ProjectRepository
         Task<List<ProjectPlan>> getProjects(BaseFilter filter);
         Task<ErrorOr<ProjectPlan>> getProjectActiveProject();
         Task<ErrorOr<bool>> createSchool(School schoolParam);
-
         Task<ErrorOr<List<School>>> getSchools();
+
+        Task<ErrorOr<School>> getSchoolById(Guid Id);
         Task<ErrorOr<bool>> createDonateThing(DonateThing projectParam);
         Task<ErrorOr<bool>> updateDonateThing(DonateThing donateThingParams);
         Task<ErrorOr<bool>> deleteDonateThing(Guid Id);

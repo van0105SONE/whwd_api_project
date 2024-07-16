@@ -45,6 +45,14 @@ namespace Services.Service.DonationService
 			     Account account = await	_accountRepository.getAccountById(donationParam.accountId);
 
 
+				if (user == null)
+				{
+					return Error.Validation(ErrorCodes.Validation, "User id is invalid, user id is required");
+				}else if (donator == null)
+				{
+					return Error.Validation(ErrorCodes.Validation, "Account id is invalid, account is required");
+				}
+
 				Transaction transaction = new Transaction()
 				{
 					Account = account,

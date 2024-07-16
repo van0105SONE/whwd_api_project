@@ -253,20 +253,20 @@ namespace Services.Service.PositionService
                     }
                     if (village == null)
                     {
-                        throw new Exception("System can't find  village");
+                        return Error.Validation(ErrorCodes.Validation,"System can't find  village");
                     }
                     school.Village = village;
                     var projectError = await _projectRepository.getProjectActiveProject();
                     if (projectError.IsError)
                     {
-                        throw new Exception("System can't find project plan");
+                        return Error.Validation(ErrorCodes.Validation, "There is no project plan is created yet");
                     }
                     school.Project = projectError.Value;
 
                     var user = await _userManager.FindByIdAsync(schoolDto.userId);
                     if (user == null)
                     {
-                        throw new Exception("Invalid user data, user id is required");
+                        return Error.Validation(ErrorCodes.Validation, "Invalid user data, user id is required");
                     }
                     school.CreateBy = user;
                     var result = await _projectRepository.createSchool(school);

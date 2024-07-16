@@ -16,10 +16,11 @@ namespace Infrastructure.Model.Place
         public string? Email { get; set; }
         public string? Other { get; set; }
         public string? Facebook { get; set; }
-        public double Longtitude { get; set; } = 0;
-        public double Latitude { get; set; } = 0;
-
+        public string? googleMapLink { get; set; }
         public string Status { get; set; }
+
+        public DateTime? startDate { get; set; } = DateTime.UtcNow;
+        public DateTime? endDate { get; set; } 
         public ApplicationUser CoordinateBy { get; set; }
 
         public required Village Village { get; set; }

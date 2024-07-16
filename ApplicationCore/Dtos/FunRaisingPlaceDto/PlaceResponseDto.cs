@@ -1,27 +1,25 @@
-﻿using System;
+﻿using ApplicationCore.Dtos.UserDto;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using whwd_web_api.Dtos.Address;
 
-namespace ApplicationCore.Dtos.FunRaisingPlaceDto
+namespace Infrastructure.Model.Place
 {
-    public class FundRaisingPlaceDto
+    public class PlaceResponseDto
     {
+        public Guid Id { get; set; }
         public required string PlaceName { get; set; }
+        public string Status { get; set; }
         public string? PhoneNumber { get; set; }
         public string? Email { get; set; }
         public string? Other { get; set; }
         public string? Facebook { get; set; }
+        
         public string? googleMapLink { get; set; }
-        public DateTime startDate { get; set;  }
-        public DateTime endDate { get; set; }
-        public required string userId { get; set; }
-        public required string coordinatorId { get; set; }
-        public VillageDto Village { get; set; }
+
+        public UserReponseDto CoordinateBy { get; set; }
+
     }
-
-
-
 }

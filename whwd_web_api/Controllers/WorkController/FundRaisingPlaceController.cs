@@ -3,10 +3,12 @@ using ApplicationCore.Dtos.FunRaisingPlaceDto;
 using ApplicationCore.Filter;
 using AutoMapper;
 using Infrastructure.DataBaseContext;
+using Infrastructure.Model.Place;
 using Infrastructure.Model.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Services.Service.FundRaisingPlaceService;
+using whwd_web_api.Errors;
 
 namespace whwd_web_api.Controllers.WorkController
 {
@@ -27,8 +29,13 @@ namespace whwd_web_api.Controllers.WorkController
         {
             try
             {
-              var result =  await _fundRaisingService.createPlace(placeDto);
-                return result.Match(t => CreatedAtAction(nameof(createPlace), t), err => Problem(err.FirstOrDefault().Description));
+                var result =  await _fundRaisingService.createPlace(placeDto);
+                if (result.IsError)
+                {
+                    return  Ok(ErrorHandler<PlaceResponseDto>.HandleErrorResponse(result.FirstError.Code, result.FirstError.Description));
+                } else {
+                    return Ok(result.Value);
+                }       
             }catch(Exception ex)
             {
                 return Problem(ex.Message);
@@ -42,20 +49,22 @@ namespace whwd_web_api.Controllers.WorkController
         {
             try
             {
-                try
-                {
                     var result = await _fundRaisingService.updatePlace(placeStatusDto);
-                    return result.Match(t => CreatedAtAction(nameof(createPlace), t), err => Problem(err.FirstOrDefault().Description));
+
+                    if (result.IsError)
+                    {
+                        return Ok(ErrorHandler<FundRaisingPlaceDto>.HandleErrorResponse(result.FirstError.Code, result.FirstError.Description));
+                    }
+                    else
+                    {
+                        return Ok(result.Value);
+                    }
                 }
                 catch (Exception ex)
                 {
                     return Problem(ex.Message);
                 }
-            }
-            catch (Exception ex)
-            {
-                return Problem(ex.Message);
-            }
+  
         }
 
 

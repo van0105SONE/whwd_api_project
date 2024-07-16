@@ -6,6 +6,6 @@ namespace whwd_web_api.Dtos.Address
     {
         public string? villageCode { get; set; }
         public required string villageName { get; set; }
-        public required DistrictResponseDto district { get; set; }
+        public required DistrictDto district { get; set; }
     }
 }

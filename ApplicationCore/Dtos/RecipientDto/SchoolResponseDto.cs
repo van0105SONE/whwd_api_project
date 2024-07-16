@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ApplicationCore.Dtos.Address;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,6 @@ namespace ApplicationCore.Dtos.RecipientDto
 	{
 		public Guid Id { get; set; }
 		public required string Name { get; set; }
-		public VillageDto Village { get; set; }
+		public VillageReponseDto Village { get; set; }
 	}
 }

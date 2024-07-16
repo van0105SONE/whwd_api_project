@@ -7,6 +7,7 @@ using Infrastructure.Model.Users;
 using Infrastructure.Repository.DonationRepostiory;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Services.Service.DonationService;
 using System.Diagnostics.CodeAnalysis;
 using whwd_web_api.Errors;
@@ -32,7 +33,14 @@ namespace whwd_web_api.Controllers.WorkController
 			try
 			{
 			    var result =  await _donationService.createDonation(donationDto);
-				return result.Match(t => CreatedAtAction(nameof(createDonation), t), err => Problem(err.FirstOrDefault().Description));
+				if (result.IsError)
+				{
+					return Ok(ErrorHandler<DonationResponseDto>.HandleErrorResponse(result.FirstError.Code, result.FirstError.Description));
+				}
+				else
+				{
+					return Ok(result.Value);
+				}
 			}catch (Exception ex)
 			{
 				throw new Exception(ex.Message);
@@ -82,7 +90,7 @@ namespace whwd_web_api.Controllers.WorkController
 		}
 
 		[HttpGet]
-		[Route("getSourceType")]
+		[Route("getDonationType")]
 		public async Task<IActionResult> getSourceTypes()
 		{
 			try
@@ -91,6 +99,7 @@ namespace whwd_web_api.Controllers.WorkController
 				{
 					"Online",
 					"Offline",
+					"Donation"
 				});
 			}
 			catch (Exception ex)

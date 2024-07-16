@@ -12,9 +12,9 @@ namespace ApplicationCore.Dtos.RecipientDto
 
         public required string Name { get; set; }
         public required string VillageName { get; set; }
+        public required string Gender { get; set; }
         public string villageCode { get; set; }
         public string districtCode { get; set; }
-        public required Guid projectPlanId { get; set; }
         public required string userId { get; set; }
     }
 }

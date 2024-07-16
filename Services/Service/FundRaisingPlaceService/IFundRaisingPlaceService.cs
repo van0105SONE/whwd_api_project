@@ -1,4 +1,5 @@
-﻿using ApplicationCore.Dtos.FunRaisingPlaceDto;
+﻿using ApplicationCore.Dtos;
+using ApplicationCore.Dtos.FunRaisingPlaceDto;
 using ApplicationCore.Filter;
 using ErrorOr;
 using Infrastructure.Model.Place;
@@ -13,9 +14,9 @@ namespace Services.Service.FundRaisingPlaceService
 {
     public interface IFundRaisingPlaceService
     {
-        public Task<ErrorOr<bool>> createPlace(FundRaisingPlaceDto placeDto);
+        public Task<ErrorOr<MessageReponse<PlaceResponseDto>>> createPlace(FundRaisingPlaceDto placeDto);
 
-        public Task<ErrorOr<bool>> updatePlace(PlaceUpdateStatusDto placeDto);
+        public Task<ErrorOr<MessageReponse<PlaceResponseDto>>> updatePlace(PlaceUpdateStatusDto placeDto);
 
         public Task<List<FundRaisingPlace>> getPlaceAll(BaseFilter filter);
 

@@ -158,7 +158,7 @@ namespace whwd_web_api.Controllers.WorkController
                 var result = await   _projectService.createSchool(schoolDto);
                 if (result.IsError)
                 {
-                    return Ok(ErrorHandler<DonateThingResponseDto>.HandleErrorResponse(result.FirstError.Code, result.FirstError.Description));
+                    return Ok(ErrorHandler<SchoolResponseDto>.HandleErrorResponse(result.FirstError.Code, result.FirstError.Description));
                 }
                 else
                 {
@@ -166,6 +166,21 @@ namespace whwd_web_api.Controllers.WorkController
                 }
             }
             catch(Exception ex)
+            {
+                return Problem(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("getSchools")]
+        public async Task<IActionResult> getSchools()
+        {
+            try
+            {
+                var result = await _projectService.getSchools();
+                return result.Match(t => Ok(t), err => Problem(err.FirstOrDefault().Description));
+            }
+            catch (Exception ex)
             {
                 return Problem(ex.Message);
             }

@@ -1,22 +1,19 @@
-﻿using ApplicationCore.Dtos.StudentDto;
+﻿using ApplicationCore.Constanst;
+using ApplicationCore.Dtos;
+using ApplicationCore.Dtos.Recipient;
+using ApplicationCore.Dtos.StudentDto;
 using ApplicationCore.Filter;
 using AutoMapper;
 using ErrorOr;
 using Infrastructure.DataBaseContext;
+using Infrastructure.Model.Place;
 using Infrastructure.Model.Student;
 using Infrastructure.Model.Users;
 using Infrastructure.Model.Work;
 using Infrastructure.Repository.ProjectRepository;
 using Infrastructure.Repository.StudentRepository;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic;
-using Services.Service.PositionService;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Services.Service.StudentService
 {
@@ -33,62 +30,110 @@ namespace Services.Service.StudentService
             _mapper = mapper;
         }
 
-      async  public Task<ErrorOr<bool>> createStudent(RecipientDto studentDto)
+      async  public Task<ErrorOr<MessageReponse<RecipientReponseDto>>> createStudent(RecipientDto studentDto)
         {
             try
             {
                 Recipient studentData =  _mapper.Map<Recipient>(studentDto);
                 var projectPlanResult = await _projectService.getProjectActiveProject();
+                var schoolResult = await _projectService.getSchoolById(studentDto.schoolId);
                 if (projectPlanResult.Value == null)
                 {
-                    return Error.NotFound("NotFound", "Project isn't found");
+                    return Error.Validation(ErrorCodes.Validation, "Project isn't found");
+                } else if (schoolResult.Value == null)
+                {
+                    return Error.Validation(ErrorCodes.Validation, "school isn't found");
                 }
                 ProjectPlan projectPlan = projectPlanResult.Value;
                 ApplicationUser? user =  await  _userManager.FindByIdAsync(studentDto.userId);
+
                 if (user == null)
                 {
-                    return Error.NotFound("NotFound", "User isn't found");
+                    return Error.Validation(ErrorCodes.Validation, "User isn't found");
                 }
 
                 studentData.CreateBy = user;
                 studentData.Project = projectPlan;
+                studentData.School = schoolResult.Value;
                 var result = await  _studentRepository.create(studentData);
-                return result;
-            }catch(Exception ex)
+                if (result.Value)
+                {
+                    RecipientReponseDto response = _mapper.Map<RecipientReponseDto>(studentData);
+                    return new MessageReponse<RecipientReponseDto>()
+                    {
+                        isSuccess = true,
+                        statusCode = 200,
+                        message = "Successful",
+                        data = response
+                    };
+                }
+                else
+                {
+                    return new MessageReponse<RecipientReponseDto>()
+                    {
+                        isSuccess = false,
+                        statusCode = 500,
+                        message = "Fail to create fund raising place"
+                    };
+                }
+            }
+            catch(Exception ex)
             {
                 throw new Exception(ex.Message);
             }
         }
 
-       async public Task<ErrorOr<bool>> updateStudent(StudentUpdateDto studentDto)
+       async public Task<ErrorOr<MessageReponse<RecipientReponseDto>>> updateStudent(Guid Id,RecipientDto studentDto)
         {
            try{
                 Recipient studentData =  _mapper.Map<Recipient>(studentDto);
    
-                Recipient student = await _studentRepository.GetStudentById(studentData.Id);
+                Recipient student = await _studentRepository.GetStudentById(Id);
+
+
                 var projectPlanResult = await _projectService.getProjectActiveProject();
                 if (projectPlanResult.Value == null)
                 {
-                    return Error.NotFound("NotFound", "Project isn't found");
+                    return Error.Validation(ErrorCodes.Validation, "Project isn't found");
                 }
                 ProjectPlan projectPlan = projectPlanResult.Value;
                 ApplicationUser? user =  await  _userManager.FindByIdAsync(studentDto.userId);
                 if (user == null)
                 {
-                    return Error.NotFound("NotFound", "User isn't found");
+                    return Error.Validation(ErrorCodes.Validation, "User isn't found");
                 }
+
+
                 student.fname = studentData.fname;
                 student.lname = studentData.lname;
-                student.chestSize = studentData.chestSize;
-                student.shouldSize = studentData.shouldSize;  
-                student.hemSize = studentData.hemSize;  
-                student.bodyLength = studentData.bodyLength;
                 student.birthDate = studentData.birthDate;
                 student.level = studentData.level;
                 student.UpdateBy = user;
                 student.UpdateAt = DateTime.UtcNow;
                 student.Project = projectPlan;
-                return await  _studentRepository.update(student);
+                var result = await  _studentRepository.update(student);
+
+                if (result)
+                {
+                    RecipientReponseDto response = _mapper.Map<RecipientReponseDto>(studentData);
+                    return new MessageReponse<RecipientReponseDto>()
+                    {
+                        isSuccess = true,
+                        statusCode = 200,
+                        message = "Successful",
+                        data = response
+                    };
+                }
+                else
+                {
+                    return new MessageReponse<RecipientReponseDto>()
+                    {
+                        isSuccess = false,
+                        statusCode = 500,
+                        message = "Fail to create fund raising place"
+                    };
+                }
+            
            }catch(Exception ex){
                 throw new Exception(ex.Message);
            }

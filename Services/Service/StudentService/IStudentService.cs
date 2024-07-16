@@ -1,4 +1,6 @@
-﻿using ApplicationCore.Dtos.StudentDto;
+﻿using ApplicationCore.Dtos;
+using ApplicationCore.Dtos.Recipient;
+using ApplicationCore.Dtos.StudentDto;
 using ApplicationCore.Filter;
 using ErrorOr;
 using Infrastructure.Model.Student;
@@ -12,8 +14,8 @@ namespace Services.Service.StudentService
 {
     public interface IStudentService
     {
-        public Task<ErrorOr<bool>> createStudent(RecipientDto studentDto);
-        public Task<ErrorOr<bool>> updateStudent(StudentUpdateDto studentDto);
+        public Task<ErrorOr<MessageReponse<RecipientReponseDto>>> createStudent(RecipientDto studentDto);
+        public Task<ErrorOr<MessageReponse<RecipientReponseDto>>> updateStudent(Guid Id, RecipientDto studentDto);
         public Task<ErrorOr<bool>> deleteStudent(Guid id); 
 
         public Task<ErrorOr<Recipient>> getStudentById(Guid Id);  

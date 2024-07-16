@@ -4,11 +4,13 @@ using ApplicationCore.Filter;
 using AutoMapper;
 using ErrorOr;
 using Infrastructure.DataBaseContext;
+using Infrastructure.Model.Place;
 using Infrastructure.Model.Student;
 using Infrastructure.Model.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Services.Service.StudentService;
+using whwd_web_api.Errors;
 
 namespace whwd_web_api.Controllers.WorkController
 {
@@ -29,8 +31,16 @@ namespace whwd_web_api.Controllers.WorkController
             try
             {
                 var result = await  _studentService.createStudent(studentDto);
-                return result.Match(t => Ok(t), err => Problem(err.FirstOrDefault().Description));
-            }catch(Exception ex)
+                if (result.IsError)
+                {
+                    return Ok(ErrorHandler<PlaceResponseDto>.HandleErrorResponse(result.FirstError.Code, result.FirstError.Description));
+                }
+                else
+                {
+                    return Ok(result.Value);
+                }
+            }
+            catch(Exception ex)
             {
                 return Problem(ex.Message);
             }
@@ -50,15 +60,20 @@ namespace whwd_web_api.Controllers.WorkController
     }
 
     [HttpPut]
-    [Route("updateRecipient")]
-    public async Task<IActionResult> updateStudent([FromBody] StudentUpdateDto studentDto){
+    [Route("updateRecipient/{recipientId}")]
+    public async Task<IActionResult> updateStudent(Guid recipientId,[FromBody] RecipientDto studentDto){
         try{
-            var result = await _studentService.updateStudent(studentDto);
-            return result.Match(t => Ok(new MessageReponse<Recipient>(){
-                isSuccess = t,
-                message = "Delete successful"
-            }), err => Problem(err.FirstOrDefault().Description));
-        }catch(Exception ex){
+            var result = await _studentService.updateStudent(recipientId,studentDto);
+                if (result.IsError)
+                {
+                    return Ok(ErrorHandler<PlaceResponseDto>.HandleErrorResponse(result.FirstError.Code, result.FirstError.Description));
+                }
+                else
+                {
+                    return Ok(result.Value);
+                }
+            }
+            catch(Exception ex){
             return Problem(ex.Message);
         }
     }

@@ -5,6 +5,7 @@ using Infrastructure.DataBaseContext;
 using Infrastructure.Model.Recipient;
 using Infrastructure.Model.Work;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.CompilerServices;
 
 namespace Infrastructure.Repository.ProjectRepository
 {
@@ -167,6 +168,17 @@ namespace Infrastructure.Repository.ProjectRepository
             {
                 ProjectPlan? currentProjectPlan = _DbContext.projectPlan.FirstOrDefault(t => t.IsActive);
                 return _DbContext.schoools.Where(t => t.Project.Id == currentProjectPlan.Id).ToList();
+            }catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<ErrorOr<School>> getSchoolById(Guid Id)
+        {
+            try
+            {
+               return  _DbContext.schoools.FirstOrDefault(t => t.Id == Id);
             }catch(Exception ex)
             {
                 throw new Exception(ex.Message);
