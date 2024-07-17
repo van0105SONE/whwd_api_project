@@ -41,14 +41,13 @@ namespace Services.Service.DonationService
 
 			     Donation donation =	_Mapper.Map<Donation>(donationParam);
 			     ApplicationUser? user =  await	_UserManager.FindByIdAsync(donationParam.userId);
-			     Donator donator = await	_DonationRepository.getDonatorById(donationParam.DonatorId);
 			     Account account = await	_accountRepository.getAccountById(donationParam.accountId);
-
+			    	Donator donator = new Donator();
 
 				if (user == null)
 				{
 					return Error.Validation(ErrorCodes.Validation, "User id is invalid, user id is required");
-				}else if (donator == null)
+				}else if (donationParam.Name == null)
 				{
 					return Error.Validation(ErrorCodes.Validation, "Account id is invalid, account is required");
 				}
@@ -168,20 +167,16 @@ namespace Services.Service.DonationService
 					return Error.Validation(ErrorCodes.Validation,"Donation not found");
 				}
 
-				donation.Description = donationParam.Description;
+				donation.Description = "Donation";
 				donation.amount = donationParam.amount;
 				donation.Title = donationParam.Title;
 
 				ApplicationUser? user = await _UserManager.FindByIdAsync(donationParam.userId);
-				Donator donator = await _DonationRepository.getDonatorById(donationParam.DonatorId);
-				donator = new Donator()
-				{
-					Name = donationParam.Name,
-					Facebook = donationParam.Facebook,
-					PhoneNumber = donationParam.PhoneNumber,
-					UpdateBy = user,
-					UpdateAt = DateTime.UtcNow
-				};
+				donation.DonorBy.Name = donationParam.Name;
+				donation.DonorBy.Facebook = donationParam.Facebook;
+				donation.DonorBy.PhoneNumber = donationParam.PhoneNumber;
+				donation.UpdateBy = user;
+				
 
 				var result = await _DonationRepository.updateDonation(donation);
                 if (result.Value)
