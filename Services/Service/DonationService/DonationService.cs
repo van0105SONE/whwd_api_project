@@ -75,8 +75,6 @@ namespace Services.Service.DonationService
                 }
                 else
 				{
-                    if (donator == null)
-                    {
 
                         donator = new Donator()
                         {
@@ -86,7 +84,7 @@ namespace Services.Service.DonationService
                             CreateBy = user
                         };
                         await _DonationRepository.creattDonator(donator);
-                    }
+                    
 
                     donation.DonorBy = donator;
 
@@ -167,7 +165,6 @@ namespace Services.Service.DonationService
 					return Error.Validation(ErrorCodes.Validation,"Donation not found");
 				}
 
-				donation.Description = "Donation";
 				donation.amount = donationParam.amount;
 				donation.Title = donationParam.Title;
 

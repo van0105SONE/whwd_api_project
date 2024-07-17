@@ -7,7 +7,6 @@ namespace Infrastructure.Model.Donate
     public class Donation : BaseModel
     {
         public string Title { get; set; }
-        public string Description { get; set; }
         
         public string SourceType { get; set; }
         public string? DonationType { get; set; }
