@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Filter;
+using ApplicationCore.Filter.report;
 using ErrorOr;
 using Infrastructure.Model.Account;
 using Infrastructure.Model.Donate;
@@ -25,5 +26,7 @@ namespace Infrastructure.Repository.DonationRepostiory
 		public Task<List<SourceType>> getSourceTypes();
 		public Task<SourceType> getSourceTypeById(Guid Id);
 		public Task<SourceType> getSourceTypeByName(string SourceName);
+
+		public Task<List<Donation>> getDonationReports(ReportAccountFilter filter);
 	}
 }

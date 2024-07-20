@@ -9,17 +9,15 @@ namespace ApplicationCore.Dtos.FunRaisingPlaceDto
 {
     public class FundRaisingPlaceDto
     {
-        public required string PlaceName { get; set; }
-        public string? PhoneNumber { get; set; }
-        public string? Email { get; set; }
-        public string? Other { get; set; }
-        public string? Facebook { get; set; }
+        public required string placeName { get; set; }
+        public string? phoneNumber { get; set; }
+        public string? email { get; set; }
+        public string? other { get; set; }
+        public string? facebook { get; set; }
         public string? googleMapLink { get; set; }
-        public DateTime startDate { get; set;  }
-        public DateTime endDate { get; set; }
         public required string userId { get; set; }
         public required string coordinatorId { get; set; }
-        public VillageDto Village { get; set; }
+        public VillageDto village { get; set; }
     }
 
 

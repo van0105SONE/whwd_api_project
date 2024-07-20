@@ -45,12 +45,11 @@ namespace whwd_web_api.Controllers.WorkController
 
         [HttpPut]
         [Route("updateStatus")]
-        public async Task<ActionResult> UpdateStatus([FromQuery] PlaceUpdateStatusDto placeStatusDto)
+        public async Task<ActionResult> UpdateStatus(Guid Id,[FromQuery] PlaceUpdateStatusDto placeStatusDto)
         {
             try
             {
-                    var result = await _fundRaisingService.updatePlace(placeStatusDto);
-
+                    var result = await _fundRaisingService.updatePlace(Id,placeStatusDto);
                     if (result.IsError)
                     {
                         return Ok(ErrorHandler<FundRaisingPlaceDto>.HandleErrorResponse(result.FirstError.Code, result.FirstError.Description));

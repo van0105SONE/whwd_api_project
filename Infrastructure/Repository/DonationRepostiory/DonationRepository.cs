@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Filter;
+using ApplicationCore.Filter.report;
 using ErrorOr;
 using Infrastructure.DataBaseContext;
 using Infrastructure.Model.Account;
@@ -157,5 +158,17 @@ namespace Infrastructure.Repository.DonationRepostiory
 				throw new Exception(ex.Message);
 			}
 		}
-	}
+
+        public async Task<List<Donation>> getDonationReports(ReportAccountFilter filter)
+        {
+            try
+            {
+                return _dbContext.Donation.Include(t => t.DonorBy).Skip((filter.page - 1) * filter.pageSize).Take(filter.pageSize).Where(t => t.CreateAt.Date >= filter.startDate && t.CreateAt.Date <= filter.endDate).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+    }
 }

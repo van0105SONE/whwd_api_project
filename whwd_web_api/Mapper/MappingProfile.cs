@@ -9,6 +9,7 @@ using ApplicationCore.Dtos.RecipientDto;
 using ApplicationCore.Dtos.RoleDto;
 using ApplicationCore.Dtos.Roles;
 using ApplicationCore.Dtos.StudentDto;
+using ApplicationCore.Dtos.TransactionDto;
 using ApplicationCore.Dtos.University;
 using ApplicationCore.Dtos.UserDto;
 using ApplicationCore.Dtos.Work;
@@ -42,6 +43,9 @@ namespace whwd_web_api.Mapper
 			//Mapping model to response
 			CreateMap<ApplicationUser, UserReponseDto>();
             CreateMap<ApplicationRoles, RoleDto>();
+
+            CreateMap<Transaction, TransactionResponseDto>();
+            CreateMap<TransactionDto, Transaction>();
 
 
             CreateMap<Department, DepartmentDto>();

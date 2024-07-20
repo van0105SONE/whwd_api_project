@@ -1,4 +1,5 @@
-﻿using ApplicationCore.Dtos.TransactionDto;
+﻿using ApplicationCore.Dtos;
+using ApplicationCore.Dtos.TransactionDto;
 using ApplicationCore.Filter;
 using ErrorOr;
 using Infrastructure.Model.Account;
@@ -12,11 +13,11 @@ namespace Services.Service.TransactionService
 {
 	public interface ITransactionService
 	{
-		public Task<ErrorOr<bool>> createTransaction(TransactionDto transactionParam);
-		public Task<ErrorOr<bool>> deleteTransaction(Guid Id);
+		public Task<ErrorOr<MessageReponse<TransactionResponseDto>>> createTransaction(TransactionDto transactionParam);
+		public Task<ErrorOr<MessageReponse<TransactionResponseDto>>> deleteTransaction(Guid Id);
 
-		public Task<List<Transaction>> getTransactions(BaseFilter filter);
-		public Task<Transaction> getTransactionId(Guid Id);
+		public Task<MessageReponse<List<TransactionResponseDto>>> getTransactions(BaseFilter filter);
+		public Task<MessageReponse<TransactionResponseDto>> getTransactionId(Guid Id);
 
 	}
 }

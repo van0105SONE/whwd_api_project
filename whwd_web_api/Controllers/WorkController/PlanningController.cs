@@ -59,7 +59,7 @@ namespace whwd_web_api.Controllers.WorkController
             try
             {
                 var result = await _projectService.getProjects(filter);
-			   return  Ok(result);
+			   return  Ok(result.Value);
             }catch(Exception ex)
             {
                 throw new Exception(ex.Message);

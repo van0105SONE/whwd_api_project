@@ -380,11 +380,13 @@ namespace Services.Service.PositionService
             try
             {
                 var result = await _projectRepository.getProjects(filter);
+                var response = _mapper.Map<List<ProjectPlanResponseDto>>(result);
                 return new MessageReponse<List<ProjectPlanResponseDto>>()
                 {
                     statusCode = 200,
                     message = "Successful",
-                    isSuccess = true
+                    isSuccess = true,
+                    data = response
                 };
             }
             catch (Exception ex)
@@ -403,7 +405,8 @@ namespace Services.Service.PositionService
                 {
                     statusCode = 200,
                     isSuccess = true,
-                    message = "Success"
+                    message = "Success",
+                    data = response
                 };
             }
             catch (Exception ex)

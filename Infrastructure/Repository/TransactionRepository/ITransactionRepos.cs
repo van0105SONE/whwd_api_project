@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Filter;
+using ApplicationCore.Filter.report;
 using ErrorOr;
 using Infrastructure.Model.Account;
 using System;
@@ -17,6 +18,8 @@ namespace Infrastructure.Repository.TransactionRepository
 		public Task<List<Transaction>> getTransactions(BaseFilter filter);
         public Task<Transaction> getTransactionId(Guid Id);
 
-		
-	}
+        public Task<List<Transaction>> getTransactionsReport(ReportAccountFilter filter);
+
+
+    }
 }

@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Filter;
+using ApplicationCore.Filter.report;
 using ErrorOr;
 using Infrastructure.DataBaseContext;
 using Infrastructure.Model.Account;
@@ -66,12 +67,23 @@ namespace Infrastructure.Repository.TransactionRepository
 			try
 			{
 
-				return _DbContexts.transactions.Take(((filter.page - 1) * filter.pageSize)).Take(filter.pageSize).ToList();
+				var list = _DbContexts.transactions.Skip(((filter.page - 1) * filter.pageSize)).Take(filter.pageSize).ToList();
+				return list;
 			}catch(Exception ex)
 			{
 				throw new Exception(ex.Message);
 			}
 		}
 
-	}
+        public async Task<List<Transaction>> getTransactionsReport(ReportAccountFilter filter)
+        {
+			try
+			{
+			  return  _DbContexts.transactions.Skip((filter.page - 1) * filter.pageSize).Take(filter.pageSize).Where(t => t.CreateAt.Date >= filter.startDate && t.CreateAt.Date <= filter.endDate).ToList();
+			}catch(Exception ex)
+			{
+				throw new Exception(ex.Message);
+			}
+        }
+    }
 }

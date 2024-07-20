@@ -1,4 +1,6 @@
-﻿using ApplicationCore.Dtos.TransactionDto;
+﻿using ApplicationCore.Constanst;
+using ApplicationCore.Dtos;
+using ApplicationCore.Dtos.TransactionDto;
 using ApplicationCore.Filter;
 using AutoMapper;
 using ErrorOr;
@@ -26,50 +28,7 @@ namespace Services.Service.TransactionService
 			_projectPlanRepository = new ProjectPlanRepository(contexts);
 			_accountRepository = new AccountRepository(contexts);
 		}
-		public async Task<ErrorOr<bool>> createTransaction(TransactionDto transactionParam)
-		{
-			try
-			{
-			    Transaction transaction =	_Mapper.Map<Transaction>(transactionParam);
-				ApplicationUser? user = await _userManager.FindByIdAsync(transactionParam.UserId);
-				if (user == null)
-				{
-					return Error.NotFound("User not found, required user id");
-				}
 
-
-		        Account account =	await	_accountRepository.getAccountById(transactionParam.AccountId);
-				if (account == null)
-				{
-					return Error.NotFound("Account not found, required user id");
-				}
-
-
-
-
-
-
-				transaction.CreateBy = user;
-				transaction.Account = account;
-
-				return await _transactionRepos.createTransaction(transaction);
-			}catch (Exception ex)
-			{
-				throw new Exception(ex.Message);
-			}
-		}
-
-		Task<List<Transaction>> ITransactionService.getTransactions(BaseFilter filter)
-		{
-			try
-			{
-				return _transactionRepos.getTransactions(filter);
-			}
-			catch (Exception ex)
-			{
-				throw new Exception(ex.Message);
-			}
-		}
 
 		public async Task<ErrorOr<bool>> deleteTransaction(Guid Id)
 		{
@@ -82,20 +41,88 @@ namespace Services.Service.TransactionService
 			}
 		}
 
-		public async Task<Transaction> getTransactionId(Guid Id)
-		{
-			try
-			{
-				return await _transactionRepos.getTransactionId(Id);
+
+
+       public async Task<ErrorOr<MessageReponse<TransactionResponseDto>>> createTransaction(TransactionDto transactionParam)
+        {
+            try
+            {
+                Transaction transaction = _Mapper.Map<Transaction>(transactionParam);
+                ApplicationUser? user = await _userManager.FindByIdAsync(transactionParam.userId);
+                if (user == null)
+                {
+                    return Error.NotFound(ErrorCodes.Validation,"User not found, required user id");
+                }
+
+
+                Account account = await _accountRepository.getAccountById(transactionParam.accountId);
+                if (account == null)
+                {
+                    return Error.NotFound(ErrorCodes.Validation, "Account not found, required user id");
+                }
+
+                transaction.CreateBy = user;
+                transaction.Account = account;
+
+                var result = await _transactionRepos.createTransaction(transaction);
+			    var response =	_Mapper.Map<TransactionResponseDto>(transaction);
+				return new MessageReponse<TransactionResponseDto>() { 
+					isSuccess = true,
+					statusCode = 200,
+					message = "Successful",
+				    data =response
+				};
+
 			}
 			catch (Exception ex)
-			{
-				throw new Exception(ex.Message);
-			}
-		}
+            {
+                throw new Exception(ex.Message);
+            }
+        }
 
+        Task<ErrorOr<MessageReponse<TransactionResponseDto>>> ITransactionService.deleteTransaction(Guid Id)
+        {
+            throw new NotImplementedException();
+        }
 
+        public async Task<MessageReponse<List<TransactionResponseDto>>> getTransactions(BaseFilter filter)
+        {
+            try
+            {
+                var result = await _transactionRepos.getTransactions(filter);
+                var response = _Mapper.Map<List<TransactionResponseDto>>(result);
+                return new MessageReponse<List<TransactionResponseDto>>()
+                {
+                    isSuccess = true,
+                    statusCode = 200,
+                    message = "Successful",
+                    data = response
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
 
-
-	}
+      public async Task<MessageReponse<TransactionResponseDto>> getTransactionId(Guid Id)
+        {
+            try
+            {
+                var result = await _transactionRepos.getTransactionId(Id);
+                var response = _Mapper.Map<TransactionResponseDto>(result);
+                return new MessageReponse<TransactionResponseDto>()
+                {
+                    isSuccess = true,
+                    statusCode = 200,
+                    message = "Successful",
+                    data = response
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+    }
 }

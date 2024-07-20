@@ -16,12 +16,12 @@ namespace Services.Service.FundRaisingPlaceService
     {
         public Task<ErrorOr<MessageReponse<PlaceResponseDto>>> createPlace(FundRaisingPlaceDto placeDto);
 
-        public Task<ErrorOr<MessageReponse<PlaceResponseDto>>> updatePlace(PlaceUpdateStatusDto placeDto);
+        public Task<ErrorOr<MessageReponse<PlaceResponseDto>>> updatePlace(Guid Id,PlaceUpdateStatusDto placeDto);
 
-        public Task<List<FundRaisingPlace>> getPlaceAll(BaseFilter filter);
+        public Task<MessageReponse<List<PlaceResponseDto>>> getPlaceAll(BaseFilter filter);
 
-        public Task<List<FundRaisingPlace>> getPlaceWithStatusConfirm(BaseFilter filter);
+        public Task<MessageReponse<List<PlaceResponseDto>>> getPlaceWithStatusConfirm(BaseFilter filter);
 
-        public Task<FundRaisingPlace> getPlaceById(Guid id);
+        public Task<MessageReponse<PlaceResponseDto>> getPlaceById(Guid id);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Dtos.TransactionDto;
+using ApplicationCore.Dtos.Work;
 using ApplicationCore.Filter;
 using AutoMapper;
 using Infrastructure.DataBaseContext;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Services.Service.AddressService;
 using Services.Service.TransactionService;
 using Services.Service.UserService;
+using whwd_web_api.Errors;
 
 namespace whwd_web_api.Controllers.WorkController
 {
@@ -30,8 +32,16 @@ namespace whwd_web_api.Controllers.WorkController
 			try
 			{
 			     var result =  await	_transactionService.createTransaction(transactonDto);
-				return result.Match(t => CreatedAtAction(nameof(createTransaction), t), err => Problem(err.FirstOrDefault().Description));
-			}catch(Exception ex)
+                if (result.IsError)
+                {
+                    return Ok(ErrorHandler<DonateThingResponseDto>.HandleErrorResponse(result.FirstError.Code, result.FirstError.Description));
+                }
+                else
+                {
+                    return Ok(result.Value);
+                }
+            }
+            catch(Exception ex)
 			{
 				return Problem(ex.Message);
 			}
