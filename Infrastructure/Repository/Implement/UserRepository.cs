@@ -29,17 +29,7 @@ namespace Infrastructure.Repository.Implement
             }
         }
 
-        public bool addTeam(ProjectTeam teamParams)
-        {
-            try
-            {
-                _dbContext.project_teams.Add(teamParams);   
-                return true;
-            }catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
+
 
         public bool deletePosition(Guid Id)
         {
@@ -123,7 +113,7 @@ namespace Infrastructure.Repository.Implement
         {
             try
             {
-                List<ApplicationUser> users = _dbContext.Users.Skip((filter.page - 1) * filter.pageSize).Include(t => t.BornVillage).ThenInclude(t => t.district).ThenInclude(t => t.province).Include(t => t.CurrentVillage).ThenInclude(t => t.district).ThenInclude(t => t.province).Include(t => t.Role).Include(t => t.Major).ToList();
+                List<ApplicationUser> users = _dbContext.Users.Skip((filter.page - 1) * filter.pageSize).Include(t => t.BornVillage).ThenInclude(t => t.district).ThenInclude(t => t.province).Include(t => t.CurrentVillage).ThenInclude(t => t.district).ThenInclude(t => t.province).Include(t => t.Major).Include(t => t.projectTeam).Include(t => t.position).Include(t => t.Role).ToList();
                 return users;
             }catch(Exception ex) { 
                 throw new Exception(ex.Message);    
@@ -134,7 +124,7 @@ namespace Infrastructure.Repository.Implement
         {
             try
             {
-                ApplicationUser? user = _dbContext.Users.Include(t => t.BornVillage).ThenInclude(t => t.district).ThenInclude(t => t.province).Include(t => t.CurrentVillage).ThenInclude(t => t.district).ThenInclude(t => t.province).Include(t => t.Major).Include(t => t.positionTeams).ThenInclude(t => t.Team).Include(t => t.positionTeams).ThenInclude(t => t.Position).Include(t => t.Role).FirstOrDefault(t => t.Id  == Id);
+                ApplicationUser? user = _dbContext.Users.Include(t => t.BornVillage).ThenInclude(t => t.district).ThenInclude(t => t.province).Include(t => t.CurrentVillage).ThenInclude(t => t.district).ThenInclude(t => t.province).Include(t => t.Major).Include(t => t.projectTeam).Include(t => t.position).Include(t => t.Role).FirstOrDefault(t => t.Id  == Id);
                 return user;
             }catch(Exception ex)
             {

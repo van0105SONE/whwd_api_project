@@ -12,11 +12,8 @@ namespace Infrastructure.Repository.RoleRepository
     public interface IRoleRepository
     {
         public ApplicationRoles createRole(ApplicationRoles role);
-        public bool addPosition(PositionTeam position);
         public List<ApplicationRoles> getRoles();
         public ApplicationRoles getRoleById(Guid Id);
-        List<PositionTeam> getPositionTeamByUserId(string userId);
-		List<PositionTeam> getPositionTeams();
         public List<Position> getPositions();
         public List<ProjectTeam> getTeams();
         public Position getPositionById(Guid Id);

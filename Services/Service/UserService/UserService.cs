@@ -52,7 +52,8 @@ namespace Services.Service.UserService
                 Village currentVillage = addressRepository.getVillageById(userDto.CurrentVillage.villageCode);
                 Major major = universityRespository.getMajorById(userDto.Major.id);
                 var department = universityRespository.getDepartmentById(userDto.Major.departmentId);
-
+                var position = userRepository.getPositionById(userDto.positionId);
+                var projectTeam = userRepository.getTeamById(userDto.teamId);
 
                 if (!isUserValid)
                 {
@@ -73,6 +74,12 @@ namespace Services.Service.UserService
                 if (currentDistrict == null)
                 {
                     return Error.Validation(ErrorCodes.Validation, "District isn't found in the system");
+                }else if (position == null)
+                {
+                    return Error.Validation(ErrorCodes.Validation, "Position isn't found in the system");
+                }else if (projectTeam == null)
+                {
+                    return Error.Validation(ErrorCodes.Validation, "Project isn't found in the system");
                 }
 
 
@@ -86,6 +93,8 @@ namespace Services.Service.UserService
                     Village village = createVillageWithCodeNull(userDto.CurrentVillage.district.districtCode, userDto.CurrentVillage.villageName);
                     applicationUser.CurrentVillage = village;
                 }
+
+
                 if (major == null)
                 {
                     var newMajor = new Major()
@@ -98,6 +107,8 @@ namespace Services.Service.UserService
                     applicationUser.Major = majorCreate;
                 }
 
+                applicationUser.position = position;
+                applicationUser.projectTeam = projectTeam;
                 applicationUser.Role = role;
                 var result = await _UserManager.CreateAsync(applicationUser, userDto.Password);
 

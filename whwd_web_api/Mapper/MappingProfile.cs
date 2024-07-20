@@ -44,10 +44,8 @@ namespace whwd_web_api.Mapper
 
 
             CreateMap<Department, DepartmentDto>();
-            CreateMap<PositionTeam, PositiontTeamResponseDto>();
 			CreateMap<ProjectTeam, ProjectTeamResponse>();
 			CreateMap<Position, PositionResponse>();
-			CreateMap<PositionTeam, PositionTeamDto>();
 			CreateMap<Major, MajorDto > ();
 			CreateMap<Village, VillageReponseDto>();
 			CreateMap<District, DistrictResponseDto>();

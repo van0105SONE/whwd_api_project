@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualBasic;
 using Newtonsoft.Json;
-using Services.Middleware;
 using Services.Service.RoleSevice;
 
 namespace whwd_web_api.Controllers.RoleController
@@ -106,8 +105,8 @@ namespace whwd_web_api.Controllers.RoleController
         {
             try
             {
-                var result = await roleService.checkUserRole(userRole);
-			    return Ok(result.Value);
+               // var result = await roleService.get(userRole);
+			    return Ok();
             }catch( Exception ex )
             {
                 return Problem(ex.Message);

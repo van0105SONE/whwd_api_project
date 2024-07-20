@@ -10,9 +10,9 @@ namespace Infrastructure.Model.Recipient
 {
     public class School : BaseModel
     {
-        public required string Name { get; set; }
+        public required string name { get; set; }
         public int totalFund { get; set; }
-        public Village Village { get; set; }
-        public required ProjectPlan Project { get; set; }
+        public Village village { get; set; }
+        public required ProjectPlan project { get; set; }
     }
 }

@@ -19,18 +19,7 @@ namespace Infrastructure.Repository.RoleRepository
           _dbContexts = dbContext;
         }
 
-        public bool addPosition(PositionTeam position)
-        {
-            try
-            {
-                _dbContexts.position_teams.Add(position);
-                _dbContexts.SaveChanges();
-                return true;
-            }catch(Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
+
 
 
 
@@ -47,17 +36,7 @@ namespace Infrastructure.Repository.RoleRepository
             }
         }
 
-        public List<PositionTeam> getPositionTeams()
-        {
-            try
-            {
-                List<PositionTeam> positions = _dbContexts.position_teams.ToList();
-                return positions;
-            }catch(Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
+  
         public List<Position> getPositions()
         {
             try
@@ -118,18 +97,6 @@ namespace Infrastructure.Repository.RoleRepository
                 throw new Exception(ex.Message);
             }
         }
-
-		public List<PositionTeam> getPositionTeamByUserId(string userId)
-		{
-            try
-            {
-                return _dbContexts.position_teams.Include( t=> t.Position).Include(t => t.Team).Where(t => t.User.Id == userId).ToList();
-            }catch(Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-		}
-
 
         public AccessRight getAccessRightById(Guid Id)
         {

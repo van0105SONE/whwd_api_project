@@ -18,6 +18,8 @@ namespace Infrastructure.Model.Users
         public DateTime? RefreshTokenExpiry { get; set; }
 
         public ApplicationRoles Role { get; set; }
-        public ICollection<PositionTeam> positionTeams { get; set; }
+        public Position position { get; set; }
+        public ProjectTeam projectTeam { get; set; }
+
     }
 }

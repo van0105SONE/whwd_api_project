@@ -17,7 +17,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.VisualBasic;
-using Services.Middleware;
+
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Error = ErrorOr.Error;
 
@@ -31,12 +31,11 @@ namespace Services.Service.PositionService
         IAddressRepository _addressRepository { get; set; }
         UserManager<ApplicationUser> _userManager { get; set; }
         
-        CheckUserRoles roleMiddleWare { get; set; }
+       
         public ProjectService(UserManager<ApplicationUser> userManager, DatabaseContexts context, IMapper mapper) {
             _mapper = mapper;
             _userManager = userManager;
             _projectRepository = new ProjectPlanRepository(context);
-            roleMiddleWare = new CheckUserRoles(context, userManager);
             _addressRepository = new AddressRepository(context);
         }
 
@@ -255,13 +254,13 @@ namespace Services.Service.PositionService
                     {
                         return Error.Validation(ErrorCodes.Validation,"System can't find  village");
                     }
-                    school.Village = village;
+                    school.village = village;
                     var projectError = await _projectRepository.getProjectActiveProject();
                     if (projectError.IsError)
                     {
                         return Error.Validation(ErrorCodes.Validation, "There is no project plan is created yet");
                     }
-                    school.Project = projectError.Value;
+                    school.project = projectError.Value;
 
                     var user = await _userManager.FindByIdAsync(schoolDto.userId);
                     if (user == null)

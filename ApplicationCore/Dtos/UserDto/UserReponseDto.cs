@@ -17,6 +17,9 @@ namespace ApplicationCore.Dtos.UserDto
 		public MajorDto major { get; set; }
 		public RoleDto role { get; set; }
 
+		public PositionResponse position { get; set; }
+		public ProjectTeamResponse projectTeam { get; set; }
+
 
     }
 }

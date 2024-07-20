@@ -22,7 +22,6 @@ namespace Infrastructure.DataBaseContext
 
 
        public DbSet<Position> positions { get; set; }
-       public DbSet<PositionTeam> position_teams { get; set; }
        public DbSet<Position> position { get; set; }
        public DbSet<AccessRight> accessRight { get; set; }
        public DbSet<ProjectTeam> project_teams { get; set; }

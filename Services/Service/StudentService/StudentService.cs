@@ -53,8 +53,8 @@ namespace Services.Service.StudentService
                 }
 
                 studentData.CreateBy = user;
-                studentData.Project = projectPlan;
-                studentData.School = schoolResult.Value;
+                studentData.project = projectPlan;
+                studentData.school = schoolResult.Value;
                 var result = await  _studentRepository.create(studentData);
                 if (result.Value)
                 {
@@ -110,7 +110,7 @@ namespace Services.Service.StudentService
                 student.level = studentData.level;
                 student.UpdateBy = user;
                 student.UpdateAt = DateTime.UtcNow;
-                student.Project = projectPlan;
+                student.project = projectPlan;
                 var result = await  _studentRepository.update(student);
 
                 if (result)

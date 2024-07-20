@@ -167,7 +167,7 @@ namespace Infrastructure.Repository.ProjectRepository
             try
             {
                 ProjectPlan? currentProjectPlan = _DbContext.projectPlan.FirstOrDefault(t => t.IsActive);
-                return _DbContext.schoools.Where(t => t.Project.Id == currentProjectPlan.Id).ToList();
+                return _DbContext.schoools.Where(t => t.project.Id == currentProjectPlan.Id).ToList();
             }catch(Exception ex)
             {
                 throw new Exception(ex.Message);

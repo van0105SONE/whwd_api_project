@@ -12,12 +12,13 @@ namespace Infrastructure.Model.Student
     {
         public required string fname { get; set; }
         public required string lname {get; set;}
+        public required string gender { get; set; }
         public DateTime birthDate { get; set; }
         public required string level { get; set; }
         public string shirtSize { get; set; }
         public string? skirtSize { get; set; }
         public string? shoesSize { get; set; }
-        public School School { get; set; }
-        public required ProjectPlan Project { get; set; }
+        public School school { get; set; }
+        public required ProjectPlan project { get; set; }
     }
 }

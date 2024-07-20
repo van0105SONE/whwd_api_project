@@ -31,8 +31,7 @@ namespace Infrastructure.Repository.IRepository
         /// Team blueprint
         /// </summary>
         /// <returns></returns>
-        bool addTeam(ProjectTeam teamParams);
-        bool deleteTeam(Guid Id);
+
         ProjectTeam getTeamById(Guid Id);
         List<ProjectTeam> GetTeams();
 
