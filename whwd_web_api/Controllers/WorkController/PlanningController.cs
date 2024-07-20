@@ -59,8 +59,7 @@ namespace whwd_web_api.Controllers.WorkController
             try
             {
                 var result = await _projectService.getProjects(filter);
-               var responseData = _mapper.Map<List<ProjectPlanResponseDto>>(result.Value.ToList());
-			   return  Ok(responseData);
+			   return  Ok(result);
             }catch(Exception ex)
             {
                 throw new Exception(ex.Message);
@@ -90,12 +89,18 @@ namespace whwd_web_api.Controllers.WorkController
 
 
         [HttpPatch]
-        [Route("updateDonateThing")]
-        public async Task<IActionResult> updateDonateThing([FromBody] UpdateDonateThingDto donateThing)
+        [Route("updateDonateThing/{Id}")]
+        public async Task<IActionResult> updateDonateThing(Guid Id,[FromBody] DonateThingDto donateThing)
         {
             try
             {
-                var result = await _projectService.updateDonateThing(donateThing);
+                if (Id == Guid.Empty)
+                {
+
+                    return BadRequest("Donate thing id is invalid, Id is required");
+                }
+
+                var result = await _projectService.updateDonateThing(Id,donateThing);
                 if (result.IsError)
                 {
                     return Ok(ErrorHandler<DonateThingResponseDto>.HandleErrorResponse(result.FirstError.Code, result.FirstError.Description));

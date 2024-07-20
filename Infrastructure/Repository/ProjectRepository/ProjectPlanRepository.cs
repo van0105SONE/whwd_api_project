@@ -33,17 +33,19 @@ namespace Infrastructure.Repository.ProjectRepository
             }
         }
 
-        public async void delete(Guid Id)
+        public async Task<bool> delete(Guid Id)
         {
             try
             {
                 ProjectPlan? projectPlan = await _DbContext.projectPlan.FirstOrDefaultAsync(t => t.Id == Id);
+
                 if (projectPlan == null)
                 {
                     throw new Exception("Project isn't found");
                 }
                 _DbContext.projectPlan.Remove(projectPlan);
                 _DbContext.SaveChanges(true);
+                return true;
             }
             catch (Exception ex)
             {
@@ -184,6 +186,17 @@ namespace Infrastructure.Repository.ProjectRepository
             try
             {
                return  _DbContext.schoools.FirstOrDefault(t => t.Id == Id);
+            }catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<ProjectPlan> getProjectPlanById(Guid Id)
+        {
+            try
+            {
+               return _DbContext.projectPlan.FirstOrDefault(t => t.Id == Id);
             }catch(Exception ex)
             {
                 throw new Exception(ex.Message);

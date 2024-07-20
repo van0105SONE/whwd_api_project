@@ -10,8 +10,10 @@ namespace Infrastructure.Repository.ProjectRepository
     {
         Task<ErrorOr<bool>> create(ProjectPlan projectParam);
 
+        Task<ProjectPlan> getProjectPlanById(Guid Id);
+
         Task<ErrorOr<bool>> closeCurrentPlan();
-        void delete(Guid Id);
+        Task<bool> delete(Guid Id);
         Task<List<ProjectPlan>> getProjects(BaseFilter filter);
         Task<ErrorOr<ProjectPlan>> getProjectActiveProject();
         Task<ErrorOr<bool>> createSchool(School schoolParam);
