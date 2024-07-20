@@ -144,15 +144,25 @@ namespace Services.Service.UserService
                 Village bornVillage = addressRepository.getVillageById(userDto.BornVillage.villageCode);
                 Village currentVillage = addressRepository.getVillageById(userDto.CurrentVillage.villageCode);
                 ApplicationUser? userData = await _UserManager.FindByIdAsync(userId);
-                Major major = universityRespository.getMajorById(userDto.Major.id);
+
                 var department = universityRespository.getDepartmentById(userDto.Major.departmentId);
+                Major major = universityRespository.getMajorById(userDto.Major.id);
+
+
 
                 if (userData == null)
                 {
                     return Error.Validation(ErrorCodes.NotFound, "User Id is invalid, User is required");
                 }else if (major == null)
                 {
-                    return Error.Validation(ErrorCodes.Validation, "Major Id is invalid, Major is required");
+                    var newMajor = new Major()
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Name = userDto.Major.name,
+                        Department = department,
+                    };
+                    var majorCreate = universityRespository.createMajor(newMajor);
+                    userData.Major = majorCreate;
                 }
 
 
