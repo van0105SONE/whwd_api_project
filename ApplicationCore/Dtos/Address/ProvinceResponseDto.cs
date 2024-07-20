@@ -8,7 +8,7 @@ namespace ApplicationCore.Dtos.Address
 {
     public class ProvinceResponseDto
     {
-        public String ProvinceCode { get; set; }
-        public String ProvinceName { get; set; }
+        public String provinceCode { get; set; }
+        public String provinceName { get; set; }
     }
 }

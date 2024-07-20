@@ -4,6 +4,7 @@ using ErrorOr;
 using Infrastructure.DataBaseContext;
 using Infrastructure.Model.Recipient;
 using Infrastructure.Model.Work;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using System.Runtime.CompilerServices;
 
@@ -154,7 +155,11 @@ namespace Infrastructure.Repository.ProjectRepository
             try
             {
               var currentProjectPlan =  _DbContext.projectPlan.FirstOrDefault(t => t.IsActive);
-              currentProjectPlan.IsActive = false;
+                if (currentProjectPlan != null)
+                {
+                    currentProjectPlan.IsActive = false;
+                }
+
               return true;
             }catch(Exception ex)
             {
