@@ -8,8 +8,7 @@ namespace ApplicationCore.Dtos.Roles
 {
 	public class ProjectTeamResponse
 	{
-		public Guid Id { get; set; }
-		public String RefNO { get; set; }
-		public String Name { get; set; }
+		public Guid id { get; set; }
+		public String name { get; set; }
 	}
 }

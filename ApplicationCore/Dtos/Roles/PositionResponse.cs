@@ -8,8 +8,7 @@ namespace ApplicationCore.Dtos.Roles
 {
 	public class PositionResponse
 	{
-		public Guid Id { get; set; }
-		public string RefNo { get; set; }
-		public string PositionName { get; set; }
+		public Guid id { get; set; }
+		public string positionName { get; set; }
 	}
 }
