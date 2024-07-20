@@ -50,8 +50,8 @@ namespace Services.Service.UserService
                 ApplicationRoles role = _roleRepository.getRoleById(userDto.RoleId);
                 Village bornVillage = addressRepository.getVillageById(userDto.BornVillage.villageCode);
                 Village currentVillage = addressRepository.getVillageById(userDto.CurrentVillage.villageCode);
-                Major major = universityRespository.getMajorById(userDto.Major.Id);
-                var department = universityRespository.getDepartmentById(userDto.Major.DepartmentId);
+                Major major = universityRespository.getMajorById(userDto.Major.id);
+                var department = universityRespository.getDepartmentById(userDto.Major.departmentId);
 
 
                 if (!isUserValid)
@@ -91,7 +91,7 @@ namespace Services.Service.UserService
                     var newMajor = new Major()
                     {
                         Id = Guid.NewGuid().ToString(),
-                        Name = userDto.Major.Name,
+                        Name = userDto.Major.name,
                         Department = department,
                     };
                     var majorCreate = universityRespository.createMajor(newMajor);
@@ -133,8 +133,8 @@ namespace Services.Service.UserService
                 Village bornVillage = addressRepository.getVillageById(userDto.BornVillage.villageCode);
                 Village currentVillage = addressRepository.getVillageById(userDto.CurrentVillage.villageCode);
                 ApplicationUser? userData = await _UserManager.FindByIdAsync(userId);
-                Major major = universityRespository.getMajorById(userDto.Major.Id);
-                var department = universityRespository.getDepartmentById(userDto.Major.DepartmentId);
+                Major major = universityRespository.getMajorById(userDto.Major.id);
+                var department = universityRespository.getDepartmentById(userDto.Major.departmentId);
 
                 if (userData == null)
                 {

@@ -7,15 +7,15 @@ namespace ApplicationCore.Dtos.UserDto
 {
 	public class UserReponseDto
 	{
-		public string Id { get; set; }
-		public string Fname { get; set; }
-		public string Lname { get; set; }
-		public string Occupation { get; set; }
+		public string id { get; set; }
+		public string fname { get; set; }
+		public string lname { get; set; }
+		public string occupation { get; set; }
 
-		public VillageReponseDto CurrentVillage { get; set; }
-		public VillageReponseDto BornVillage { get; set; }
-		public MajorDto Major { get; set; }
-		public RoleDto Role { get; set; }
+		public VillageReponseDto currentVillage { get; set; }
+		public VillageReponseDto bornVillage { get; set; }
+		public MajorDto major { get; set; }
+		public RoleDto role { get; set; }
 
 
     }
