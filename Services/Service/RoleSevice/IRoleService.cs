@@ -1,4 +1,5 @@
-﻿using ApplicationCore.Dtos.Roles;
+﻿using ApplicationCore.Dtos.RoleDto;
+using ApplicationCore.Dtos.Roles;
 using ErrorOr;
 using Infrastructure.Model.Users;
 using System;
@@ -14,7 +15,7 @@ namespace Services.Service.RoleSevice
         public Task<ErrorOr<ApplicationRoles>> createRole(string roleName);
         public ErrorOr<List<Position>> getPositions();
         public ErrorOr<List<ProjectTeam>> getProjectTeam();
-        public ErrorOr<List<ApplicationRoles>> getUserRoles();
+        public ErrorOr<List<RoleResponse>> getUserRoles();
         public Task<ErrorOr<List<AccessRight>>> getRoleAccesses(Guid roleId);
         public  Task<ErrorOr<AccessRight>> createRoleAccess(RoleAccessDto roleAccessParams);
 

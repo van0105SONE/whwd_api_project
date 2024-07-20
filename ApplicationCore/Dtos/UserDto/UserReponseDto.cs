@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Dtos.Address;
+using ApplicationCore.Dtos.RoleDto;
 using ApplicationCore.Dtos.Roles;
 using ApplicationCore.Dtos.University;
 using whwd_web_api.Dtos.Address;
@@ -15,7 +16,7 @@ namespace ApplicationCore.Dtos.UserDto
 		public VillageReponseDto currentVillage { get; set; }
 		public VillageReponseDto bornVillage { get; set; }
 		public MajorDto major { get; set; }
-		public RoleDto role { get; set; }
+		public RoleResponse role { get; set; }
 
 		public PositionResponse position { get; set; }
 		public ProjectTeamResponse projectTeam { get; set; }

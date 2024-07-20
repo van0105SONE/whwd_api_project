@@ -6,6 +6,7 @@ using ApplicationCore.Dtos.Donate;
 using ApplicationCore.Dtos.FunRaisingPlaceDto;
 using ApplicationCore.Dtos.Recipient;
 using ApplicationCore.Dtos.RecipientDto;
+using ApplicationCore.Dtos.RoleDto;
 using ApplicationCore.Dtos.Roles;
 using ApplicationCore.Dtos.StudentDto;
 using ApplicationCore.Dtos.University;
@@ -80,6 +81,10 @@ namespace whwd_web_api.Mapper
             CreateMap<SchoolResponseDto, SchoolSerieResponseDto>();
             //Mapper 
             CreateMap<ConjointDto, Conjoint>();
+
+            // map user role
+            CreateMap<ApplicationRoles, RoleResponse>();
+            CreateMap<AccessRight, AccessRightResponse>();
         }
     }
 }

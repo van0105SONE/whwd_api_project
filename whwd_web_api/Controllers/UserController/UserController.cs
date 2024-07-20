@@ -114,6 +114,8 @@ namespace whwd_web_api.Controllers.UserController
 							ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
 						}
 					);
+
+
 				return Ok(jsonString);
 			}
 			catch (Exception ex)

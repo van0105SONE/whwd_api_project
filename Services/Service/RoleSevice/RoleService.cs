@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Constanst;
+using ApplicationCore.Dtos.RoleDto;
 using ApplicationCore.Dtos.Roles;
 using AutoMapper;
 using ErrorOr;
@@ -61,12 +62,13 @@ namespace Services.Service.RoleSevice
             }
         }
 
-        public ErrorOr<List<ApplicationRoles>> getUserRoles()
+        public ErrorOr<List<RoleResponse>> getUserRoles()
         {
             try
             {
                 List<ApplicationRoles> roles = _roleRepository.getRoles() ;
-                return roles;
+                List<RoleResponse> resonses = _mapper.Map<List<RoleResponse>>(roles);
+                return resonses;
             }catch(Exception ex)
             {
                 throw new Exception(ex.Message);

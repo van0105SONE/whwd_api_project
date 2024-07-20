@@ -58,7 +58,6 @@ namespace whwd_web_api.Controllers.RoleController
                 };
                 var roleResult =  roleService.getUserRoles();
                 var jsonString = JsonConvert.SerializeObject(roleResult.Value, settings );
-                
                 return Ok(jsonString);
 
                
