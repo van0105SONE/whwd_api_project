@@ -66,57 +66,6 @@ internal class Program
         var app = builder.Build();
 
        using(var scope = app.Services.CreateScope()){
-        var db = scope.ServiceProvider.GetRequiredService<DatabaseContexts>();
-
-
-
-
-
-			List<SourceType> sourceTypes = new List<SourceType>(){
-			new SourceType(){
-				Id = Guid.NewGuid(),
-				Name = "Online"
-			},
-			new SourceType(){
-				Id = Guid.NewGuid(),
-				Name = "Offline"
-			}
-		};
-
-			foreach (var item in sourceTypes)
-			{
-				db.sourceTypes.Add(item);
-				db.SaveChanges();
-			}
-
-
-
-
-
-            List<Position> position = new List<Position>(){
-            new Position(){
-                Id = Guid.NewGuid(),
-                RefNo = DateTime.Now.Date.ToString(),
-                PositionName = "Project Leader"
-            },
-            new Position(){
-                Id = Guid.NewGuid(),
-                RefNo = DateTime.Now.Date.ToString(),
-                PositionName = "Leader"
-            },
-            new Position(){
-                Id = Guid.NewGuid(),
-                RefNo = DateTime.Now.Date.ToString(),
-                PositionName = "Member"
-            },
-
-        };
-
-            foreach (var item in position)
-            {
-                db.position.Add(item);
-                db.SaveChanges();
-            }
 
         }
         // Configure the HTTP request pipeline.
