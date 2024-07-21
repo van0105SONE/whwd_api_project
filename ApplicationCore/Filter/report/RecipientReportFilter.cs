@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ApplicationCore.Filter.report
 {
-    public class RecipientReportFilter
+    public class RecipientReportFilter : BaseFilter
     {
         public Guid projectId { get; set; }
     }

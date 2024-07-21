@@ -28,5 +28,9 @@ namespace Infrastructure.Repository.DonationRepostiory
 		public Task<SourceType> getSourceTypeByName(string SourceName);
 
 		public Task<List<Donation>> getDonationReports(ReportAccountFilter filter);
+		public Task<int> getTotalDonation();
+		public Task<int> getTotalDonationWithSourceType(string sourceType);
+
+		public Task<int> getTotalDonationWithDonationType(string donationType);
 	}
 }

@@ -5,10 +5,11 @@ namespace ApplicationCore.Dtos.Reports
 {
     public class AccountRepoortDto
     {
-        public decimal totalExpense { get; set; }
-        public decimal totalIncome { get; set; }
+        public double totalExpense { get; set; }
+        public double totalIncome { get; set; }
+        public int totalTransaction { get; set; }
 
-        public string  totalDonation { get; set; }
+        public double  totalDonation { get; set; }
 
         public List<TransactionResponseDto> transactions { get; set; }
     }

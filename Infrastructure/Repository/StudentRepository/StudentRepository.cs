@@ -1,7 +1,10 @@
 ﻿using System.Formats.Asn1;
 using ApplicationCore.Filter;
+using ApplicationCore.Filter.report;
 using ErrorOr;
 using Infrastructure.DataBaseContext;
+using Infrastructure.Model.Recipient;
+using Infrastructure.Model.reports;
 using Infrastructure.Model.Student;
 using Microsoft.EntityFrameworkCore;
 
@@ -77,6 +80,55 @@ namespace Infrastructure.Repository.StudentRepository
               return await _dbContext.students.FirstAsync(t => t.Id == Id);
             }catch(Exception ex){
              throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<List<Recipient>> getRecipientReport(RecipientReportFilter filter)
+        {
+            try
+            {
+                return await _dbContext.students.Where(t => t.project.Id == filter.projectId).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<int> getTotalRecipient()
+        {
+            try
+            {
+                return  _dbContext.students.Count();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<List<RecipientReport>> getTotalRecipientBySchool()
+        {
+            try
+            {
+                List<RecipientReport> response = new List<RecipientReport> ();
+                List<School> schools = _dbContext.schoools.ToList();
+
+                foreach(var school in schools)
+                {
+                    var total = _dbContext.students.Where(t => t.school.Id == school.Id).Count();
+                    response.Add(new RecipientReport()
+                    {
+                        schoolName = school.name,
+                        totalRecipient = total,
+                    });
+                }
+
+                return response;
+
+            }catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
     }

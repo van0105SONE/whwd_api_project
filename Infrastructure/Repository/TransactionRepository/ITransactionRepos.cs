@@ -20,6 +20,12 @@ namespace Infrastructure.Repository.TransactionRepository
 
         public Task<List<Transaction>> getTransactionsReport(ReportAccountFilter filter);
 
+        public Task<double> getTotalIncome();
+        public Task<double> getTotalExpense();
+        public Task<double> getTotalDonation();
+
+        public Task<int> getTotalTransaction();
+
 
     }
 }

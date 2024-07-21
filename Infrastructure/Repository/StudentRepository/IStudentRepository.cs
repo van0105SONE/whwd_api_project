@@ -1,5 +1,7 @@
 ﻿using ApplicationCore.Filter;
+using ApplicationCore.Filter.report;
 using ErrorOr;
+using Infrastructure.Model.reports;
 using Infrastructure.Model.Student;
 using System;
 using System.Collections.Generic;
@@ -17,5 +19,8 @@ namespace Infrastructure.Repository.StudentRepository
         Task<bool> update(Recipient student);
 
         Task<Recipient> GetStudentById(Guid Id);
+        Task<List<Recipient>> getRecipientReport(RecipientReportFilter filter);
+        Task<int> getTotalRecipient();
+        Task<List<RecipientReport>> getTotalRecipientBySchool();
     }
 }

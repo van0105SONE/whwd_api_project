@@ -47,13 +47,57 @@ namespace Infrastructure.Repository.TransactionRepository
 			}
 		}
 
+        public async Task<double> getTotalDonation()
+        {
+            try
+            {
+                return _DbContexts.transactions.Where(t => t.TransactionType.ToUpper() == "DONATION").Sum(t => t.Amount);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
 
+        public async Task<double> getTotalExpense()
+        {
+            try
+            {
+                return _DbContexts.transactions.Where(t => t.TransactionType.ToUpper() == "EXPENSE").Sum(t => t.Amount);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
 
-		public async Task<Transaction> getTransactionId(Guid Id)
+        public async Task<double> getTotalIncome()
+        {
+			try
+			{
+				return _DbContexts.transactions.Where(t => t.TransactionType.ToUpper() == "INCOME").Sum(t => t.Amount);
+			}catch(Exception ex)
+			{
+				throw new Exception(ex.Message);
+			}
+        }
+
+        public async Task<int> getTotalTransaction()
+        {
+            try
+            {
+                return _DbContexts.transactions.Count();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<Transaction> getTransactionId(Guid Id)
 		{
 			try
 			{
-
 				return _DbContexts.transactions.FirstOrDefault(t => t.Id == Id);
 			}
 			catch(Exception ex)
@@ -66,7 +110,6 @@ namespace Infrastructure.Repository.TransactionRepository
 		{
 			try
 			{
-
 				var list = _DbContexts.transactions.Skip(((filter.page - 1) * filter.pageSize)).Take(filter.pageSize).ToList();
 				return list;
 			}catch(Exception ex)
@@ -79,7 +122,7 @@ namespace Infrastructure.Repository.TransactionRepository
         {
 			try
 			{
-			  return  _DbContexts.transactions.Skip((filter.page - 1) * filter.pageSize).Take(filter.pageSize).Where(t => t.CreateAt.Date >= filter.startDate && t.CreateAt.Date <= filter.endDate).ToList();
+			  return  _DbContexts.transactions.Skip((filter.page - 1) * filter.pageSize).Take(filter.pageSize).Where(t => t.CreateAt.Date >= filter.startDate.Value.Date && t.CreateAt.Date <= filter.endDate.Value.Date).ToList();
 			}catch(Exception ex)
 			{
 				throw new Exception(ex.Message);

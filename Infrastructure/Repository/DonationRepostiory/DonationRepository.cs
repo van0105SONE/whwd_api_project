@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -164,6 +165,41 @@ namespace Infrastructure.Repository.DonationRepostiory
             try
             {
                 return _dbContext.Donation.Include(t => t.DonorBy).Skip((filter.page - 1) * filter.pageSize).Take(filter.pageSize).Where(t => t.CreateAt.Date >= filter.startDate && t.CreateAt.Date <= filter.endDate).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<int> getTotalDonation()
+        {
+			try
+			{
+		     return _dbContext.Donation.Count();
+			}catch(Exception ex)
+			{
+				throw new Exception(ex.Message);
+			}
+        }
+
+        public async Task<int> getTotalDonationWithSourceType(string sourceType)
+        {
+            try
+            {
+                return _dbContext.Donation.Where(t => t.SourceType.ToUpper() == sourceType.ToUpper()).Count();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<int> getTotalDonationWithDonationType(string donationType)
+        {
+            try
+            {
+                return _dbContext.Donation.Where(t => t.DonationType.ToUpper() == donationType.ToUpper()).Count();
             }
             catch (Exception ex)
             {

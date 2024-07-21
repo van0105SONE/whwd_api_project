@@ -6,6 +6,7 @@ using ApplicationCore.Dtos.Donate;
 using ApplicationCore.Dtos.FunRaisingPlaceDto;
 using ApplicationCore.Dtos.Recipient;
 using ApplicationCore.Dtos.RecipientDto;
+using ApplicationCore.Dtos.Reports;
 using ApplicationCore.Dtos.RoleDto;
 using ApplicationCore.Dtos.Roles;
 using ApplicationCore.Dtos.StudentDto;
@@ -19,6 +20,7 @@ using Infrastructure.Model.Address;
 using Infrastructure.Model.Donate;
 using Infrastructure.Model.Place;
 using Infrastructure.Model.Recipient;
+using Infrastructure.Model.reports;
 using Infrastructure.Model.Student;
 using Infrastructure.Model.University;
 using Infrastructure.Model.Users;
@@ -47,7 +49,7 @@ namespace whwd_web_api.Mapper
             CreateMap<Transaction, TransactionResponseDto>();
             CreateMap<TransactionDto, Transaction>();
 
-
+            CreateMap<Infrastructure.Model.reports.RecipientReport, RecipientBySchool>();
             CreateMap<Department, DepartmentDto>();
 			CreateMap<ProjectTeam, ProjectTeamResponse>();
 			CreateMap<Position, PositionResponse>();

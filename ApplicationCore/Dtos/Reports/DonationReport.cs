@@ -10,9 +10,10 @@ namespace ApplicationCore.Dtos.Reports
     public class DonationReport
     {
         public int totalDonation { get; set; }
-        public int totalOrganiztion { get; set; }
-        public int totalCompany { get; set; }
-        public int totalPersonal { get; set; }
+        public int totalOnline { get; set; }
+        public int totalOffline { get; set; }
+        public int totalCash { get; set; }
+        public int totalThing { get; set; }
         public List<DonationResponseDto> donations { get; set; }
     }
 }
