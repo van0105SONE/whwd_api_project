@@ -147,20 +147,25 @@ namespace Services.Service.FundRaisingPlaceService
         {
             try
             {
-                var place =  await _fundRaisingPlaceService.getPlaceById(Id);
+                var place = await _fundRaisingPlaceService.getPlaceById(Id);
                 var user = await _userManager.FindByIdAsync(placeDto.userId);
                 if (place == null)
                 {
                     return Error.Validation(ErrorCodes.Validation, "Place is not found in the system");
-                }else if (user == null)
+                }
+                else if (user == null)
                 {
                     return Error.Validation(ErrorCodes.Validation, "User is not found in the system");
                 }
 
 
                 place.Status = placeDto.status;
-                place.startDate = placeDto.startDate;
-                place.endDate = placeDto.endDate;
+                if (placeDto.status == "CONFIRM")
+                {
+                    place.startDate = placeDto.startDate;
+                    place.endDate = placeDto.endDate;
+                }
+
                 place.UpdateBy = user;
 
                 if (place.startDate.Value.Date >= DateTime.Now.Date)

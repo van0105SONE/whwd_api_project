@@ -2,6 +2,7 @@
 using ErrorOr;
 using Infrastructure.DataBaseContext;
 using Infrastructure.Model.Work;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -62,7 +63,7 @@ namespace Infrastructure.Repository.ConjointRepository
 		{
 			try
 			{
-				return _dbContext.conjoints.Skip((filter.page - 1) * filter.pageSize).Take(filter.pageSize).ToList();
+				return _dbContext.conjoints.Include(t => t.FundRaisingPlace).Include(t =>t.Joiner).Skip((filter.page - 1) * filter.pageSize).Take(filter.pageSize).ToList();
 			}
 			catch (Exception ex)
 			{

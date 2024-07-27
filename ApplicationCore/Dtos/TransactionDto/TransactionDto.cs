@@ -17,7 +17,6 @@ namespace ApplicationCore.Dtos.TransactionDto
 		public required string description { get; set; }
 		public required string transactionType { get; set; }
 		public double amount { get; set; }
-
 		public required Guid accountId { get; set; }
 		public required string userId { get; set; }
 	}

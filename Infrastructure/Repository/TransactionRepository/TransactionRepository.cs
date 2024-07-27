@@ -3,6 +3,7 @@ using ApplicationCore.Filter.report;
 using ErrorOr;
 using Infrastructure.DataBaseContext;
 using Infrastructure.Model.Account;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -110,7 +111,7 @@ namespace Infrastructure.Repository.TransactionRepository
 		{
 			try
 			{
-				var list = _DbContexts.transactions.Skip(((filter.page - 1) * filter.pageSize)).Take(filter.pageSize).ToList();
+				var list = _DbContexts.transactions.Include(t => t.Account).Include(t => t.CreateBy).Skip(((filter.page - 1) * filter.pageSize)).Take(filter.pageSize).ToList();
 				return list;
 			}catch(Exception ex)
 			{

@@ -145,7 +145,7 @@ namespace Infrastructure.Repository.ProjectRepository
 		{
             try
             {
-              return await  _DbContext.projectPlan.Include(t => t.donateThings).Include(t => t.schools).Skip((filter.page - 1) * filter.pageSize).Take(filter.pageSize).ToListAsync() ;
+              return await  _DbContext.projectPlan.Include(t => t.donateThings).Include(t => t.schools).OrderByDescending(t => t.IsActive).Skip((filter.page - 1) * filter.pageSize).Take(filter.pageSize).ToListAsync() ;
             }catch(Exception ex)
             {
                 throw new Exception(ex.Message);
@@ -160,9 +160,15 @@ namespace Infrastructure.Repository.ProjectRepository
                 if (currentProjectPlan != null)
                 {
                     currentProjectPlan.IsActive = false;
+                    _DbContext.projectPlan.Update(currentProjectPlan);
+                    _DbContext.SaveChanges();
+                    return true;
+                }else
+                {
+                    return false;
                 }
 
-              return true;
+
             }catch(Exception ex)
             {
                 throw new Exception(ex.Message);

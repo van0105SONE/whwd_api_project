@@ -13,10 +13,14 @@ namespace ApplicationCore.Dtos.Work
 		public String ProjectName { get; set; }
 		public String Description { get; set; }
 		public String userId { get; set; }
-		public DateTime StartDate { get; set; }
+        public bool isActive { get; set; }
+        public DateTime StartDate { get; set; }
 		public DateTime EndDate { get; set; }
+        public Double totalRecieve { get; set; }
+        public Double totalFund { get; set; }
 
-		public List<SchoolResponseDto> schools { get; set; }
+        public int totalFundRaisedPlace { get; set; }
+        public List<SchoolResponseDto> schools { get; set; }
 		public ICollection<DonateThingResponseDto> donateThings { get; set; }
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Constanst;
+using ApplicationCore.Dtos;
 using ApplicationCore.Dtos.FunRaisingPlaceDto;
 using ApplicationCore.Filter;
 using AutoMapper;
@@ -18,9 +19,13 @@ namespace whwd_web_api.Controllers.WorkController
         
         private UserManager<ApplicationUser> _userManager { get; set; }
         private IFundRaisingPlaceService _fundRaisingService { get; set; }
+        private IMapper _mapper { get; set; }
+        private DatabaseContexts _databaseContest { get; set; }
          public FundRaisingPlaceController(UserManager<ApplicationUser> userManager,DatabaseContexts contexts, IMapper mapper) { 
             _userManager = userManager;
             _fundRaisingService = new FundRaisingPlaceService(userManager, contexts, mapper);
+            _databaseContest = contexts;
+            _mapper = mapper;
          }
 
         [HttpPost]
@@ -42,10 +47,46 @@ namespace whwd_web_api.Controllers.WorkController
             }
         }
 
+        [HttpDelete]
+        [Route("deletePlace/{Id}")]
+        public async Task<ActionResult> deletePlace(Guid Id)
+        {
+            try
+            {
+              var placer =  _databaseContest.fundRaisingPlaces.FirstOrDefault(t => t.Id == Id);
+                if (placer == null)
+                {
+                    return BadRequest(
+                        new  MessageReponse<PlaceResponseDto>(){
+                            statusCode = 400,
+                           isSuccess = false,
+                           message = "Fail to remove place"
+                              }
+                        );
+                }
+                _databaseContest.fundRaisingPlaces.Remove(placer);
+                _databaseContest.SaveChanges();
 
-        [HttpPut]
-        [Route("updateStatus")]
-        public async Task<ActionResult> UpdateStatus(Guid Id,[FromQuery] PlaceUpdateStatusDto placeStatusDto)
+                return Ok(
+     new MessageReponse<PlaceResponseDto>()
+     {
+         statusCode = 201,
+         isSuccess = true,
+         message = "Successful",
+         data = _mapper.Map<PlaceResponseDto>(placer)
+     }
+     );
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
+        }
+
+
+        [HttpPatch]
+        [Route("updateStatus/{Id}")]
+        public async Task<ActionResult> UpdateStatus(Guid Id,[FromBody] PlaceUpdateStatusDto placeStatusDto)
         {
             try
             {

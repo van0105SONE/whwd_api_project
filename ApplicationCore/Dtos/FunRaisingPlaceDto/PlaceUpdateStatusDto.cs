@@ -8,11 +8,11 @@ namespace ApplicationCore.Dtos.FunRaisingPlaceDto
 {
     public class PlaceUpdateStatusDto
     {
-        public DateTime startDate {get; set;}
-        public DateTime endDate { get; set;}    
-        public string status { get; set; }
+        public DateTime? startDate {get; set;}
+        public DateTime? endDate { get; set;}    
+        public string? status { get; set; }
 
-        public string userId { get; set; }
+        public string? userId { get; set; }
         
     }
 }

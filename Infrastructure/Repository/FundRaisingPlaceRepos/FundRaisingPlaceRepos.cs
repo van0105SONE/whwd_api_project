@@ -52,11 +52,11 @@ namespace Infrastructure.Repository.FundRaisingPlaceRepos
                 List<FundRaisingPlace> places = new List<FundRaisingPlace>();
                 if (string.IsNullOrEmpty(filter.status))
                 {
-                    places = await _dbContext.fundRaisingPlaces.Where(t => t.Status != Constant.COORDINATE_STATUSES[3]).Skip((filter.page - 1) * filter.pageSize).Take(filter.pageSize).ToListAsync();
+                    places = await _dbContext.fundRaisingPlaces.Include(t => t.CreateBy).Include(t => t.CoordinateBy).Include(t => t.Village).ThenInclude(t => t.district).ThenInclude(t => t.province).Skip((filter.page - 1) * filter.pageSize).Take(filter.pageSize).ToListAsync();
                 }
                 else
                 {
-                    places = await _dbContext.fundRaisingPlaces.Where(t => t.Status == Constant.COORDINATE_STATUSES[3]).Skip((filter.page - 1) * filter.pageSize).Take(filter.pageSize).ToListAsync();
+                    places = await _dbContext.fundRaisingPlaces.Skip((filter.page - 1) * filter.pageSize).Take(filter.pageSize).ToListAsync();
                 }
 
                 return places;

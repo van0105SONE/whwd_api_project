@@ -30,6 +30,7 @@ namespace Services.Service.PositionService
         IProjectPlanRepository _projectRepository { get; set; }
         IAddressRepository _addressRepository { get; set; }
         UserManager<ApplicationUser> _userManager { get; set; }
+        DatabaseContexts _databaseContexts { get; set; }
         
        
         public ProjectService(UserManager<ApplicationUser> userManager, DatabaseContexts context, IMapper mapper) {
@@ -37,6 +38,7 @@ namespace Services.Service.PositionService
             _userManager = userManager;
             _projectRepository = new ProjectPlanRepository(context);
             _addressRepository = new AddressRepository(context);
+            _databaseContexts = context;
         }
 
         public async Task<ErrorOr<MessageReponse<ProjectPlanResponseDto>>> createProject(ProjectPlanDto projectPlanParam)
@@ -49,7 +51,7 @@ namespace Services.Service.PositionService
                   if (user == null)
                   {
                     return Error.Validation(ErrorCodes.Validation, "User ist found on system"); 
-                  }else if (projectPlanParam.StartDate <= projectPlanParam.EndDate.Date)
+                  }else if (projectPlanParam.StartDate >= projectPlanParam.EndDate.Date)
                   {
                     return Error.Validation(ErrorCodes.Validation, "End date must be greater than start date");
                   }
@@ -150,19 +152,15 @@ namespace Services.Service.PositionService
                     DonateThing donateThing = _mapper.Map<DonateThing>(donateThingDto);
                     donateThing.totalPrice = donateThing.Unit * donateThingDto.Price;
                     ApplicationUser? user = await _userManager.FindByIdAsync(donateThingDto.userId);
+                    var projectPlan = _databaseContexts.projectPlan.FirstOrDefault(t => t.IsActive);
 
-                    var projectResult = await _projectRepository.getProjectActiveProject();
-                    if (projectResult.Value == null)
-                    {
-                        return Error.Validation(ErrorCodes.Validation, "project is not found");
-                    }
-                    else if (user == null)
+                   if (user == null)
                     {
                         return Error.Validation(ErrorCodes.Validation, "User is not found");
                     }
 
                     donateThing.CreateBy = user;
-                    donateThing.ProjectPlan = projectResult.Value;
+                    donateThing.ProjectPlan = projectPlan;
                     var result = await _projectRepository.createDonateThing(donateThing);
                     isSuccess = result.Value;
                     donateThingList.Add(donateThing);
@@ -237,13 +235,8 @@ namespace Services.Service.PositionService
                         return Error.Validation(ErrorCodes.Validation,"System can't find  village");
                     }
                     school.village = village;
-                    var projectError = await _projectRepository.getProjectActiveProject();
-                    if (projectError.IsError)
-                    {
-                        return Error.Validation(ErrorCodes.Validation, "There is no project plan is created yet");
-                    }
-                    school.project = projectError.Value;
-
+                    var projectPlan = _databaseContexts.projectPlan.FirstOrDefault(t => t.IsActive);
+                    school.project = projectPlan;
                     var user = await _userManager.FindByIdAsync(schoolDto.userId);
                     if (user == null)
                     {
