@@ -5,13 +5,10 @@ namespace ApplicationCore.Dtos.AuthenticationDto
 {
     public class PasswordResetDto
     {
-        [Required]
-        public required String UserName { get; set; }
-        [Required]
-        public required String CurrentPassword { get; set; }
+        public String? userName { get; set; }
 
-        [Required]
-        public required String NewPasssword { get; set; }
+        public  String? currentPassword { get; set; }
+        public  String? newPassword { get; set; }
 
     }
 }

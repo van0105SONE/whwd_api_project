@@ -8,6 +8,7 @@ using Infrastructure.DataBaseContext;
 using Infrastructure.Model.Account;
 using Infrastructure.Model.Donate;
 using Infrastructure.Model.Users;
+using Infrastructure.Model.Work;
 using Infrastructure.Repository.AccountRepos;
 using Infrastructure.Repository.DonationRepostiory;
 using Infrastructure.Repository.TransactionRepository;
@@ -24,7 +25,7 @@ namespace Services.Service.DonationService
 		private IDonationRepository _DonationRepository { get; set; }
 		private IAccountRepository _accountRepository { get; set; }
 		private ITransactionRepos _transacitonRepos { get; set; }
-
+		private DatabaseContexts _dbContexts { get; set; }
 		public DonationService(UserManager<ApplicationUser> userManager, DatabaseContexts contexts, IMapper mapper)
 		{
 			_Mapper = mapper;
@@ -32,17 +33,15 @@ namespace Services.Service.DonationService
 			_DonationRepository = new DonationRepository(contexts);
 			_accountRepository = new AccountRepository(contexts);
 			_transacitonRepos = new TransactionRepository(contexts);
-
+			_dbContexts = contexts;
 		}
         public async Task<ErrorOr<MessageReponse<DonationResponseDto>>> createDonation([FromBody] DonationDto donationParam)
 		{
 			try
 			{
-
 			     Donation donation =	_Mapper.Map<Donation>(donationParam);
 			     ApplicationUser? user =  await	_UserManager.FindByIdAsync(donationParam.userId);
-			     Account account = await	_accountRepository.getAccountById(donationParam.accountId);
-			    	Donator donator = new Donator();
+				Donator donator = new Donator();
 
 				if (user == null)
 				{
@@ -52,16 +51,31 @@ namespace Services.Service.DonationService
 					return Error.Validation(ErrorCodes.Validation, "Account id is invalid, account is required");
 				}
 
+				Account? account = _dbContexts.accounts.FirstOrDefault(t => t.AccountTypes.ToUpper() == "MAIN" && t.ProjectPlan.IsActive);
+
+
+
 				Transaction transaction = new Transaction()
 				{
 					Account = account,
-					Description = "Donate from donator",
+                    Description = "Donate from donator",
 					Amount = donationParam.amount,
 					TransactionType = donation.DonationType,
 					CreateBy = user
 				};
-
 				var trxResult = await _transacitonRepos.createTransaction(transaction);
+
+
+				Account mainAccount = _dbContexts.accounts.FirstOrDefault(t => t.AccountTypes.ToUpper() == "MAIN" && t.ProjectPlan.IsActive);
+				mainAccount.DepositAmount += transaction.Amount;
+				mainAccount.Balance += transaction.Amount;
+
+				ProjectPlan projectPlan = _dbContexts.projectPlan.FirstOrDefault(t => t.IsActive);
+                projectPlan.TotalRecieve += transaction.Amount;
+
+				_dbContexts.accounts.Update(mainAccount);
+				_dbContexts.projectPlan.Update(projectPlan);
+				_dbContexts.SaveChanges();
 
 
 				if (trxResult.IsError)
@@ -76,11 +90,12 @@ namespace Services.Service.DonationService
                 else
 				{
 
-                        donator = new Donator()
-                        {
-                            Name = donationParam.Name,
-                            Facebook = donationParam.Facebook,
-                            PhoneNumber = donationParam.PhoneNumber,
+					donator = new Donator()
+					{
+						Name = donationParam.Name,
+						Facebook = donationParam.Facebook,
+						PhoneNumber = donationParam.PhoneNumber,
+						SponsorType = donationParam.SponsorType,
                             CreateBy = user
                         };
                         await _DonationRepository.creattDonator(donator);
@@ -159,6 +174,8 @@ namespace Services.Service.DonationService
 			{
 
 			    Donation donation = await	_DonationRepository.getDonationById(Id);
+				Donator donator = _dbContexts.donators.FirstOrDefault(t => t.Id == Guid.Parse( donationParam.donatorId));
+
 
 				if (donation == null)
 				{
@@ -169,10 +186,11 @@ namespace Services.Service.DonationService
 				donation.Title = donationParam.Title;
 
 				ApplicationUser? user = await _UserManager.FindByIdAsync(donationParam.userId);
-				donation.DonorBy.Name = donationParam.Name;
-				donation.DonorBy.Facebook = donationParam.Facebook;
-				donation.DonorBy.PhoneNumber = donationParam.PhoneNumber;
-				donation.UpdateBy = user;
+				donator.SponsorType = donationParam.SponsorType;
+                donator.Name = donationParam.Name;
+                donator.Facebook = donationParam.Facebook;
+                donator.PhoneNumber = donationParam.PhoneNumber;
+				donation.DonorBy = donator;
 				
 
 				var result = await _DonationRepository.updateDonation(donation);

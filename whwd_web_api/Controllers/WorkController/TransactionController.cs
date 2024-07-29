@@ -31,6 +31,7 @@ namespace whwd_web_api.Controllers.WorkController
 		{
 			try
 			{
+
 			     var result =  await	_transactionService.createTransaction(transactonDto);
                 if (result.IsError)
                 {

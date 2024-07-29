@@ -3,6 +3,7 @@ using System;
 using Infrastructure.DataBaseContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(DatabaseContexts))]
-    partial class DatabaseContextsModelSnapshot : ModelSnapshot
+    [Migration("20240728052447_addGenderAndBirthDate")]
+    partial class addGenderAndBirthDate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,10 +31,6 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("AccountName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("AccountNo")
                         .IsRequired()
                         .HasColumnType("text");
@@ -42,6 +41,10 @@ namespace Infrastructure.Migrations
 
                     b.Property<double>("Balance")
                         .HasColumnType("double precision");
+
+                    b.Property<string>("BookingNO")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("timestamp with time zone");
@@ -54,6 +57,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("double precision");
 
                     b.Property<string>("OwnById")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<Guid>("ProjectPlanId")
@@ -102,7 +106,7 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("AccountId")
+                    b.Property<Guid>("AccountId")
                         .HasColumnType("uuid");
 
                     b.Property<double>("Amount")
@@ -1018,7 +1022,9 @@ namespace Infrastructure.Migrations
 
                     b.HasOne("Infrastructure.Model.Users.ApplicationUser", "OwnBy")
                         .WithMany()
-                        .HasForeignKey("OwnById");
+                        .HasForeignKey("OwnById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Infrastructure.Model.Work.ProjectPlan", "ProjectPlan")
                         .WithMany()
@@ -1043,7 +1049,9 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("Infrastructure.Model.Account.Account", "Account")
                         .WithMany()
-                        .HasForeignKey("AccountId");
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Infrastructure.Model.Users.ApplicationUser", "CreateBy")
                         .WithMany()

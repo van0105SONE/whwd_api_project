@@ -84,6 +84,34 @@ namespace whwd_web_api.Controllers.UserController
             }
         }
 
+        [HttpDelete]
+        [Route("deleteUser/{userId}")]
+        public async Task<IActionResult> deleteUser(Guid userId)
+        {
+            try
+            {
+                var updateResult = await _userService.deleteUser(userId);
+                if (updateResult.IsError)
+                {
+                    return Ok(ErrorHandler<ApplicationUser>.HandleErrorResponse(updateResult.FirstError.Code, updateResult.FirstError.Description));
+                }
+                else
+                {
+                    return Ok(updateResult.Value);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new MessageReponse<ApplicationUser>()
+                {
+                    statusCode = 500,
+                    isSuccess = false,
+                    message = ex.Message
+                });
+            }
+        }
+
         [HttpGet]
         [Route("getUsers")]
         public async Task<IActionResult> GetUsers([FromQuery] BaseFilter filter)

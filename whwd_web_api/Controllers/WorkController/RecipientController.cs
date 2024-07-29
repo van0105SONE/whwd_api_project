@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Dtos;
+using ApplicationCore.Dtos.Recipient;
 using ApplicationCore.Dtos.StudentDto;
 using ApplicationCore.Filter;
 using AutoMapper;
@@ -33,7 +34,7 @@ namespace whwd_web_api.Controllers.WorkController
                 var result = await  _studentService.createStudent(studentDto);
                 if (result.IsError)
                 {
-                    return Ok(ErrorHandler<PlaceResponseDto>.HandleErrorResponse(result.FirstError.Code, result.FirstError.Description));
+                    return Ok(ErrorHandler<RecipientReponseDto>.HandleErrorResponse(result.FirstError.Code, result.FirstError.Description));
                 }
                 else
                 {
@@ -46,8 +47,8 @@ namespace whwd_web_api.Controllers.WorkController
             }
         }
     [HttpDelete]
-    [Route("deleteRecipient")]
-    public async Task<IActionResult> deleteStudent([FromQuery] Guid Id){
+    [Route("deleteRecipient/{Id}")]
+    public async Task<IActionResult> deleteStudent( Guid Id){
         try{
             var result = await _studentService.deleteStudent(Id);
             return result.Match(t => Ok(new MessageReponse<Recipient>(){

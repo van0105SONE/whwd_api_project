@@ -80,13 +80,13 @@ namespace whwd_web_api.Controllers
         {
             try
             {
-                ApplicationUser? user = await _UserManager.FindByNameAsync(request.UserName);
+                ApplicationUser? user = await _UserManager.FindByNameAsync(request.userName);
                 if (user == null)
                 {
                     return NotFound("Username isn't exist");
                 }
 
-               var result = await _UserManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPasssword);
+               var result = await _UserManager.ChangePasswordAsync(user, request.currentPassword, request.newPassword);
 
                 if (result.Succeeded)
                 {

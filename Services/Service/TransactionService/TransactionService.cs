@@ -7,6 +7,7 @@ using ErrorOr;
 using Infrastructure.DataBaseContext;
 using Infrastructure.Model.Account;
 using Infrastructure.Model.Users;
+using Infrastructure.Model.Work;
 using Infrastructure.Repository.AccountRepos;
 using Infrastructure.Repository.ProjectRepository;
 using Infrastructure.Repository.TransactionRepository;
@@ -21,6 +22,8 @@ namespace Services.Service.TransactionService
 		private ITransactionRepos _transactionRepos { get; set; }
 	    private IProjectPlanRepository _projectPlanRepository { get; set; }
 		private IAccountRepository _accountRepository { get; set; }
+        private DatabaseContexts _dbContexts { get; set; }
+
 		public TransactionService(UserManager<ApplicationUser> UserManager, DatabaseContexts contexts, IMapper mapper) { 
 		     _Mapper = mapper;
 			 _userManager = UserManager;
@@ -60,18 +63,43 @@ namespace Services.Service.TransactionService
                 {
                     return Error.NotFound(ErrorCodes.Validation, "Account not found, required user id");
                 }
-
                 transaction.CreateBy = user;
                 transaction.Account = account;
-
                 var result = await _transactionRepos.createTransaction(transaction);
-			    var response =	_Mapper.Map<TransactionResponseDto>(transaction);
-				return new MessageReponse<TransactionResponseDto>() { 
-					isSuccess = true,
-					statusCode = 200,
-					message = "Successful",
-				    data =response
-				};
+
+                if (result.Value)
+                {
+                    Account mainAccount = _dbContexts.accounts.FirstOrDefault(t => t.AccountTypes.ToUpper() == "MAIN" && t.ProjectPlan.IsActive);
+                    mainAccount.Balance += transaction.Amount;
+
+                    _dbContexts.accounts.Update(mainAccount);
+                    _dbContexts.SaveChanges();
+
+                    ProjectPlan projectPlan = _dbContexts.projectPlan.FirstOrDefault(t => t.IsActive);
+                    projectPlan.TotalRecieve += transaction.Amount;
+                    _dbContexts.projectPlan.Update(projectPlan);
+                    _dbContexts.SaveChanges();
+                    var response = _Mapper.Map<TransactionResponseDto>(transaction);
+                    return new MessageReponse<TransactionResponseDto>()
+                    {
+                        isSuccess = true,
+                        statusCode = 200,
+                        message = "Successful",
+                        data = response
+                    };
+                }
+                else
+                {
+                    return new MessageReponse<TransactionResponseDto>()
+                    {
+                        isSuccess = false,
+                        statusCode = 500,
+                        message = "Faile",
+                    };
+                }
+
+
+
 
 			}
 			catch (Exception ex)

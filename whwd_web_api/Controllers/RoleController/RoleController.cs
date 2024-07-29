@@ -1,10 +1,13 @@
 ﻿using ApplicationCore.Dtos;
+using ApplicationCore.Dtos.RoleDto;
 using ApplicationCore.Dtos.Roles;
 using AutoMapper;
 using Infrastructure.DataBaseContext;
 using Infrastructure.Model.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 using Services.Service.RoleSevice;
@@ -16,6 +19,7 @@ namespace whwd_web_api.Controllers.RoleController
     {
 
         private IMapper _mapper { get; set; }
+        private DatabaseContexts _dbContexts { get; set; }
         private RoleManager<ApplicationRoles> _roleManager { get; set; }
         private UserManager<ApplicationUser> _userManager { get; set; }
         private IRoleService roleService { get; set; }
@@ -24,6 +28,7 @@ namespace whwd_web_api.Controllers.RoleController
              _userManager = userManager;
              _mapper = mapper;
             _roleManager = roleManager;
+            _dbContexts = dbContext;
             roleService = new RoleService( roleManager,userManager,dbContext, mapper);
      
         }
@@ -44,6 +49,65 @@ namespace whwd_web_api.Controllers.RoleController
                 return Problem(ex.Message);
             }
         }
+
+        [HttpPatch]
+        [Route("updateRoles")]
+        public async Task<IActionResult> updateRoles([FromBody]  List<RoleResponse> rolesDto)
+        {
+            try
+            {
+                foreach(var role in rolesDto)
+                {
+                    foreach(var access in role.accessRights)
+                    {
+                        var accessRights = _dbContexts.accessRight.FirstOrDefault(t => t.Id == access.Id);
+                        accessRights.IsActice = access.IsActice;
+                        _dbContexts.accessRight.Update(accessRights);
+                        _dbContexts.SaveChanges();
+                    }
+
+                }
+    
+                return Ok(new MessageReponse<string>()
+                {
+                    statusCode = 200,
+                    isSuccess = true
+                });
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
+        }
+
+
+        [HttpGet]
+        [Route("checkUserRole")]
+        public async Task<IActionResult> updateRoles([FromQuery] Guid userId, string moduleName, string action)
+        {
+            try
+            {
+
+              var user = _dbContexts.Users.FirstOrDefault(t => t.Id == userId.ToString());
+
+              var role = _dbContexts.Roles.Include(t => t.accessRights).FirstOrDefault(t => t.NormalizedName == moduleName.ToUpper());
+
+                if (role == null)
+                {
+                    return Ok(false);
+                }else
+                {
+                  var accessRight =  role.accessRights.FirstOrDefault(t => t.Name.ToUpper() == action.ToUpper());
+                    return Ok(accessRight.IsActice);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
+        }
+
 
         [HttpGet]
         [Route("getRoles")]
@@ -74,7 +138,12 @@ namespace whwd_web_api.Controllers.RoleController
             try
             {
                 var roleResult = await roleService.createRoleAccess(roleAccessDto);
-                var jsonString = JsonConvert.SerializeObject(roleResult.Value, Formatting.Indented);
+                var jsonString = JsonConvert.SerializeObject(roleResult.Value, Formatting.Indented,
+                            new JsonSerializerSettings()
+                            {
+                                ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                            }
+                    );
                 return Ok(jsonString);
             }
             catch (Exception ex)

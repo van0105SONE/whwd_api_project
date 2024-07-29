@@ -6,6 +6,7 @@ using ApplicationCore.Filter;
 using AutoMapper;
 using ErrorOr;
 using Infrastructure.DataBaseContext;
+using Infrastructure.Model.Account;
 using Infrastructure.Model.Address;
 using Infrastructure.Model.Recipient;
 using Infrastructure.Model.Users;
@@ -18,6 +19,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.VisualBasic;
 using System.Diagnostics.CodeAnalysis;
+using whwd_web_api.Dtos.Accounts;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Error = ErrorOr.Error;
 
@@ -45,7 +47,6 @@ namespace Services.Service.PositionService
         {
             try
             {
- 
                   ProjectPlan projectPlan  =  _mapper.Map<ProjectPlan>(projectPlanParam);
                   ApplicationUser user = await _userManager.FindByIdAsync(projectPlanParam.userId);
                   if (user == null)
@@ -57,10 +58,6 @@ namespace Services.Service.PositionService
                   }
                   var result  = await  _projectRepository.closeCurrentPlan();
 
-                  if (!result.Value)
-                  {
-                     return Error.Validation(ErrorCodes.Validation, "End date must be greater than start date");
-                  }
                  
                     projectPlan.IsActive = true;
                     projectPlan.TotalRecieve = 0;
@@ -71,8 +68,33 @@ namespace Services.Service.PositionService
                     var isCreated = await _projectRepository.create(projectPlan);
 
                    if (isCreated.Value)
-                  {
-                   var response = _mapper.Map<ProjectPlanResponseDto>(projectPlan);
+                {
+
+                    Account? oldAccount = _databaseContexts.accounts.FirstOrDefault(t => t.ProjectPlan.IsActive && t.AccountTypes.ToUpper() == "MAIN");
+                    double balance = 0;
+                    if (oldAccount != null)
+                    {
+                     balance  = oldAccount.Balance;
+                    }
+
+
+
+                    Account account = new Account() { 
+                        AccountName = "Warm Heart Warm Body",
+                        AccountNo = "111-1111-1111-1111",
+                        AccountTypes = "Main",
+                        Balance = balance,
+                        OwnBy = user,
+                        ProjectPlan = projectPlan,
+                        DepositAmount = 0,
+                        WithdrawAmount = 0,
+                        CreateBy = user,
+                    };
+
+                    _databaseContexts.accounts.Add(account);
+                    _databaseContexts.SaveChanges();
+
+                    var response = _mapper.Map<ProjectPlanResponseDto>(projectPlan);
                     return new MessageReponse<ProjectPlanResponseDto>() { 
                         statusCode = 201,
                         isSuccess = true,

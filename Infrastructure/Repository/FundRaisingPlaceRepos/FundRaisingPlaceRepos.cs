@@ -56,7 +56,7 @@ namespace Infrastructure.Repository.FundRaisingPlaceRepos
                 }
                 else
                 {
-                    places = await _dbContext.fundRaisingPlaces.Skip((filter.page - 1) * filter.pageSize).Take(filter.pageSize).ToListAsync();
+                    places = await _dbContext.fundRaisingPlaces.Where(t => t.Status == "CONFIRM").Skip((filter.page - 1) * filter.pageSize).Take(filter.pageSize).ToListAsync();
                 }
 
                 return places;

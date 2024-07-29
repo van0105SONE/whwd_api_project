@@ -8,6 +8,8 @@ namespace Infrastructure.Model.Users
     {
         public string Fname { get; set; }
         public string Lname { get; set; }
+        public string Gender { get; set; }
+        public DateTime BirtDate { get; set; }
         public string Occupation { get; set; }
 
         public Village CurrentVillage { get; set; }

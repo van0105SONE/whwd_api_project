@@ -10,7 +10,7 @@ namespace ApplicationCore.Dtos.Donate
     public class DonationResponseDto
     {
         public string Title { get; set; }
-        public string Description { get; set; }
+        public string SourceType { get; set; }
         public string DonationType { get; set; }
         public double amount { get; set; }
         public DonatorResponseDto DonorBy { get; set; }

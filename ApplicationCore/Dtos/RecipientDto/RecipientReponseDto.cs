@@ -10,6 +10,7 @@ namespace ApplicationCore.Dtos.Recipient
 {
     public class RecipientReponseDto
     {
+        public Guid Id { get; set;  }
         public required string fname { get; set; }
         public required string lname { get; set; }
         public required string gender { get; set; }

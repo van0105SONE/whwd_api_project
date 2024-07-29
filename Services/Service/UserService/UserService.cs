@@ -144,12 +144,14 @@ namespace Services.Service.UserService
                 Village bornVillage = addressRepository.getVillageById(userDto.BornVillage.villageCode);
                 Village currentVillage = addressRepository.getVillageById(userDto.CurrentVillage.villageCode);
                 ApplicationUser? userData = await _UserManager.FindByIdAsync(userId);
-
                 var department = universityRespository.getDepartmentById(userDto.Major.departmentId);
                 Major major = universityRespository.getMajorById(userDto.Major.id);
+                ApplicationRoles role = _roleRepository.getRoleById(userDto.RoleId);
 
-
-
+                if (role == null)
+                {
+                    return Error.Validation(ErrorCodes.NotFound, "Role is not exist in database");
+                }
                 if (userData == null)
                 {
                     return Error.Validation(ErrorCodes.NotFound, "User Id is invalid, User is required");
@@ -179,12 +181,14 @@ namespace Services.Service.UserService
 
                 userData.Fname = userMapper.Fname;
                 userData.Lname = userMapper.Lname;
-                userData.UserName = userMapper.UserName;
                 userData.PhoneNumber = userMapper.PhoneNumber;
                 userData.Email = userMapper.Email;
                 userData.BornVillage = bornVillage;
                 userData.CurrentVillage = currentVillage;
                 userData.Occupation = userMapper.Occupation;
+                userData.Role = role;
+
+
                 var updateResult = await _UserManager.UpdateAsync(userData);
 
                 if (updateResult.Succeeded)

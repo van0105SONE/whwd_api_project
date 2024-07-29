@@ -30,12 +30,14 @@ namespace Services.Service.FundRaisingPlaceService
         private readonly UserManager<ApplicationUser> _userManager;
         private IFundRaisingPlaceRepos _fundRaisingPlaceService { get; set; }
         private IAddressRepository _addressRepository { get; set; }
+        private DatabaseContexts _dbContexts { get; set; }  
         public FundRaisingPlaceService(UserManager<ApplicationUser> userManager, DatabaseContexts context, IMapper mapper)
         {
             _mapper = mapper;
             _userManager = userManager;
             _addressRepository = new AddressRepository(context);
             _fundRaisingPlaceService = new FundRaisingPlaceRepos(context);
+            _dbContexts = context;
             
         }
         public async Task<ErrorOr<MessageReponse<PlaceResponseDto>>> createPlace(FundRaisingPlaceDto placeDto)
@@ -71,6 +73,8 @@ namespace Services.Service.FundRaisingPlaceService
 
                 if (result)
                 {
+                   var currentProjectPlan = _dbContexts.projectPlan.FirstOrDefault(t => t.IsActive);
+                    currentProjectPlan.totalFundRaisedPlace += 1;
                     PlaceResponseDto response =   _mapper.Map<PlaceResponseDto>(newPlace);
                     return new MessageReponse<PlaceResponseDto>()
                     {
@@ -168,15 +172,7 @@ namespace Services.Service.FundRaisingPlaceService
 
                 place.UpdateBy = user;
 
-                if (place.startDate.Value.Date >= DateTime.Now.Date)
-                {
-                    return new MessageReponse<PlaceResponseDto>()
-                    {
-                        isSuccess = false,
-                        statusCode = 400,
-                        message = "Start date must greater than current date"
-                    };
-                }
+
 
 
                 var result = await _fundRaisingPlaceService.updatePlace(place);

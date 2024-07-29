@@ -11,9 +11,9 @@ namespace Infrastructure.Model.Account
     public class Account : BaseModel
     {
         public required string AccountNo { get; set; }
-        public required string BookingNO { get; set; }
+        public required string AccountName { get; set; }
         public required string AccountTypes { get; set; }
-        public required  ApplicationUser OwnBy { get; set; }
+        public required  ApplicationUser? OwnBy { get; set; }
         public required ProjectPlan ProjectPlan { get; set; }
         public double DepositAmount { get; set; }
         public double WithdrawAmount { get; set; }

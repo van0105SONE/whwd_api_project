@@ -11,11 +11,19 @@ namespace ApplicationCore.Dtos.UserDto
 		public string id { get; set; }
 		public string fname { get; set; }
 		public string lname { get; set; }
+		public string userName { get; set; }
 		public string occupation { get; set; }
+		public string gender { get; set; }
+		public string email { get; set; }
 
+		public string phoneNumber { get; set; }
+
+
+
+		public DateTime birtDate { get; set; }
 		public VillageReponseDto currentVillage { get; set; }
 		public VillageReponseDto bornVillage { get; set; }
-		public MajorDto major { get; set; }
+		public MajorResponseDto major { get; set; }
 		public RoleResponse role { get; set; }
 
 		public PositionResponse position { get; set; }

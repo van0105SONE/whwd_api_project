@@ -10,6 +10,7 @@ namespace ApplicationCore.Dtos.Donate
 	{
 		public string Title { get; set; }
 		public double amount { get; set; }
+		public string? donatorId { get; set; }
 		public string? Name { get; set; }
 		public string? SponsorType { get; set; }
 		public string? PhoneNumber { get; set; }
@@ -17,7 +18,6 @@ namespace ApplicationCore.Dtos.Donate
         public string SourceType { get; set; }
         public string? DonationType { get; set; }
 		public string userId { get; set; }
-		public Guid accountId { get; set; }
 	}
 
 }

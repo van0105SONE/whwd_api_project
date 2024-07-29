@@ -19,6 +19,6 @@ namespace Services.Service.StudentService
         public Task<ErrorOr<bool>> deleteStudent(Guid id); 
 
         public Task<ErrorOr<Recipient>> getStudentById(Guid Id);  
-        public Task<ErrorOr<List<Recipient>>> getStudents(BaseFilter filter);
+        public Task<ErrorOr<List<RecipientReponseDto>>> getStudents(BaseFilter filter);
     }
 }

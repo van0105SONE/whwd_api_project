@@ -76,6 +76,7 @@ namespace whwd_web_api.Controllers.WorkController
 			}
 		}
 
+
 		[HttpGet]
 		[Route("getDonations")]
 		public async Task<IActionResult> getDonations([FromQuery] BaseFilter filter )

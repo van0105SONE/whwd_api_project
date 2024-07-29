@@ -15,6 +15,8 @@ namespace ApplicationCore.Dtos.FunRaisingPlaceDto
         public string? other { get; set; }
         public string? facebook { get; set; }
         public string? googleMapLink { get; set; }
+        public DateTime? startDate { get; set; }
+        public DateTime? endDate { get; set; }
         public required string userId { get; set; }
         public required string coordinatorId { get; set; }
         public VillageDto village { get; set; }

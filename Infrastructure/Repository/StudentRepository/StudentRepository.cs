@@ -68,7 +68,7 @@ namespace Infrastructure.Repository.StudentRepository
         async public Task<List<Recipient>> getStudents(BaseFilter filter)
         {
             try{
-              return await _dbContext.students.Skip((filter.page - 1) * filter.pageSize).Take(filter.pageSize).ToListAsync();
+              return await _dbContext.students.Include(t => t.school).Include(t => t.CreateBy).Where(t => t.project.IsActive).Skip((filter.page - 1) * filter.pageSize).Take(filter.pageSize).ToListAsync();
             }catch(Exception ex){
               throw new Exception(ex.Message);
             }

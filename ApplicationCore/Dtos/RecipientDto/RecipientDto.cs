@@ -10,7 +10,7 @@ namespace ApplicationCore.Dtos.StudentDto
     {
         public required string fname { get; set; }
         public required string lname {get; set;}
-        public required string gender { get; set; }
+        public  string? gender { get; set; }
         public DateTime birthDate { get; set; }
         public required string level { get; set; }
         public string shirtSize { get; set; }

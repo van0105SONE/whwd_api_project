@@ -113,7 +113,7 @@ namespace Infrastructure.Repository.Implement
         {
             try
             {
-                List<ApplicationUser> users = _dbContext.Users.Skip((filter.page - 1) * filter.pageSize).Include(t => t.BornVillage).ThenInclude(t => t.district).ThenInclude(t => t.province).Include(t => t.CurrentVillage).ThenInclude(t => t.district).ThenInclude(t => t.province).Include(t => t.Major).Include(t => t.projectTeam).Include(t => t.position).Include(t => t.Role).ToList();
+                List<ApplicationUser> users = _dbContext.Users.Skip((filter.page - 1) * filter.pageSize).Include(t => t.BornVillage).ThenInclude(t => t.district).ThenInclude(t => t.province).Include(t => t.CurrentVillage).ThenInclude(t => t.district).ThenInclude(t => t.province).Include(t => t.Major).ThenInclude(t => t.Department).ThenInclude(t => t.faculty).ThenInclude(t => t.university).Include(t => t.projectTeam).Include(t => t.position).Include(t => t.Role).ToList();
                 return users;
             }catch(Exception ex) { 
                 throw new Exception(ex.Message);    

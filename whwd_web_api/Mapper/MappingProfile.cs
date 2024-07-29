@@ -58,7 +58,10 @@ namespace whwd_web_api.Mapper
 			CreateMap<District, DistrictResponseDto>();
             CreateMap<Province, ProvinceResponseDto>();
             CreateMap<Recipient, RecipientReponseDto>();
-
+            CreateMap<Major, MajorResponseDto>();
+            CreateMap<Department, DepartmentResponseDto>();
+            CreateMap<Faculty, FacultyResponseDto>();
+            CreateMap<University, UniversityResponseDto>();
             CreateMap<FundRaisingPlace, PlaceResponseDto>();
 
 

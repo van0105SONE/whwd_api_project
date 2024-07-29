@@ -23,11 +23,13 @@ namespace Services.Service.StudentService
         public IStudentRepository _studentRepository { get; set; }
         public IProjectPlanRepository _projectService { get; set; }
         public UserManager<ApplicationUser> _userManager { get; set; }
+        private DatabaseContexts databaseContexts { get; set; }
         public StudentService(DatabaseContexts context, UserManager<ApplicationUser> userManager, IMapper mapper) {
             _studentRepository = new StudentRepository(context);
             _projectService = new ProjectPlanRepository(context);
             _userManager = userManager;
             _mapper = mapper;
+            databaseContexts = context;
         }
 
       async  public Task<ErrorOr<MessageReponse<RecipientReponseDto>>> createStudent(RecipientDto studentDto)
@@ -35,16 +37,16 @@ namespace Services.Service.StudentService
             try
             {
                 Recipient studentData =  _mapper.Map<Recipient>(studentDto);
-                var projectPlanResult = await _projectService.getProjectActiveProject();
+                var projectPlanResult = databaseContexts.projectPlan.FirstOrDefault(t => t.IsActive);
                 var schoolResult = await _projectService.getSchoolById(studentDto.schoolId);
-                if (projectPlanResult.Value == null)
+                if (projectPlanResult == null)
                 {
                     return Error.Validation(ErrorCodes.Validation, "Project isn't found");
                 } else if (schoolResult.Value == null)
                 {
                     return Error.Validation(ErrorCodes.Validation, "school isn't found");
                 }
-                ProjectPlan projectPlan = projectPlanResult.Value;
+                ProjectPlan projectPlan = projectPlanResult;
                 ApplicationUser? user =  await  _userManager.FindByIdAsync(studentDto.userId);
 
                 if (user == null)
@@ -58,6 +60,17 @@ namespace Services.Service.StudentService
                 var result = await  _studentRepository.create(studentData);
                 if (result.Value)
                 {
+                    var donateThings = databaseContexts.donateThings.Where(t => t.ProjectPlan.IsActive).ToList();
+                    double totalFund = 0;
+                    foreach (var thing in donateThings)
+                    {
+                        var totalRecipient = databaseContexts.students.Count(t => t.project.IsActive);
+                        totalFund += totalRecipient * thing.totalPrice;
+                    }
+
+                    var currentProjectPlan  =   databaseContexts.projectPlan.FirstOrDefault(t => t.IsActive);
+                    currentProjectPlan.TotalFund += totalFund;
+                    databaseContexts.SaveChanges();
                     RecipientReponseDto response = _mapper.Map<RecipientReponseDto>(studentData);
                     return new MessageReponse<RecipientReponseDto>()
                     {
@@ -106,6 +119,7 @@ namespace Services.Service.StudentService
 
                 student.fname = studentData.fname;
                 student.lname = studentData.lname;
+                student.gender = studentDto.gender;
                 student.birthDate = studentData.birthDate;
                 student.level = studentData.level;
                 student.UpdateBy = user;
@@ -148,11 +162,13 @@ namespace Services.Service.StudentService
              }
         }
 
-      async  public Task<ErrorOr<List<Recipient>>> getStudents(BaseFilter filter)
+      async  public Task<ErrorOr<List<RecipientReponseDto>>> getStudents(BaseFilter filter)
         {
              try{
                var student = await _studentRepository.getStudents(filter);
-               return student;
+
+                var recipients = _mapper.Map<List<RecipientReponseDto>>(student);
+               return recipients;
              }catch(Exception ex){
                 return Error.Unexpected("Failure", ex.Message);
              }

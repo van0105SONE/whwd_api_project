@@ -24,12 +24,12 @@ namespace whwd_web_api.Controllers.WorkController
 
 
 		[HttpGet]
-		[Route("isJoint/{Id}")]
-        public async Task<IActionResult> isJoinst(Guid Id)
+		[Route("isJoint")]
+        public async Task<IActionResult> isJoinst([FromQuery] Guid userId, Guid placeId)
         {
             try
-            {
-                bool isExist =  _dbContexts.conjoints.Any(t => t.Joiner.Id == Id.ToString());
+             {
+                bool isExist =  _dbContexts.conjoints.Any(t => t.Joiner.Id == userId.ToString() && placeId == t.FundRaisingPlace.Id);
 				return Ok(isExist);
             }
             catch (Exception ex)

@@ -11,8 +11,11 @@ namespace ApplicationCore.Dtos.UserDto
         public string? Lname { get; set; }
         public required string UserName { get; set; }
         public required string Email { get; set; }
+        public string? phoneNumber { get; set; }
         public required string Password { get; set; }
         public required string Occupation { get; set; }
+        public string Gender { get; set; }
+        public DateTime BirtDate { get; set; }
         public required Guid positionId {get; set;}
         public required Guid teamId {get; set;}
         public required VillageDto CurrentVillage { get; set; }
