@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Constanst;
+using ApplicationCore.Dtos;
 using ApplicationCore.Dtos.Donate;
 using ApplicationCore.Filter;
 using AutoMapper;
@@ -78,9 +79,32 @@ namespace whwd_web_api.Controllers.WorkController
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+				return BadRequest(ex.Message);
             }
         }
+
+        [HttpDelete]
+        [Route("deleteDonation/{id}")]
+        public async Task<IActionResult> deleteDonation(Guid id)
+        {
+            try
+            {
+                var donation =  _databaseContexts.Donation.FirstOrDefault(t => t.Id == id);
+				_databaseContexts.Donation.Remove(donation);
+				_databaseContexts.SaveChanges();
+				return Ok(new MessageReponse<string>()
+				{
+					statusCode = 200,
+					isSuccess = true,
+					message = "Delete Success"
+				});
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
 
         [HttpPut]
         [Route("approveOnlineDonate/{Id}")]

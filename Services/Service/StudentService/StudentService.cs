@@ -65,7 +65,7 @@ namespace Services.Service.StudentService
                     foreach (var thing in donateThings)
                     {
                         var totalRecipient = databaseContexts.students.Count(t => t.project.IsActive);
-                        totalFund += totalRecipient * thing.totalPrice;
+                        totalFund += totalRecipient * (thing.Unit * thing.Price);
                     }
 
                     var currentProjectPlan  =   databaseContexts.projectPlan.FirstOrDefault(t => t.IsActive);
@@ -103,13 +103,6 @@ namespace Services.Service.StudentService
    
                 Recipient student = await _studentRepository.GetStudentById(Id);
 
-
-                var projectPlanResult = await _projectService.getProjectActiveProject();
-                if (projectPlanResult.Value == null)
-                {
-                    return Error.Validation(ErrorCodes.Validation, "Project isn't found");
-                }
-                ProjectPlan projectPlan = projectPlanResult.Value;
                 ApplicationUser? user =  await  _userManager.FindByIdAsync(studentDto.userId);
                 if (user == null)
                 {
@@ -122,9 +115,12 @@ namespace Services.Service.StudentService
                 student.gender = studentDto.gender;
                 student.birthDate = studentData.birthDate;
                 student.level = studentData.level;
+                student.shirtSize = studentData.shirtSize;
+                student.skirtSize = studentData.skirtSize;
+                student.shoesSize = studentData.shoesSize;
+
                 student.UpdateBy = user;
                 student.UpdateAt = DateTime.UtcNow;
-                student.project = projectPlan;
                 var result = await  _studentRepository.update(student);
 
                 if (result)

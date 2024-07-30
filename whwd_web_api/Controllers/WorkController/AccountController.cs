@@ -18,8 +18,10 @@ namespace whwd_web_api.Controllers.WorkController
     public class AccountController : Controller
     {
         IAccountService _accountService;
+        private DatabaseContexts _databaseContexts { get; set; }
     public AccountController(UserManager<ApplicationUser> userManager, DatabaseContexts dbContext, IMapper mapper)
         {
+            _databaseContexts = dbContext;
             _accountService = new AccountService(dbContext, userManager,mapper);
         }
 
@@ -62,7 +64,26 @@ namespace whwd_web_api.Controllers.WorkController
         return Problem(ex.Message);
       }
     }
-    [HttpDelete]
+
+
+
+        [HttpGet]
+        [Route("getCurrentAccount")]
+        public async Task<IActionResult> GetCurrentAccount()
+        {
+            try
+            {
+               return Ok(_databaseContexts.accounts.FirstOrDefault(t => t.ProjectPlan.IsActive));
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
+        }
+
+
+
+        [HttpDelete]
     [Route("deleteAccount")]
     public async Task<IActionResult> deleteAccount([FromQuery] Guid  Id ){
         try{

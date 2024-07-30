@@ -58,6 +58,16 @@ namespace whwd_web_api.Controllers.WorkController
             try
             {
                 var place = _databaseContest.fundRaisingPlaces.FirstOrDefault(t => t.Id == id);
+
+                place.googleMapLink = placeDto.googleMapLink;
+                place.PhoneNumber = place.PhoneNumber;
+                place.startDate = placeDto.startDate;
+                place.endDate = placeDto.endDate;
+                place.Email = placeDto.email;
+
+                _databaseContest.fundRaisingPlaces.Update(place);
+                _databaseContest.SaveChanges();
+
                 if (place == null)
                 {
                     return BadRequest(new MessageReponse<PlaceResponseDto>()

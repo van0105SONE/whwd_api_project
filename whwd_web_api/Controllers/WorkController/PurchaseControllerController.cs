@@ -30,6 +30,7 @@ namespace whwd_web_api.Controllers.WorkController
                 var cart = _mapper.Map<Carts>(purchaseDto);
                 var user = databaseContexts.Users.FirstOrDefault(t => t.Id == purchaseDto.userId);
                 cart.CreateBy = user;
+                cart.status = "pending";
                 databaseContexts.cart.Add(cart);
                 databaseContexts.SaveChanges();
                 List<CartItem> itemList = new List<CartItem>();
@@ -48,6 +49,36 @@ namespace whwd_web_api.Controllers.WorkController
                     statusCode = 200,
                     message = "Successs",
                     isSuccess = true
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut]
+        [Route("approvePurchase/{id}")]
+        public IActionResult approvePurchase(Guid id)
+        {
+            try
+            {
+                var cart = databaseContexts.cart.FirstOrDefault(t => t.Id == id);
+                cart.status = "approve";
+                databaseContexts.cart.Update(cart);
+                databaseContexts.SaveChanges();
+
+                var account =  databaseContexts.accounts.FirstOrDefault(t => t.AccountTypes.ToUpper() == "MAIN" && t.ProjectPlan.IsActive);
+                account.Balance -= cart.totalPrice;
+                account.WithdrawAmount += cart.totalPrice;
+                databaseContexts.accounts.Update(account);
+                databaseContexts.SaveChanges();
+
+                return Ok(new MessageReponse<String>()
+                {
+                    statusCode = 200,
+                    isSuccess = true,
+                    message = "Success"
                 });
             }
             catch (Exception ex)
@@ -124,6 +155,9 @@ namespace whwd_web_api.Controllers.WorkController
                 return BadRequest(ex.Message);
             }
         }
+
+
+        
 
     }
 }

@@ -13,6 +13,7 @@ using Infrastructure.Repository.FundRaisingPlaceRepos;
 using Infrastructure.Repository.Implement;
 using Infrastructure.Repository.IRepository;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -162,6 +163,10 @@ namespace Services.Service.FundRaisingPlaceService
                     return Error.Validation(ErrorCodes.Validation, "User is not found in the system");
                 }
 
+                var projectPlan = _dbContexts.projectPlan.FirstOrDefault(t => t.IsActive);
+                projectPlan.totalFundRaisedPlace += 1;
+                _dbContexts.projectPlan.Update(projectPlan);
+                _dbContexts.SaveChanges();
 
                 place.Status = placeDto.status;
                 if (placeDto.status == "CONFIRM")
