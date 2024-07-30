@@ -30,6 +30,7 @@ namespace Services.Service.TransactionService
 			 _transactionRepos = new TransactionRepository(contexts);
 			_projectPlanRepository = new ProjectPlanRepository(contexts);
 			_accountRepository = new AccountRepository(contexts);
+            _dbContexts = contexts;
 		}
 
 
@@ -69,7 +70,8 @@ namespace Services.Service.TransactionService
 
                 if (result.Value)
                 {
-                    Account mainAccount = _dbContexts.accounts.FirstOrDefault(t => t.AccountTypes.ToUpper() == "MAIN" && t.ProjectPlan.IsActive);
+                   
+                    Account mainAccount = _dbContexts.accounts.FirstOrDefault(t => t.AccountTypes.ToUpper() == "MAIN" );
                     mainAccount.Balance += transaction.Amount;
 
                     _dbContexts.accounts.Update(mainAccount);

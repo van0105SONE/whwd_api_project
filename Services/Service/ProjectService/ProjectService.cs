@@ -80,7 +80,7 @@ namespace Services.Service.PositionService
 
 
                     Account account = new Account() { 
-                        AccountName = "Warm Heart Warm Body",
+                        AccountName = projectPlan.ProjectName,
                         AccountNo = "111-1111-1111-1111",
                         AccountTypes = "Main",
                         Balance = balance,

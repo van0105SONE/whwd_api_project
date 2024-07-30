@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ApplicationCore.Dtos.UserDto;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,8 @@ namespace ApplicationCore.Dtos.Donate
         public string SourceType { get; set; }
         public string DonationType { get; set; }
         public double amount { get; set; }
+        public DateTime createAt { get; set; }
+        public UserReponseDto createBy { get; set; }
         public DonatorResponseDto DonorBy { get; set; }
     }
 }

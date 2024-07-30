@@ -21,6 +21,6 @@ namespace Infrastructure.Repository.StudentRepository
         Task<Recipient> GetStudentById(Guid Id);
         Task<List<Recipient>> getRecipientReport(RecipientReportFilter filter);
         Task<int> getTotalRecipient();
-        Task<List<RecipientReport>> getTotalRecipientBySchool();
+        Task<List<RecipientReport>> getTotalRecipientBySchool(RecipientReportFilter filter);
     }
 }

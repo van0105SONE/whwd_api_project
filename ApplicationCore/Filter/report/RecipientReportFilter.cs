@@ -8,6 +8,8 @@ namespace ApplicationCore.Filter.report
 {
     public class RecipientReportFilter : BaseFilter
     {
+        public DateTime? startDate { get; set; }
+        public DateTime? endDate { get; set; }
         public Guid projectId { get; set; }
     }
 }

@@ -107,12 +107,12 @@ namespace Infrastructure.Repository.StudentRepository
             }
         }
 
-        public async Task<List<RecipientReport>> getTotalRecipientBySchool()
+        public async Task<List<RecipientReport>> getTotalRecipientBySchool(RecipientReportFilter filter)
         {
             try
             {
                 List<RecipientReport> response = new List<RecipientReport> ();
-                List<School> schools = _dbContext.schoools.ToList();
+                List<School> schools = _dbContext.schoools.Where(t => t.project.Id == filter.projectId).ToList();
 
                 foreach(var school in schools)
                 {

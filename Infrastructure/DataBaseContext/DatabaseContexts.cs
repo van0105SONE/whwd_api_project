@@ -1,5 +1,6 @@
 ﻿using Infrastructure.Model.Account;
 using Infrastructure.Model.Address;
+using Infrastructure.Model.Cart;
 using Infrastructure.Model.Donate;
 using Infrastructure.Model.Place;
 using Infrastructure.Model.Recipient;
@@ -20,6 +21,8 @@ namespace Infrastructure.DataBaseContext
         { 
         }
 
+        public DbSet<CartItem> cartItems { get; set; }
+       public DbSet<Carts> cart { get; set; }
 
        public DbSet<Position> positions { get; set; }
        public DbSet<Position> position { get; set; }

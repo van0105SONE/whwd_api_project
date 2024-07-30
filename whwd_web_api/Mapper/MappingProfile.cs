@@ -4,6 +4,7 @@ using ApplicationCore.Dtos.ConjointDto;
 using ApplicationCore.Dtos.Dashboard;
 using ApplicationCore.Dtos.Donate;
 using ApplicationCore.Dtos.FunRaisingPlaceDto;
+using ApplicationCore.Dtos.PurchaseDto;
 using ApplicationCore.Dtos.Recipient;
 using ApplicationCore.Dtos.RecipientDto;
 using ApplicationCore.Dtos.Reports;
@@ -17,6 +18,7 @@ using ApplicationCore.Dtos.Work;
 using AutoMapper;
 using Infrastructure.Model.Account;
 using Infrastructure.Model.Address;
+using Infrastructure.Model.Cart;
 using Infrastructure.Model.Donate;
 using Infrastructure.Model.Place;
 using Infrastructure.Model.Recipient;
@@ -35,6 +37,9 @@ namespace whwd_web_api.Mapper
         public MappingProfile() {
             AllowNullCollections = true;
 
+            // 
+            CreateMap<ItemDto, CartItem>();
+            CreateMap<PurchaseDto, Carts>();
             //Mapping request to Model
             CreateMap<RecipientDto, Recipient>();
             CreateMap<UserDto, ApplicationUser>();

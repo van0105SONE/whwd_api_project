@@ -17,6 +17,8 @@ namespace ApplicationCore.Dtos.Donate
 		public string? Facebook { get; set; }
         public string SourceType { get; set; }
         public string? DonationType { get; set; }
+		public string? bankReference { get; set; }
+		public string? bankName { get; set; }
 		public string userId { get; set; }
 	}
 

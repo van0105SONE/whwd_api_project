@@ -41,7 +41,7 @@ namespace Services.Service.DonationService
 			{
 			     Donation donation =	_Mapper.Map<Donation>(donationParam);
 			     ApplicationUser? user =  await	_UserManager.FindByIdAsync(donationParam.userId);
-				Donator donator = new Donator();
+				 Donator donator = new Donator();
 
 				if (user == null)
 				{
@@ -60,22 +60,27 @@ namespace Services.Service.DonationService
 					Account = account,
                     Description = "Donate from donator",
 					Amount = donationParam.amount,
-					TransactionType = donation.DonationType,
+					TransactionType = "Donation",
 					CreateBy = user
 				};
 				var trxResult = await _transacitonRepos.createTransaction(transaction);
 
 
-				Account mainAccount = _dbContexts.accounts.FirstOrDefault(t => t.AccountTypes.ToUpper() == "MAIN" && t.ProjectPlan.IsActive);
-				mainAccount.DepositAmount += transaction.Amount;
-				mainAccount.Balance += transaction.Amount;
 
-				ProjectPlan projectPlan = _dbContexts.projectPlan.FirstOrDefault(t => t.IsActive);
-                projectPlan.TotalRecieve += transaction.Amount;
+				if(donationParam.SponsorType != "UNKNOWN")
+				{
+                    Account mainAccount = _dbContexts.accounts.FirstOrDefault(t => t.AccountTypes.ToUpper() == "MAIN" && t.ProjectPlan.IsActive);
+                    mainAccount.DepositAmount += transaction.Amount;
+                    mainAccount.Balance += transaction.Amount;
 
-				_dbContexts.accounts.Update(mainAccount);
-				_dbContexts.projectPlan.Update(projectPlan);
-				_dbContexts.SaveChanges();
+                    ProjectPlan projectPlan = _dbContexts.projectPlan.FirstOrDefault(t => t.IsActive);
+                    projectPlan.TotalRecieve += transaction.Amount;
+
+                    _dbContexts.accounts.Update(mainAccount);
+                    _dbContexts.projectPlan.Update(projectPlan);
+                    _dbContexts.SaveChanges();
+                }
+
 
 
 				if (trxResult.IsError)
