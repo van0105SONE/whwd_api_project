@@ -25,7 +25,7 @@ namespace whwd_web_api.Controllers.WorkController
             _studentService = new StudentService(context, userManager, mapper);
         }
 
-      [HttpPost]
+     [HttpPost]
      [Route("createRecipient")]
        async  public Task<IActionResult> createStudent([FromBody] RecipientDto studentDto)
         {
@@ -48,7 +48,7 @@ namespace whwd_web_api.Controllers.WorkController
         }
     [HttpDelete]
     [Route("deleteRecipient/{Id}")]
-    public async Task<IActionResult> deleteStudent( Guid Id){
+    public async Task<IActionResult> deleteStudent(Guid Id){
         try{
             var result = await _studentService.deleteStudent(Id);
             return result.Match(t => Ok(new MessageReponse<Recipient>(){
